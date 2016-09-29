@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+var debug = require('debug')('caport2020User-Microservice');
+// var app = require('../app');
+var db = require("../models/db");
+
+db.connect(function(err){
+
+  if(err){
+    console.log("Unable to connect to DB, err:" +err);
+  }
+  else{
+    console.log("Connected to DB");
+      var app = require('../app');
+      app.set('port', process.env.PORT || 3005);
+      var server;
+
+      if (process.env.ENABLEHTTPS ){
+          app.set('port', 443);
+          //How to run Express over HTTPS
+          var https = require('https');
+          var fs = require('fs');
+
+          var options = {
+              key : fs.readFileSync('keys/key.pem'),
+              cert : fs.readFileSync('keys/key-cert.pem')
+          }
+          server = https.createServer(options, app).listen(app.get('port'), function() {
+              debug('Express server listening on port ' + server.address().port);
+              console.log('Express server HTTPS listening on port ' + server.address().port);
+          });
+      }else {
+
+          server = app.listen(app.get('port'), function () {
+              console.log('Express server listening on port ' + server.address().port);
+              debug('Express server listening on port ' + server.address().port);
+          });
+      }
+  }
+
+});
+
+process.on('SIGINT', function(code) {
+    console.log("Exiting MS...");
+    db.disconnect(function(err,result){
+
+    if(err){
+        console.log('Unable to disconnect from database');
+    }
+
+    else{
+        console.log('Disconnected from database');
+    }
+
+
+    process.exit(0);
+    });
+
+});
+
+
+
+
+
+

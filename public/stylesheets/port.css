@@ -1,0 +1,132 @@
+  .panel-red a.whiteString{
+    color: #FDFEFE;
+  }
+
+  .panel-green a.whiteString{
+    color: #FDFEFE;
+  }
+
+
+  .panel-success a.whiteString{
+    color: #3c763d;
+  }
+
+  .panel-info a.whiteString{
+    color: #31708f;
+  }
+
+
+  .panel-yellow a.whiteString{
+    color: #FDFEFE;
+  }
+
+  .panel-primary a.whiteString{
+    color: #FDFEFE;
+  }
+
+  .colorblue{
+    color: #1D4976;
+  }
+
+  .center{
+    text-align: center;
+  }
+
+  .left{
+    text-align: left;
+  }
+
+  .alignJust{
+    text-align: justify;
+  }
+
+
+  .wrap {
+    white-space: pre-wrap;      /* CSS3 */
+    white-space: -moz-pre-wrap; /* Firefox */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    word-wrap: break-word;      /* IE */
+  }
+
+
+  .row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+  }
+
+
+  .tovCenter {
+    display: flex;
+    justify-content:center;
+    align-content:center;
+    flex-direction:column; /* column | row */
+  }
+
+
+
+  .minPaddingLR {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  #panelY{
+    width: 77px;;
+  }
+
+  a.icon{
+    color: black;
+  }
+  /* mouse over link */
+  a.icon:hover {
+    color: darkgray;
+  }
+
+
+  button.green{
+    background-color: green;
+  }
+  /* mouse over link */
+  button.green:hover {
+    background-color: darkgreen;
+  }
+
+  button.red{
+    background-color: red;
+  }
+  /* mouse over link */
+  button.red:hover {
+    background-color: darkred;
+  }
+
+  button.yellow{
+    background-color: yellow;
+  }
+  /* mouse over link */
+  button.yellow:hover {
+    background-color: #e5c500;
+  }
+
+  /* Popover Header */
+  .popover-title {
+    /*background-color: #73AD21;*/
+    color: #337ab7;
+    /*font-size: 28px;*/
+    text-align:center;
+  }
+
+  /* Popover Body */
+  .popover-content .btn-primary {
+    color: #FFFFFF;
+  }
+
+  /* Popover Body */
+  .popover-content .btn-default {
+    color: black;
+  }
+
+
+  .popoverToken{
+    width:100%;
+  }

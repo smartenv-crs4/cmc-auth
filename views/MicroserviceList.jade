@@ -1,0 +1,34 @@
+extends layout
+
+
+
+block content
+  //-
+  //  msType=["Tipo 1", "Tipo 2"]
+  //  each item in msType
+  //  li = item
+
+
+
+
+  h1= title
+  table(border="1")
+    each item in table
+      tr
+        each column in item
+          td= column
+
+
+  form(name="add-estimation", method="get" , action="/configMs/getMicroservices")
+    div.input
+      input(type="hidden" name="access_token" value="#{psw}")
+      span.label Microservice Type:
+      select(name='Type')
+        option(value='', selected='selected') Select a microservice Type
+        //- var list = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"]
+        each item in appGrant
+          option(value=item)= item
+        option(value='All') All
+
+    div.actions
+      input(type="submit", value="Cerca")

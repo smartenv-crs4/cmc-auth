@@ -1,0 +1,530 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        meta(name='description', content='')
+        meta(name='author', content='')
+        title SB Admin 2 - Bootstrap Admin Theme
+        // Bootstrap Core CSS
+        link(href='bootstrapTemplate/bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
+        // MetisMenu CSS
+        link(href='bootstrapTemplate/bower_components/metisMenu/dist/metisMenu.min.css', rel='stylesheet')
+        // Timeline CSS
+        link(href='bootstrapTemplate/dist/css/timeline.css', rel='stylesheet')
+        // Custom CSS
+        link(href='bootstrapTemplate/dist/css/sb-admin-2.css', rel='stylesheet')
+        // Custom Fonts
+        link(href='bootstrapTemplate/bower_components/font-awesome/css/font-awesome.min.css', rel='stylesheet', type='text/css')
+        // PORT 20202 CSS
+        link(href='stylesheets/port.css', rel='stylesheet')
+        // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+        // WARNING: Respond.js doesn't work if you view the page via file://
+        //if lt IE 9
+          script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+          script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
+    body
+        #wrapper
+            // Navigation
+            nav.navbar.navbar-default.navbar-static-top(role='navigation', style='margin-bottom: 0')
+                .navbar-header
+                    button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+                        span.sr-only Toggle navigation
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand(href='index.html') Cagliari Port 2020 Microservice Admin
+                // /.navbar-header
+                ul.nav.navbar-top-links.navbar-right
+                    // /.dropdown
+                    li.dropdown
+                        a.dropdown-toggle(data-toggle='dropdown', href='#')
+                            i.fa.fa-user.fa-fw
+                            i.fa.fa-caret-down
+                        ul.dropdown-menu.dropdown-user
+                            li
+                                a(href='#')
+                                    i.fa.fa-user.fa-fw
+                                    |  User Profile
+                            li
+                                a(href='#')
+                                    i.fa.fa-gear.fa-fw
+                                    |  Settings
+                            li.divider
+                            li
+                                a(href='login.html')
+                                    i.fa.fa-sign-out.fa-fw
+                                    |  Logout
+                        // /.dropdown-user
+                    // /.dropdown
+                // /.navbar-top-links
+            #page-wrapper
+                .row
+                    .row.page-header
+                        .col-lg-2
+                            img.img-responsive(src='bootstrapTemplate/img/LogoRed.png')
+                        .col-lg-10
+                            h1.colorblue Running Microservices
+                    // /.col-lg-12
+                // /.row
+                .row
+                    #tokenManagement.modal.fade(data-backdrop="static" data-keyboard="false" tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                        .modal-dialog
+                            .modal-content
+                                .modal-header
+                                    button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                                        span.fa.fa-times(aria-hidden='true')
+                                    h4.modal-title.center Token Types Management
+                                .modal-body.center
+
+                                    //TODO STSRT
+                                    .row
+                                        .col-lg-12
+                                            .row
+                                                .col-lg-6
+                                                    .panel.panel-default
+                                                        .panel-heading
+                                                            i.fa.fa-key.fa-fw
+                                                            |  User Types
+                                                        .panel-body
+                                                            .table-responsive
+                                                                table.table.table-bordered.table-hover.table-striped
+                                                                    thead
+                                                                        tr
+                                                                            th(style="display:none") Id
+                                                                            th Name
+                                                                            th Manage
+                                                                    tbody#tableusertype
+                                                                        tr
+                                                                            td(style="display:none") ID1
+                                                                            td user1
+                                                                        tr
+                                                                            td(style="display:none") ID2
+                                                                            td user2
+                                                                        tr
+                                                                            td(style="display:none") ID3
+                                                                            td user3
+
+
+                                                .col-lg-6
+                                                    .panel.panel-default
+                                                        .panel-heading
+                                                            i.fa.fa-key.fa-fw
+                                                            |  App Types
+                                                        .panel-body
+                                                            .table-responsive
+                                                                table.table.table-bordered.table-hover.table-striped
+                                                                    thead
+                                                                        tr
+                                                                            th(style="display:none") Id
+                                                                            th Name
+                                                                            th Manage
+                                                                    tbody#tableapptype
+                                                                        tr
+                                                                            td(style="display:none") ID1
+                                                                            td user1
+                                                                        tr
+                                                                            td(style="display:none") ID2
+                                                                            td user2
+                                                                        tr
+                                                                            td(style="display:none") ID3
+                                                                            td user3
+
+                                            #newTokenType.row(style="display:none")
+                                                .col-md-12
+                                                    .panel.panel-default
+                                                        .panel-heading
+                                                            h3.panel-title Set a new Token Type
+                                                        .panel-body
+                                                            form(role='form')
+                                                                fieldset
+                                                                    .form-group
+                                                                        p#errMsgNewTokenType.wrap.alert.alert-danger(role='alert',style="display:none") Lorem ipsum TOKEN
+                                                                    .form-group
+                                                                        input.form-control(id="TokenTypeId",placeholder='id', name='TokenTypeId', type='text',style="display:none", autofocus='')
+                                                                    .form-group
+                                                                        input.form-control(placeholder='Token Type Name. Use ", " to separate multiple values', name='TokenType', type='text', autofocus='')
+                                                                    .form-group
+                                                                        #rowTokenType.row
+                                                                            .col-xs-3
+                                                                                label Token Type
+                                                                            .col-lg-9
+                                                                                .row
+                                                                                    .col-xs-4
+                                                                                        label.radio-inline
+                                                                                            input#optionsRadiosInline1(type='radio', name='optionsRadiosInline', value='user', checked='')
+                                                                                            | User
+                                                                                    .col-xs-5
+                                                                                        label.radio-inline
+                                                                                            input#optionsRadiosInline2(type='radio', name='optionsRadiosInline', value='app')
+                                                                                            | App
+
+                                                        .row
+                                                            .col-lg-6
+                                                                a.btn.btn-lg.btn-success.btn-block(href="javascript:saveNewToken('" + myUrl + "','" + myToken + "');") Save Token Type
+                                                            .col-lg-6
+                                                                a.btn.btn-lg.btn-success.btn-block(href="javascript:closeWindow('#newTokenType');") Cancel
+
+                                            .row
+                                                a.btn.btn-default.btn-block(href="javascript:ShowNewToken();") ADD
+
+
+
+
+                                    // TODO END
+
+                                .modal-footer
+                                    button.btn.btn-info(data-dismiss='modal')
+                                        span.fa.fa-times(aria-hidden='true')
+                                        | &nbsp;Close
+
+
+                .row
+
+                    // Mcroservice Box
+                    each item in MicroSL
+                        .col-lg-3.col-md-6
+                            .panel(class=item['color'])
+                                .panel-heading
+                                    .row
+                                        // TODO OLD .col-xs-3
+                                        .col-xs-5
+                                            i.fa(class=item['icon']).fa-5x
+                                            if(item['name']=='authms')
+                                                .row
+                                                    a(onclick="TokenTypeDetails('"+ myUrl + "','" + myToken + "')", data-toggle='modal' data-target='#tokenManagement').whiteString
+                                                        span.fa.fa-key(aria-hidden='true')
+                                                        |Token Type
+                                        // TODO OLD .col-xs-9.text-right
+                                        .col-xs-7.text-right
+                                            a.whiteString( data-toggle="confirmation", href="javascript:deleteMicroservice('"+ myUrl + "','" + myToken + "','" + item['_id'] +"');")
+                                                i.fa.fa-times
+                                            a.whiteString( id=item['_id'], data-toggle="confirmationalert")
+                                            .huge(id=item['name']) NA
+                                            div #{item['name']}
+                                            div Running instances!
+                                            a(onclick="generateToken('"+ item['name']+ "','"+ myUrl + "','" + myToken + "')",data-toggle='modal', data-target='#myModal').whiteString
+                                                span.glyphicon.glyphicon-tags(aria-hidden='true')
+                                                |   &nbsp;Get Token
+                                            #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                                                .modal-dialog
+                                                    .modal-content
+                                                        .modal-header
+                                                            button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                                                                span.fa.fa-times(aria-hidden='true')
+                                                            h4#myModalLabel.modal-title.center Get Microservice Token
+                                                        .modal-body.center
+                                                            p#token.wrap Lorem ipsum TOKEN
+                                                        .modal-footer
+                                                            button.btn.btn-info(data-dismiss='modal')
+                                                                span.fa.fa-times(aria-hidden='true')
+                                                                | &nbsp;Close
+                                                            button.btn.btn-primary(id='copy-button',data-clipboard-target='#token')
+                                                                span.glyphicon.glyphicon-copy(aria-hidden='true')
+                                                                |   &nbsp;Copy to clipboard
+
+
+                                a(href="javascript:msDetails('"+ myUrl + "','" + myToken + "','" + item['name'] +"');")
+                                    .panel-footer
+                                        span.pull-left View Details
+                                        span.pull-right
+                                            i.fa.fa-arrow-circle-right
+                                        .clearfix
+                    #panelAdd.col-sm-2
+                        #panelY.panel.panel-yellow
+                            .panel-heading.minPaddingLR
+                                .row.row-eq-height
+                                    .col-sm-6.tovCenter
+                                        i.fa.fa-plus.fa-5x
+                                    .col-sm-6
+                                        i &nbsp;
+                                        .huge &nbsp;
+                                        div &nbsp;
+                                        div &nbsp;
+                                        a &nbsp;
+                            a(href="javascript:ShowOld();")
+                                .panel-footer
+                                    span.pull-left Add
+                                    span.pull-right
+                                        i.fa.fa-arrow-circle-right
+                                    .clearfix
+                // /.row
+                #newmicroservice.row(style="display:none")
+                    .col-md-12
+                        .panel.panel-default
+                            .panel-heading
+                                h3.panel-title Register a new Microservice
+                            .panel-body
+                                form(role='form')
+                                    fieldset
+                                        .form-group
+                                            p#errMsg.wrap.alert.alert-danger(role='alert',style="display:none") Lorem ipsum TOKEN
+                                        .form-group
+                                            input.form-control(placeholder='Microservice Name', name='name', type='text', autofocus='')
+                                        .form-group
+                                            input.form-control(placeholder='Base Url', name='url', type='text', value='')
+                                        .form-group
+                                            .row
+                                                .col-lg-3
+                                                    input.form-control(readonly, id="color",placeholder='panel Color', name='color', type='text', value='')
+                                                .col-lg-1
+                                                    button.btn.btn-primary.btn-circle(type='button',onclick="setColor('panel-primary')")
+                                                .col-lg-1
+                                                    button.btn.btn-default.btn-circle(type='button',onclick="setColor('panel-default')")
+                                                .col-lg-1
+                                                    button.btn.btn-info.btn-circle(type='button',onclick="setColor('panel-info')")
+                                                .col-lg-1
+                                                    button.btn.btn-success.btn-circle(type='button',onclick="setColor('panel-success')")
+                                                .col-lg-1
+                                                    button.btn.btn-warning.btn-circle(type='button',onclick="setColor('panel-warning')")
+                                                .col-lg-1
+                                                    button.btn.btn-danger.btn-circle(type='button',onclick="setColor('panel-danger')")
+                                                .col-lg-1
+                                                    button.btn.btn-circle.yellow(type='button',onclick="setColor('panel-yellow')")
+                                                .col-lg-1
+                                                    button.btn.btn-circle.red(type='button',onclick="setColor('panel-red')")
+                                                .col-lg-1
+                                                    button.btn.btn-circle.green(type='button',onclick="setColor('panel-green')")
+
+                                        .form-group
+                                            .row
+                                                .col-lg-3
+                                                    input.form-control(readonly,id="icon",placeholder='icon name', name='icon', type='text', value='')
+                                                .col-lg-9
+                                                    each item in iconsList
+                                                        .col-lg-1
+                                                            a.icon(onclick="setIcon('"+item+"')")
+                                                                span.pull-left
+                                                                    i.fa(class=item).fa-2x
+
+
+
+                                        // Change this to a button or input when using this as a form
+                                        a.btn.btn-lg.btn-success.btn-block(href="javascript:saveMicroserice('"+myUrl+"','"+ myToken + "');") Save
+
+
+
+                .row
+                    // /.col-lg-8
+
+                    .col-lg-12
+                        .panel.panel-default
+                            .panel-heading
+                                i.fa.fa-dashboard.fa-fw
+                                span#msdetails &nbsp; authms microservice Details
+                            .panel-body
+                                .col-lg-4
+                                    .panel.panel-default
+                                        .panel-heading
+                                            i.fa.fa-cubes.fa-fw
+                                            |  Running Node instances
+                                            .pull-right
+                                                .btn-group
+                                                    button.btn.btn-default.btn-xs.dropdown-toggle(type='button', data-toggle='dropdown')
+                                                        | Actions
+                                                        span.caret
+                                                    ul.dropdown-menu.pull-right(role='menu')
+                                                        li
+                                                            a(href='#') Action
+                                                        li
+                                                            a(href='#') Another action
+                                                        li
+                                                            a(href='#') Something else here
+                                                        li.divider
+                                                        li
+                                                            a(href='#') Separated link
+
+                                        // /.panel-heading
+                                        panel-body
+                                            //.list-group
+                                            //    a.list-group-item(href='#')
+                                            //        i.fa.fa-sitemap.fa-fw
+                                            //        |  156.148.37.1
+                                            //        span.pull-right.text-muted.small
+                                            //            em Load Balance (nginx)
+                                            //.list-group
+                                            //    a.list-group-item(href='#')
+                                            //        i.fa.fa-tasks.fa-fw
+                                            //        |  156.148.37.1
+                                            //        span.pull-right.text-muted.small
+                                            //            em 4 minutes ago
+                                            // /.list-group
+                                            #msinstancelistpanel.a.btn.btn-default.btn-block(href='#') Refresh
+                                        // /.panel-body
+                                    // /.panel
+                                    // /.panel
+                                // /.col-lg-8
+                                // /.col-lg-4
+                                .col-lg-8
+                                    .panel.panel-default
+                                        .panel-heading
+                                            i.fa.fa-key.fa-fw
+                                            |  Microservice Authorizations
+                                            .pull-right
+                                                .btn-group
+                                                    button.btn.btn-default.btn-xs.dropdown-toggle(type='button', data-toggle='dropdown')
+                                                        | Actions
+                                                        span.caret
+                                                    ul.dropdown-menu.pull-right(role='menu')
+                                                        li
+                                                            a(href='#') Action
+                                                        li
+                                                            a(href='#') Another action
+                                                        li
+                                                            a(href='#') Something else here
+                                                        li.divider
+                                                        li
+                                                            a(href='#') Separated link
+                                        // /.panel-heading
+                                        .panel-body
+                                            .table-responsive
+                                                table.table.table-bordered.table-hover.table-striped
+                                                    thead
+                                                        tr
+                                                            th(style="display:none") Id
+                                                            th Method
+                                                            th URI
+                                                            th Enabled Token Type
+                                                            th Manage
+                                                    tbody#tableauth
+                                                        tr
+                                                            td(style="display:none") ID1
+                                                            td POST
+                                                            td /Users/signin
+                                                            td WebUi
+                                                        tr
+                                                            td(style="display:none") ID"
+                                                            td POST
+                                                            td /Users/signup
+                                                            td WebUi
+                                                        tr
+                                                            td(style="display:none") ID"
+                                                            td GET
+                                                            td /Users
+                                                            td Admin
+
+                                           #newauth.row(style="display:none")
+                                               .col-md-12
+                                                   .panel.panel-default
+                                                       .panel-heading
+                                                           h3.panel-title Set a new Authorization
+                                                       .panel-body
+                                                           form(role='form')
+                                                               fieldset
+                                                                   .form-group
+                                                                       p#errMsgNewAuth.wrap.alert.alert-danger(role='alert',style="display:none") Lorem ipsum TOKEN
+                                                                   .form-group
+                                                                       input.form-control(id="msNameAuth",placeholder='name', name='msNameAuth', type='text',style="display:none", autofocus='')
+                                                                   .form-group
+                                                                       input.form-control(id="msId",placeholder='id', name='msId', type='text',style="display:none", autofocus='')
+                                                                   .form-group
+                                                                       input.form-control(placeholder='URI', name='msUriAuth', type='text', autofocus='')
+                                                                   .form-group
+                                                                       select.form-control(name='msMethodAuth', type='text', value='')
+                                                                           option(value='', selected='selected', disabled='disabled') Select Method
+                                                                           option POST
+                                                                           option GET
+                                                                           option PUT
+                                                                           option DELETE
+
+
+                                                                   .form-group
+                                                                       .row
+                                                                           .col-xs-2
+                                                                               label Auth Token :
+                                                                           .col-lg-10
+                                                                               .row
+                                                                                    .col-xs-3
+                                                                                        p User
+                                                                                        #tokentypeuser
+                                                                                    .col-xs-3
+                                                                                        p App
+                                                                                        #tokentypeapp
+                                                                                    .col-xs-4
+                                                                                        p Ms
+                                                                                        #tokentypems
+                                                                               .row
+                                                                                   .col-xs-3
+                                                                                       #buttontokentypeuser
+                                                                                   .col-xs-3
+                                                                                       #buttontokentypeapp
+                                                                                   .col-xs-4
+
+                                                                   .row
+                                                                       .col-lg-6
+                                                                            a.btn.btn-lg.btn-success.btn-block(href="javascript:saveNewAuth('" + myUrl + "','" + myToken + "');") Save Auth
+                                                                       .col-lg-6
+                                                                            a.btn.btn-lg.btn-success.btn-block(href="javascript:closeWindow('#newauth');") Cancel
+
+
+                                            a.btn.btn-default.btn-block(href="javascript:ShowNewAuth('"+myUrl+ "','"+myToken+"')") ADD
+                                            // /.table-responsive
+                                        // /.panel-body
+                                    // /.panel
+                                    // /.panel
+                                    // /.panel
+                // /.row
+
+            #myAlertMsg.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                                span.fa.fa-times(aria-hidden='true')
+                            h4#myModalLabel.modal-title.center TESTO
+                        .modal-body.center
+                            p#token.wrap MESSAGGIO
+                        .modal-footer
+                            button.btn.btn-info(data-dismiss='modal')
+                                span.fa.fa-times(aria-hidden='true')
+                                | &nbsp;Close
+                            button.btn.btn-primary(id='copy-button',data-clipboard-target='#token')
+                                span.glyphicon.glyphicon-copy(aria-hidden='true')
+                                |   &nbsp;Copy to clipboard
+            // /#page-wrapper
+        // /#wrapper
+        // jQuery
+        script(src='bootstrapTemplate/bower_components/jquery/dist/jquery.min.js')
+        // Bootstrap Core JavaScript
+        //script(src='bootstrapTemplate/bower_components/bootstrap/dist/js/bootstrap.min.js')
+        script(src='bootstrap-3.3.6-dist/js/bootstrap.min.js')
+        // Metis Menu Plugin JavaScript
+        script(src='bootstrapTemplate/bower_components/metisMenu/dist/metisMenu.min.js')
+        // Custom Theme JavaScript
+        script(src='bootstrapTemplate/dist/js/sb-admin-2.js')
+        // port2020 script
+        script(src="/utility/utility.js")
+        script(src="/utility/bootstrap-confirmation.js")
+        //copy to clipboard script
+        script(src="node_modules/clipboard/dist/clipboard.min.js")
+        script.
+            (function () {
+                new Clipboard('#copy-button');
+            })();
+
+        script.
+            (function () {
+                refreshMs('#{myUrl}','#{myToken}');
+            })();
+
+        script.
+            msDetails('#{myUrl}','#{myToken}' ,"authms");
+
+        script.
+            $('[data-toggle=confirmation]').confirmation({singleton: true , placement: 'left', popout: true});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
