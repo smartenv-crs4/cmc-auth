@@ -21,7 +21,7 @@ var config = {
       appType:["webui", "ext", "user","ms"], //webUi is an internal microservice then it must not be deleted or moved from position [0] in the array
       //MyMicroserviceToken:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzg5OTk3NjcxNjc3fQ.D5RVpcl7pgWwxa0Q5KRhoU079zocNtBTAXLuieYyDZQ",
       MyMicroserviceToken:"",
-      msType:["AppService" , "UsersService", "ContentsService","authms"], // do not remove AuthMs that is this
+      msType:["userms" , "appms", "mailerms","authms"], // do not remove AuthMs that is this
       myMicroserviceBaseUrl:"http://localhost:3005",
       iconsList:["fa-support","fa-unlock-alt","fa-envelope","fa-search","fa-glass","fa-bar-chart-o","fa-envelope-o","fa-key","fa-gears","fa-desktop","fa-laptop","fa-th","fa-thumbs-o-up","fa-mobile","fa-check","fa-th-list","fa-times","fa-sign-out","fa-signal","fa-gear","fa-external-link","fa-sign-in","fa-spinner","fa-archive","fa-bug","fa-home","fa-clock-o","fa-download","fa-bookmark-o","fa-unlock","fa-credit-card","fa-rss","fa-hdd-o","fa-bullhorn","fa-bell","fa-location-arrow","fa-crop","fa-code-fork","fa-qrcode","fa-barcode","fa-tags","fa-book","fa-bookmark","fa-print","fa-camera","fa-globe","fa-wrench","fa-tasks","fa-filter","fa-briefcase","fa-users","fa-calendar","fa-comment","fa-link","fa-cloud","fa-cut","fa-pencil","fa-rss-square","fa-table","fa-database","fa-sitemap","fa-dropbox","fa-retweet","fa-file-text","fa-random","fa-share-alt","fa-share-alt-square","fa-folder-open","fa-table","fa-magic","fa-ticket","fa-recycle","fa-cube","fa-cubes","fa-save","fa-globe"],
       consuleUrl:"http://156.148.37.152:8500/v1/agent/services",

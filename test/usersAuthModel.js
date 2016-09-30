@@ -168,4 +168,28 @@ describe('MS Auth Model', function(){
 
   });
 
+
+    describe('Strict throw test', function(){
+
+        it('must thow an exception for invalid USER Type', function(done){
+
+            try {
+                conf.setParam("appType",["valid"]);
+                User.create({
+                    email:"email@email.it",
+                    type: "INVALID"
+                },function(err,val){
+                    should.exist(err);
+                    var errstring="err:"+ err
+                    console.log(errstring);
+                    errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for user field `type`[valid].");
+                    done();
+                });
+            }catch(ex) {
+                console.log("ex:" + ex);
+                done();
+            }
+        });
+    });
+
 });

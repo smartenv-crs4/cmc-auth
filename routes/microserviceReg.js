@@ -429,16 +429,21 @@ router.post('/authendpoint',jwtMiddle.ensureIsMicroservice, function (req, res) 
         if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
         if(item) return res.status(409).send({error:"Duplicate", error_message:"roles " + microservice.method + " " + microservice.URI + " already exists"});
         try {
+
             AuthEP.create(microservice,function (err, newitem) {
                 // console.log("Creatig USER" + err);
-                if (err) return res.status(500).send({
-                    error: "InternalError",
-                    error_message: 'Unable to register microservice Auth Tokens (err:' + err + ')'
-                });
-
+                if (err) {
+                    console.log("!!!!!!!!!!!!!!!!!!!!!VALID TOKENS ERR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +util.inspect(AuthEP.schema.path('authToken').options.type[0].enum)+ " ---> err: " + err);
+                    return res.status(500).send({
+                        error: "InternalError",
+                        error_message: 'Unable to register microservice Auth Tokens (err:' + err + ')'
+                    });
+                }
+                console.log("!!!!!!!!!!!!!!!!!!!!!VALID TOKENS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +util.inspect(AuthEP.schema.path('authToken').options.type[0].enum));
                 return res.status(201).send(newitem);
             });
         }catch (ex){
+            console.log("!!!!!!!!!!!!!!!!!!!!!VALID TOKENS EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +util.inspect(AuthEP.schema.path('authToken').options.type[0].enum)+ " ---> err: " + ex);
             return res.status(500).send({
                 error: "InternalError",
                 error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'

@@ -266,9 +266,9 @@ exports.updateMicroservice=function(clbk){
             }
             //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("msType",msNameList);
-            msAuth.UpdateAuthTokenSchema(function(val){
-                clbk();
-            });
+            clbk();
+
+
 
         }else clbk();
     });
@@ -285,12 +285,7 @@ exports.updateUsers=function(clbk){
             }
             //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("userType",tokenNameList);
-            msAuth.UpdateAuthTokenSchema(function(val){
-                User.UpdateUserTypeSchema(function(val){
-                    clbk();
-                });
-            });
-
+            clbk();
         }else clbk();
     });
 };
@@ -305,11 +300,7 @@ exports.updateApp=function(clbk){
             }
             //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("appType",tokenNameList);
-            msAuth.UpdateAuthTokenSchema(function(val){
-                App.UpdateAppTypeSchema(function(val){
-                    clbk();
-                });
-            });
+            clbk();
 
         }else clbk();
     });

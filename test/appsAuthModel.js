@@ -6,10 +6,10 @@ var db = require("./dbTest");
 var App = require('../models/apps').Apps;
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
-var conf=require('../config').conf;
+var conf=require('../routes/configSettingManagment');
 
 var util = require('util');
-var type=conf.appType;
+var type=conf.getParam("appType");
 
 describe('MS Auth Model', function(){
 
@@ -201,7 +201,26 @@ describe('MS Auth Model', function(){
                     should.exist(err);
                     var errstring="err:"+ err
                     console.log(errstring);
-                    errstring.should.be.equal("err:ValidationError: `INVALID` is not a valid enum value for path `type`.");
+                    errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for app field `type`[webui,ext,user,ms].");
+                    done();
+                });
+            }catch(ex) {
+                console.log("ex:" + ex);
+                done();
+            }
+        });
+    });
+
+    describe('Strict throw test', function(){
+
+        it('must thow an exception for invalid App Type', function(done){
+
+            try {
+                App.create({
+                    email:"email@email.it",
+                    type: conf.getParam("appType")[0]
+                },function(err,val){
+                    should.exist(val);
                     done();
                 });
             }catch(ex) {

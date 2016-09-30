@@ -468,31 +468,35 @@ describe('appType-Api API', function () {
 
     describe('DELETE /apptypes/:id', function(){
 
+        this.timeout(4000);
+
         it('must return error 409 in delete  due some auth token rules include this app type ', function(done){
 
+            console.log("MS TYPE " + conf.msType[0] + " app type: " + conf.appType[0] );
+
             authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[conf.appType[0]]},function(err,valAuth){
-                if (err) console.log("######   ERRORE: " + err + "  ######");
+                if (err) console.log("######   ERRORE1: " + err + "  ######");
                 else{
                     UserAndAppTypes.findOne({name:conf.appType[0]},function(error,ute){
-                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        if(error) console.log("######   ERRORE2: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
                             request.delete({
                                 url: url,
                                 headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
                             },function(error, response, body){
-                                if(error) console.log("######   ERRORE: " + error + "  ######");
+                                if(error) console.log("######   ERRORE3: " + error + "  ######");
                                 else{
                                     response.statusCode.should.be.equal(409);
                                     var results = JSON.parse(response.body);
                                     results.error_message.should.be.equal("token type " + ute.name + " is not deleted due some rule with this token type could be exist");
 
                                     UserAndAppTypes.findOne({name:ute.name}, function(error, usr){
-                                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                                        if(error) console.log("######   ERRORE4: " + error + "  ######");
                                         else{
                                             usr.should.be.not.equal(null);
                                             authorization.findOne({authToken:ute.name},function(err,valA){
-                                                if(err) console.log("######   ERRORE: " + err + "  ######");
+                                                if(err) console.log("######   ERRORE5: " + err + "  ######");
                                                 valA.should.be.not.equal(null);
                                                 done();
                                             })
