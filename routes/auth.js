@@ -204,7 +204,7 @@ passport.use(new LocalStrategy(User.authenticate()));
  * @apiUse IvalidUserAanPassword
  *
  */
-router.post('/signin',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.post('/signin',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 
@@ -278,7 +278,7 @@ router.post('/signin',jwtMiddle.ensureIsMicroservice, function (req, res) {
  * @apiUse IvalidUserAanPassword
  *
  */
-router.post('/signup',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.post('/signup',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
     if (!req.body || _.isEmpty(req.body) ) return res.status(400).send({error:"BadREquest",error_message:'request body missing'});
@@ -352,7 +352,7 @@ router.post('/signup',jwtMiddle.ensureIsMicroservice, function (req, res) {
  * @apiUse ServerError
  *
  */
-router.get('/', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/', jwtMiddle.ensureIsAuthorized, function(req, res) {
 
     //TODO: returns ALL users, must be changed to return only authorized users
     //given an authenticated user (by token)
@@ -424,7 +424,7 @@ router.get('/', jwtMiddle.ensureIsMicroservice, function(req, res) {
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.get('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -478,7 +478,7 @@ router.get('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
  * @apiUse ServerError
  *
  */
-router.delete('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.delete('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -526,7 +526,7 @@ function enable_disable(id,value,cb){
     });
 }
 //TODO only webui microservices can call this endopints
-//router.post(':id/action/check/',jwtMiddle.ensureIsMicroservice, function(req,res){
+//router.post(':id/action/check/',jwtMiddle.ensureIsAuthorized, function(req,res){
 //        "use strict";
 //
 //        var id=req.params.id;
@@ -538,7 +538,7 @@ function enable_disable(id,value,cb){
 //        });
 //    }
 //);
-//router.post(':id/action/uncheck/',jwtMiddle.ensureIsMicroservice, function(req,res){
+//router.post(':id/action/uncheck/',jwtMiddle.ensureIsAuthorized, function(req,res){
 //        "use strict";
 //
 //        var id=req.params.id;
@@ -582,7 +582,7 @@ function enable_disable(id,value,cb){
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/:id/actions/enable',jwtMiddle.ensureIsMicroservice, function(req,res){
+router.post('/:id/actions/enable',jwtMiddle.ensureIsAuthorized, function(req, res){
         "use strict";
 
         var id=req.params.id;
@@ -625,7 +625,7 @@ router.post('/:id/actions/enable',jwtMiddle.ensureIsMicroservice, function(req,r
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/:id/actions/disable',jwtMiddle.ensureIsMicroservice, function(req,res){
+router.post('/:id/actions/disable',jwtMiddle.ensureIsAuthorized, function(req, res){
         "use strict";
 
         console.log("DISABLEUSER");
@@ -671,7 +671,7 @@ router.post('/:id/actions/disable',jwtMiddle.ensureIsMicroservice, function(req,
  * @apiUse ServerError
  * 
  */
-router.post('/:id/actions/resetpassword',jwtMiddle.ensureIsMicroservice, function(req,res) {
+router.post('/:id/actions/resetpassword',jwtMiddle.ensureIsAuthorized, function(req, res) {
     "use strict";
 
 
@@ -747,7 +747,7 @@ router.post('/:id/actions/resetpassword',jwtMiddle.ensureIsMicroservice, functio
  * @apiUse IvalidUserAanPassword
  *
  */
-router.post('/:id/actions/setpassword',jwtMiddle.ensureIsMicroservice, function(req,res) {
+router.post('/:id/actions/setpassword',jwtMiddle.ensureIsAuthorized, function(req, res) {
     "use strict";
 
 

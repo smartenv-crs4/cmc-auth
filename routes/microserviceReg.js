@@ -133,7 +133,7 @@ router.use(middlewares.parseFields);
 
 
 
-router.post('/renewtoken', jwtMiddle.ensureIsMicroservice,function(req, res){
+router.post('/renewtoken', jwtMiddle.ensureIsAuthorized,function(req, res){
 
     //console.log("!!!!!!!!!!!!!!!" + util.inspect(req.body));
     var serviceType=req.body.serviceType;
@@ -153,7 +153,7 @@ router.post('/renewtoken', jwtMiddle.ensureIsMicroservice,function(req, res){
 });
 
 
-router.post('/signup', [jwtMiddle.ensureIsMicroservice],function(req, res){
+router.post('/signup', [jwtMiddle.ensureIsAuthorized],function(req, res){
 
     //Authorization - anybody, without token
 
@@ -191,7 +191,7 @@ router.post('/signup', [jwtMiddle.ensureIsMicroservice],function(req, res){
 });
 
 
-router.delete('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.delete('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -217,7 +217,7 @@ router.delete('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
 });
 
 
-router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsMicroservice],function(req, res){
+router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized],function(req, res){
 
     var url = conf.getParam("consuleUrl");
 
@@ -268,7 +268,7 @@ router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsMicro
 
 
 
-router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsMicroservice],function(req, res){
+router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized],function(req, res){
 
     var respToWebUI=[];
     var nginxIp=[];
@@ -406,8 +406,8 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsMic
  *
  */
 
-//router.post('/:name/authendpoint',jwtMiddle.ensureIsMicroservice, function (req, res) {
-router.post('/authendpoint',jwtMiddle.ensureIsMicroservice, function (req, res) {
+//router.post('/:name/authendpoint',jwtMiddle.ensureIsAuthorized, function (req, res) {
+router.post('/authendpoint',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
     if (!req.body || _.isEmpty(req.body) ) return res.status(400).send({error:"BadREquest",error_message:'request body missing'});
@@ -433,17 +433,16 @@ router.post('/authendpoint',jwtMiddle.ensureIsMicroservice, function (req, res) 
             AuthEP.create(microservice,function (err, newitem) {
                 // console.log("Creatig USER" + err);
                 if (err) {
-                    console.log("!!!!!!!!!!!!!!!!!!!!!VALID TOKENS ERR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +util.inspect(AuthEP.schema.path('authToken').options.type[0].enum)+ " ---> err: " + err);
+
                     return res.status(500).send({
                         error: "InternalError",
                         error_message: 'Unable to register microservice Auth Tokens (err:' + err + ')'
                     });
                 }
-                console.log("!!!!!!!!!!!!!!!!!!!!!VALID TOKENS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +util.inspect(AuthEP.schema.path('authToken').options.type[0].enum));
+
                 return res.status(201).send(newitem);
             });
         }catch (ex){
-            console.log("!!!!!!!!!!!!!!!!!!!!!VALID TOKENS EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +util.inspect(AuthEP.schema.path('authToken').options.type[0].enum)+ " ---> err: " + ex);
             return res.status(500).send({
                 error: "InternalError",
                 error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'
@@ -481,7 +480,7 @@ router.post('/authendpoint',jwtMiddle.ensureIsMicroservice, function (req, res) 
  */
 
 
-router.get('/authendpoint', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
 
     //given an authenticated user (by token)
 
@@ -539,8 +538,8 @@ router.get('/authendpoint', jwtMiddle.ensureIsMicroservice, function(req, res) {
  *
  */
 
-//router.get('/:name/authendpoint', jwtMiddle.ensureIsMicroservice, function(req, res) {
-router.get('/authendpoint/:name', jwtMiddle.ensureIsMicroservice, function(req, res) {
+//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function(req, res) {
 
     if(req.query.name)
         return res.status(400).send({error: 'BadRequest', error_message : "name is a Url param"});
@@ -605,7 +604,7 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsMicroservice, function(req, 
  *
  */
 
-router.get('/authendpoint/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.get('/authendpoint/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -660,7 +659,7 @@ router.get('/authendpoint/:id',jwtMiddle.ensureIsMicroservice, function (req, re
  *
  */
 
-router.delete('/authendpoint/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.delete('/authendpoint/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -728,7 +727,7 @@ router.delete('/authendpoint/:id',jwtMiddle.ensureIsMicroservice, function (req,
  * @apiUse ServerError
  *
  */
-router.put('/authendpoint/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.put('/authendpoint/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
     if (!req.body || _.isEmpty(req.body) ) return res.status(400).send({error:"BadREquest",error_message:'request body missing'});

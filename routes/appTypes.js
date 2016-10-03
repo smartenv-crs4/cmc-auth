@@ -168,7 +168,7 @@ router.use(middlewares.parseFields);
  * @apiUse ServerError
  *
  */
-router.get('/', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/', jwtMiddle.ensureIsAuthorized, function(req, res) {
 
     var query = {};
 
@@ -223,7 +223,7 @@ router.get('/', jwtMiddle.ensureIsMicroservice, function(req, res) {
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.get('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -279,7 +279,7 @@ router.get('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
  * @apiUse ServerError
  *
  */
-router.delete('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.delete('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -405,7 +405,7 @@ router.delete('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
  * @apiUse ServerError
  *
  */
-router.put('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.put('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var id = req.param('id').toString();
 
@@ -509,7 +509,7 @@ router.put('/:id',jwtMiddle.ensureIsMicroservice, function (req, res) {
  * @apiUse ServerError
  *
  */
-router.post('/',jwtMiddle.ensureIsMicroservice, function (req, res) {
+router.post('/',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
     if(!req.body) return res.status(400).send({error:"BadREquest",error_message:'request body missing'});
