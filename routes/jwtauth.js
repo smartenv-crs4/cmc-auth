@@ -6,6 +6,8 @@
 
 
 var util=require('util');
+var authEnpoints=require("../models/authEndpoints").AuthEndPoint;
+var _=require("underscore");
 var commonfunctions=require('./commonfunctions');
 
 var conf=require('../routes/configSettingManagment');
@@ -22,7 +24,7 @@ exports.decodeToken = function(req, res, next) {
             }
     }
 
-    console.log("DECODE TOKEN");
+
 
     commonfunctions.decode(token,function(err,decoded){
         if(err){
@@ -130,29 +132,64 @@ exports.decodeToken = function(req, res, next) {
 //};
 
 
-exports.ensureIsMicroservice = function(req, res, next) {
+exports.ensureIsAuthorized = function(req, res, next) {
 
-    console.log("ensure is MS");
 
-    var token = req.decode_results;
-    var exampleUrl = "http://cp2020.crs4.it/";
 
-    console.log("TOKEN TYPE " + token.type);
+    
+    var URI;
+    var path=(req.route.path=="/") ? "" : req.route.path;
+    if(_.isEmpty(req.baseUrl))
+        URI=req.path+path;
+    else
+        URI=req.baseUrl+path;
 
-        if (!(conf.getParam("msType").indexOf(token.type)>=0)) { // if is not a microservice token
-            return res.status(401)
-                .set({'WWW-Authenticate': 'Bearer realm=' + exampleUrl + ', error="invalid_token", error_message="The access token is not a valid microservice Auth Token"'})
-                .send({error: "invalid_token", error_message: "The access token is not a valid microservice Token"});
-        } else{
-            console.log("VALID MS TOKEN");
-            return next();
+
+    authEnpoints.findOne({URI:URI,method:req.method},function(err,item){
+        if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
+        if(!item) {
+            // console.log("ensure is MS");
+
+            var token = req.decode_results;
+            var exampleUrl = "http://cp2020.crs4.it/";
+
+            // console.log("TOKEN TYPE " + token.type);
+
+            if (!(conf.getParam("msType").indexOf(token.type)>=0)) { // if is not a microservice token
+                return res.status(401)
+                    .set({'WWW-Authenticate': 'Bearer realm=' + exampleUrl + ', error="invalid_token", error_message="The access token is not a valid microservice Auth Token"'})
+                    .send({error: "invalid_token", error_message: "The access token is not a valid microservice Token"});
+            } else{
+                // console.log("VALID MS TOKEN");
+                return next();
+            }
+
+        }else{
+            if(item.authToken.indexOf(req.decode_results.type)>=0)
+                return next();
+            else{
+                return res.status(401)
+                    .set({'WWW-Authenticate': 'Bearer realm=' + exampleUrl + ', error="invalid_token", error_message="You are not authorized to acess this resource"'})
+                    .send({error: "invalid_token", error_message: "Only " + item.authToken +  " token types can access this resource"});
+            }
         }
+
+
+
+    });
+
+
+
+
+
+
+
 
 };
 
 
 
-//exports.ensureIsMicroservice = function(req, res, next) {
+//exports.ensureIsAuthorized = function(req, res, next) {
 //
 //
 //    console.log("body SGUP middle:"+util.inspect(req.body));

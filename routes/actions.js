@@ -203,7 +203,7 @@ function decodeToken(req,res,callb){
  * @apiUse ServerError
  *
  */
-router.get('/decodeToken', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function(req, res) {
     decodeToken(req,res,function(err,decoded){
         if(err){
             decoded.error_message=decoded.error_message.replace("access_token", "decode_token")
@@ -283,7 +283,7 @@ router.get('/decodeToken', jwtMiddle.ensureIsMicroservice, function(req, res) {
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/checkiftokenisauth', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function(req, res) {
     var URI=req.query.URI;
     var method=req.query.method;
 
@@ -371,7 +371,7 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsMicroservice, function(req, 
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/decodeToken', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function(req, res) {
     //console.log("Decode Token" + JSON.stringify(decode_results));
     decodeToken(req,res,function(err,decoded){
         if(err){
@@ -464,7 +464,7 @@ router.post('/decodeToken', jwtMiddle.ensureIsMicroservice, function(req, res) {
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/checkiftokenisauth', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function(req, res) {
     //console.log("Decode Token" + JSON.stringify(decode_results));
     var URI=req.body.URI;
     var method=req.body.method;
@@ -545,7 +545,7 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsMicroservice, function(req,
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/refreshToken',jwtMiddle.ensureIsMicroservice, function(req,res){
+router.post('/refreshToken',jwtMiddle.ensureIsAuthorized, function(req, res){
     "use strict";
 
         console.log("REFRESHTOKEN");
@@ -602,7 +602,7 @@ router.post('/refreshToken',jwtMiddle.ensureIsMicroservice, function(req,res){
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/gettokentypelist', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function(req, res) {
     var userType=conf.getParam("userType");
     var appType=conf.getParam("appType");
     var msType=conf.getParam("msType");
@@ -633,7 +633,7 @@ router.get('/gettokentypelist', jwtMiddle.ensureIsMicroservice, function(req, re
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/getsupeusertokenlist', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function(req, res) {
 
     var list=[];
     appsUsersType.find({super:true,type:"user"},function(err,values){
@@ -673,7 +673,7 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsMicroservice, function(req
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/getsuperapptokenlist', jwtMiddle.ensureIsMicroservice, function(req, res) {
+router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function(req, res) {
 
     var list=[];
     appsUsersType.find({super:true,type:"app"},function(err,values){

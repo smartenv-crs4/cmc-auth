@@ -80,7 +80,6 @@ exports.connect = function connect(testName,callback) {
                                     async.each(conf.appType, function(item, callbackEnd) {
 
                                         try{
-                                            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    app " + testName +":" + item);
                                             tokenType.create({name:item,type:"app"},function(err,va){
                                                 callbackEnd();
                                             });
@@ -96,7 +95,6 @@ exports.connect = function connect(testName,callback) {
                                     async.each(conf.userType, function(item, callbackEnd) {
 
                                         try{
-                                            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    user "+ testName +":"+ item);
                                             tokenType.create({name:item,type:"user"},function(err,va){
                                                 callbackEnd();
                                             });

@@ -555,8 +555,7 @@ describe('appType-Api API', function () {
                         body:JSON.stringify({apptype:{name:conf.appType[1]}})
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
-                        else{
-                            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + body);
+                        else{                            
                             response.statusCode.should.be.equal(500);
                             var results = JSON.parse(body);
                             results.error_message.indexOf("Unable to update app token type").should.be.not.equal(-1);
