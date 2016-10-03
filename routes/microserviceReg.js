@@ -560,7 +560,7 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function(req, re
             if (!_.isEmpty(results.authendpoints))
                 return res.status(200).send(results);
             else
-                return res.status(404).send({error:"Not found", error_message:"Resource not found with this Id"});
+                return res.status(404).send({error:"Not found", error_message:"Resources not found"});
         }
         else{
             return res.status(500).send({error:'internal_error', error_message: 'something blew up, ERROR:'+err  });
