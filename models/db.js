@@ -45,6 +45,7 @@ exports.connect = function connect(callback) {
                                 delete user['password'];
                                 console.log("XXXXXXX PSW " + psw);
                                 console.log("XXXXXXX User " + util.inspect(user));
+                                conf.userType=[user.type];// set admin as default user Type
                                 commonFunctions.createUser(user,psw,function(err, stausCode, json){
                                     if(err) console.log("ERROR in creation Default admin user " + json.error_message);
 

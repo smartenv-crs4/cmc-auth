@@ -86,11 +86,17 @@ exports.generateToken= function (resource,mode){
         exp: expiresRt
     }, secret);
 
-    var encodedToken = JSON.stringify({
+    // var encodedToken = JSON.stringify({
+    //     apiKey : { token:token, expires: expires},
+    //     refreshToken : {token:refreshToken, expires: expiresRt},
+    //     userId : resource._id
+    // });
+
+    var encodedToken = {
         apiKey : { token:token, expires: expires},
         refreshToken : {token:refreshToken, expires: expiresRt},
         userId : resource._id
-    });
+    };
 
     //console.log("############### " + token);
 
