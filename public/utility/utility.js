@@ -597,7 +597,10 @@ function ShowNewToken(callback){
     $("input[name='TokenTypeId']").val("");
     $("input[name='TokenType']").val("");
     $('#newTokenType').slideDown(1000);
-    $("#rowTokenType").show();
+    //$("#rowTokenType").show();
+    $("#optionsRadiosInline1").prop('disabled',false);
+    $("#optionsRadiosInline2").prop('disabled',false);
+    $("#optionschecksuper").prop('checked',false);
     if(callback) {
         callback();
     }
@@ -610,6 +613,7 @@ function saveNewToken(url,myToken){
 
 
     var tokenType = $('input[name=optionsRadiosInline]:checked').val();
+    var superuser = $('#optionschecksuper').is(":checked");
 
     var endPoint="usertypes";
     var resource={usertype:{}};
@@ -630,7 +634,8 @@ function saveNewToken(url,myToken){
     if(id) { // if id is set then the action is update
         var nt = {
             "name": $("input[name='TokenType']").val(),
-            "type": tokenType
+            "type": tokenType,
+            "super":superuser
         };
 
         resource[key]=nt;
@@ -647,14 +652,15 @@ function saveNewToken(url,myToken){
                 $('#'+id).empty();
                 $('#'+id).append('<td style=\"display:none\">'+id+'</td> \
                                             <td>'+nt.name+'</td> \
+                                            <td>'+nt.super+'</td> \
                                             <td> \
-                                                <button onclick=\"javascript:updateTokenType(\''+ id + '\',\'' + nt.name +'\',\'' + nt.type +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
+                                                <button onclick=\"javascript:updateTokenType(\''+ id + '\',\'' + nt.name +'\',\'' + nt.type +'\',\''+ nt.super +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
                                                     <i class=\"fa fa-pencil\"></i> \
                                                 </button> \
                                                 <button onclick=\"javascript:deleteTokenType(\''+ id +'\',\'' + nt.type+ '\',\'' + url + '\',\'' + myToken+'\');\" type=\"button\" class=\"btn btn-warning btn-circle\"> \
                                                     <i class=\"fa fa-trash-o\"></i> \
                                                 </button> \
-                                                <a id=\"'+results[item]._id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
+                                                <a id=\"'+id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
                                             </td>');
                 $('#newTokenType').slideUp(1000);
             },
@@ -673,7 +679,8 @@ function saveNewToken(url,myToken){
 
         var nt = {
             "name": null ,
-            "type": tokenType
+            "type": tokenType,
+            "super":superuser
         };
 
         var list = $("input[name='TokenType']").val().split(", ");
@@ -693,14 +700,15 @@ function saveNewToken(url,myToken){
                     $('#'+tabletype).append('<tr id=\"'+data._id+'"> \
                                             <td style=\"display:none\">'+data._id+'</td> \
                                             <td>'+data.name+'</td> \
+                                            <td>'+data.super+'</td> \
                                              <td> \
-                                                <button onclick=\"javascript:updateTokenType(\''+ data._id + '\',\'' + data.name +'\',\'' + data.type +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
+                                                <button onclick=\"javascript:updateTokenType(\''+ data._id + '\',\'' + data.name +'\',\'' + data.type + '\',\''+data.super  +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
                                                     <i class=\"fa fa-pencil\"></i> \
                                                 </button> \
                                                 <button onclick=\"javascript:deleteTokenType(\''+ data._id +'\',\'' + data.type+ '\',\'' + url + '\',\'' + myToken+'\');\" type=\"button\" class=\"btn btn-warning btn-circle\"> \
                                                     <i class=\"fa fa-trash-o\"></i> \
                                                 </button> \
-                                                <a id=\"'+results[item]._id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
+                                                <a id=\"'+data._id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
                                             </td> \
                                         </tr>');
                     if(index==(list.length-1))
@@ -724,6 +732,9 @@ function saveNewToken(url,myToken){
 function TokenTypeDetails(url,myToken){
 
     //get auth
+    $('#tableapptype').empty();
+    closeWindow('#newTokenType');
+
     $.ajax({
         url: url+"/apptypes",
         type: 'GET',
@@ -733,7 +744,7 @@ function TokenTypeDetails(url,myToken){
         contentType: "application/json",
         success: function(data) {
 
-            $('#tableapptype').empty();
+
 
             //
             //
@@ -745,8 +756,9 @@ function TokenTypeDetails(url,myToken){
                 $('#tableapptype').append('<tr id=\"'+results[item]._id+'"> \
                                             <td style=\"display:none\">'+results[item]._id+'</td> \
                                             <td>'+results[item].name+'</td> \
+                                            <td>'+results[item].super+'</td> \
                                             <td> \
-                                                <button onclick=\"javascript:updateTokenType(\''+ results[item]._id + '\',\'' + results[item].name +'\',\'' + results[item].type +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
+                                                <button onclick=\"javascript:updateTokenType(\''+ results[item]._id + '\',\'' + results[item].name +'\',\'' + results[item].type +'\',\''+ results[item].super +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
                                                     <i class=\"fa fa-pencil\"></i> \
                                                 </button> \
                                                 <button onclick=\"javascript:deleteTokenType(\''+ results[item]._id +'\',\'' + results[item].type+ '\',\'' + url + '\',\'' + myToken+'\');\" type=\"button\" class=\"btn btn-warning btn-circle\"> \
@@ -763,6 +775,7 @@ function TokenTypeDetails(url,myToken){
     });
 
 
+    $('#tableusertype').empty();
 
     //get auth
     $.ajax({
@@ -774,7 +787,7 @@ function TokenTypeDetails(url,myToken){
         contentType: "application/json",
         success: function(data) {
 
-            $('#tableusertype').empty();
+
             //
             //
             // console.log("MS NAME:" + msName + " Data:" +JSON.stringify(data));
@@ -784,8 +797,9 @@ function TokenTypeDetails(url,myToken){
                 $('#tableusertype').append('<tr id=\"'+results[item]._id+'"> \
                                             <td style=\"display:none\">'+results[item]._id+'</td> \
                                             <td>'+results[item].name+'</td> \
+                                            <td>'+results[item].super+'</td> \
                                             <td> \
-                                                <button onclick=\"javascript:updateTokenType(\''+ results[item]._id + '\',\'' + results[item].name +'\',\'' + results[item].type +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
+                                                <button onclick=\"javascript:updateTokenType(\''+ results[item]._id + '\',\'' + results[item].name +'\',\'' + results[item].type +'\',\''+ results[item].super + '\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
                                                     <i class=\"fa fa-pencil\"></i> \
                                                 </button> \
                                                 <button onclick=\"javascript:deleteTokenType(\''+ results[item]._id +'\',\'' + results[item].type+ '\',\'' + url + '\',\'' + myToken+'\');\" type=\"button\" class=\"btn btn-warning btn-circle\"> \
@@ -806,17 +820,32 @@ function TokenTypeDetails(url,myToken){
 
 
 
-function updateTokenType(id,name,type){
+function updateTokenType(id,name,type,superuser){
 
     ShowNewToken(function(){
         $("input[name='TokenTypeId']").val(id);
         $("input[name='TokenType']").val(name);
+
+        $("#optionsRadiosInline1").prop('disabled',true);
+        $("#optionsRadiosInline2").prop('disabled',true);
+
+
+
+        if(superuser=="true")
+            $("#optionschecksuper").prop('checked',true);
+        else
+            $("#optionschecksuper").prop('checked',false);
+
         if(type=="app"){
-            $(":checkbox[value='app']").attr("checked","true");
+            console.log("APP");
+            $(":radio[value='app']").prop('checked',true);
         }else{
-            $(":checkbox[value='user']").attr("checked","true");
+            console.log("USER");
+            $(":radio[value='user']").prop('checked',true);
         }
-        $("#rowTokenType").hide();
+
+
+        //$("#rowTokenType").hide();
 
     });
 
@@ -859,6 +888,62 @@ function deleteTokenType(id,type,url,myToken){
             //console.log("EROOR inDELETE"+JSON.stringify(data));
         }
     });
+}
+
+
+
+function getToken(){
+    var token=sessionStorage.getItem("token");
+
+    console.log("TOKEN_SESSION:"+ token);
+
+    if(token) {
+        retV=true;
+        $("#wrapper").show();
+        $("#login").hide();
+    }else{
+        $("#wrapper").hide();
+        $("#login").show();
+    }
+    return;
+}
+
+
+
+
+function login(url,myToken){
+
+    var ms = {
+        "username": $("input[name='username']").val(),
+        "password": $("input[name='password']").val()
+    };
+
+    $.ajax({
+        url: url+"/authuser/signin",
+        type: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        data: JSON.stringify(ms),
+        contentType: "application/json",
+        success: function(data) {
+            console.log(data.apiKey);
+           sessionStorage.setItem("token",data.apiKey);
+           getToken();
+        },
+        error: function(data) {
+            $('#loginErrorpanel').show();
+            $('#loginErrorpanel').text(data.responseJSON.error_message);
+        }
+    });
+}
+
+
+
+
+function logout(){
+    sessionStorage.removeItem("token");
+    getToken();
 }
 
 // refresh microservice info

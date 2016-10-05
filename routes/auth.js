@@ -219,7 +219,6 @@ router.post('/signin',jwtMiddle.ensureIsAuthorized, function (req, res) {
 //    console.log(req);
 
     //console.log("body:"+util.inspect(req.body));
-
     passport.authenticate('local', function(err, user, info) {
 
         console.log(info);
