@@ -894,9 +894,6 @@ function deleteTokenType(id,type,url,myToken){
 
 function getToken(){
     var token=sessionStorage.getItem("token");
-
-    console.log("TOKEN_SESSION:"+ token);
-
     if(token) {
         retV=true;
         $("#wrapper").show();
@@ -927,7 +924,6 @@ function login(url,myToken){
         data: JSON.stringify(ms),
         contentType: "application/json",
         success: function(data) {
-            console.log(data.apiKey);
            sessionStorage.setItem("token",data.apiKey);
            getToken();
         },
@@ -937,8 +933,6 @@ function login(url,myToken){
         }
     });
 }
-
-
 
 
 function logout(){
