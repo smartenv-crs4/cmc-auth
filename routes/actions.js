@@ -29,39 +29,38 @@ function decodeToken(req,res,callb){
 
 // Begin Macro
 /**
- * @apiDefine  NotFound
- * @apiError 404_NotFound <b>NotFound:</b> the Object with specified <code>id</code> was not found.<BR>
- * <b>request.body.error</b> contains an error name specifing the not Found Error.<BR>
- * <b>request.body.erro_messager</b> contains an error message specifing the not Found Error.<BR>
+ * @apiDefine NotFound
+ * @apiError 404_NotFound The Object with specified <code>id</code> was not found.<BR>
+ * <b>request.body.error</b> contains an error name specifying the 404_NotFound error.<BR>
+ * <b>request.body.error_message</b> contains an error message specifying the 404_NotFound error.<BR>
  */
 
 /**
  * @apiDefine Metadata
- * @apiSuccess {Object} _metadata object containing metadata for pagination information
- * @apiSuccess {Number} _metadata.skip  Skips the first skip results of this Query
- * @apiSuccess {Number} _metadata.limit  Limits the number of results to be returned by this Query.
+ * @apiSuccess {Object} _metadata Object containing metadata for pagination info
+ * @apiSuccess {Number} _metadata.skip Number of results of this query skipped
+ * @apiSuccess {Number} _metadata.limit Limits the number of results to be returned by this query.
  * @apiSuccess {Number} _metadata.totalCount Total number of query results.
  */
 
-
 /**
  * @apiDefine  ServerError
- * @apiError 500_ServerError <b>ServerError:</b>Internal Server Error. <BR>
- * <b>request.body.error</b> contains an error type message specifing the problem as: <i>Db Internal Microservice Error ....</i><BR>
- * <b>request.body.error_message</b> Error Message specifing the problem  as: <i>Connection Down</i><BR>
+ * @apiError 500_ServerError Internal Server Error. <BR>
+ * <b>request.body.error</b>: error type message specifying the problem, e.g. <i>Db Internal Microservice Error ....</i><BR>
+ * <b>request.body.error_message</b>: error message specifying the problem e.g. <i>Connection Down</i><BR>
  * @apiErrorExample Error-Response: 500 Internal Server Error
  *     HTTP/1.1 500 Internal Server Error
  *      {
- *         error: 'Internal Error'
- *         error_message: 'something blew up, ERROR: No MongoDb Connection'
+ *         "error": 'Internal Error'
+ *         "error_message": 'something blew up, ERROR: No MongoDb Connection'
  *      }
  */
 
 /**
  * @apiDefine  BadRequest
- * @apiError 400_BadRequest <b>BadRequest:</b> The server cannot or will not process the request due to something that is perceived to be a client error<BR>
- * <b>request.body.error</b> Error name as: <i>BadRequest ....</i><BR>
- * <b>request.body.error_message</b> Error Message specifing the problem as: <i>malformed request syntax, invalid reques, invalid fields ....</i><BR>
+ * @apiError 400_BadRequest The server cannot or will not process the request due to something perceived as a client error<BR>
+ * <b>request.body.error</b> error type message specifying the problem, e.g. <i>BadRequest ....</i><BR>
+ * <b>request.body.error_message</b> error message specifying the problem e.g. <i>malformed request syntax, invalid reques, invalid fields ....</i><BR>
  *
  *  @apiErrorExample Error-Response: 400 BadRequest
  *     HTTP/1.1 400 InvalidRequest
@@ -71,38 +70,31 @@ function decodeToken(req,res,callb){
  *      }
  */
 
-
-
 /**
  * @apiDefine  Unauthorized
- * @apiError 401_Unauthorized <strong>Unauthorized:</strong> not authorized to call this endpoint.<BR>
- * <b>request.body.error</b> Error name specifing the problem as: <i>NotAuthorized ....</i><BR>
- * <b>request.body.error_message</b> Error Message specifing the problem  as: <i>only admin user can create admin user</i><BR>
+ * @apiError 401_Unauthorized Not authorized to call this endpoint.<BR>
+ * <b>request.body.error:</b> error type message specifying the problem, e.g. <i>NotAuthorized ....</i><BR>
+ * <b>request.body.error_message:</b> error message specifying the problem e.g. <i>only admin user can create admin user</i><BR>
  * @apiErrorExample Error-Response: 401 Unauthorized
  *     HTTP/1.1 401 Unauthorized
  *      {
- *         error:"invalid_token",
- *         error_description:"Unauthorized: The access token expired"
+ *         "error":"invalid_token",
+ *         "error_description":"Unauthorized: The access token expired"
  *      }
  */
 
-
-
 /**
- * @apiDefine  IvalidUserAanPassword
- * @apiError 403_Unauthorized <strong>Unauthorized:</strong> username or password not valid.<BR>
- * <b>request.body.error</b> Error name specifing the problem as: <i>Not Logged ....</i><BR>
- * <b>request.body.error_message</b> Error Message specifing the problem  as: <i>wrong username or password</i><BR>
+ * @apiDefine  InvalidUserAndPassword
+ * @apiError 403_Unauthorized Username or password not valid.<BR>
+ * <b>request.body.error:</b> error type message specifying the problem, e.g. <i>Not Logged ....</i><BR>
+ * <b>request.body.error_message:</b> error message specifying the problem e.g. <i>wrong username or password</i><BR>
  * @apiErrorExample Error-Response: 403 Unauthorized
  *     HTTP/1.1 403 Unauthorized
  *      {
- *         error:"Unauthorized",
- *         error_description:"Warning: wrong username"
+ *         "error":"Unauthorized",
+ *         "error_description":"Warning: wrong username"
  *      }
  */
-
-
-
 
 /**
  * @apiDefine GetResource
@@ -111,20 +103,17 @@ function decodeToken(req,res,callb){
  * @apiSuccess {String} users.field1 field 1 defined in schema
  * @apiSuccess {String} users.field2 field 2 defined in schema
  * @apiSuccess {String} users.fieldN field N defined in schema
- *
  */
-
 
 /**
  * @apiDefine GetResourceExample
  * @apiSuccessExample {json} Example: 200 OK, Success Response
- *
  *     {
  *       "users":[
  *                      {
  *                          "_id": "543fdd60579e1281b8f6da92",
  *                          "email": "prova@prova.it",
- *                           "name": "prova",
+ *                          "name": "prova",
  *                          "notes": "Notes About prova"
  *                      },
  *                      {
@@ -141,14 +130,11 @@ function decodeToken(req,res,callb){
  *                   "skip":10,
  *                   "limit":50,
  *                   "totalCount":100
- *               }
- *    }
+ *                   }
+ *     }
  */
 
-
 // End Macro
-
-
 
 
 /**
@@ -157,59 +143,54 @@ function decodeToken(req,res,callb){
  * @apiName Token Decode
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It decode the token and return the contents bundled in the token
+ * @apiDescription Accessible only by microservice access tokens. Decodes the token and returns the contents bundled in the token
  *
+ * @apiParam {String} access_token access token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} decode_token token to be unboxed
  *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ body || as query param || header]
- * @apiParam {String} decode_token token that should be unboxed
- *
- *
- * @apiSuccess (200 - OK) {Boolean} valid  if true the decoded token is valid and a token field is returned otherwise if false the decoded token is not valid and a error_message field is returned
- * @apiSuccess (200 - OK) {Boolean} token   contains decoded token information only is valid field is true
- * @apiSuccess (200 - OK) {String}  token._id  contains id about token owner
- * @apiSuccess (200 - OK) {String}  token.email  contains email id about token owner
- * @apiSuccess (200 - OK) {String}  token.type  contains token owner type
- * @apiSuccess (200 - OK) {String}  token.enabled  if true the owner is enabled to access the resource
- * @apiSuccess (200 - OK) {String}  token.expires  contains information about token life
- * @apiSuccess (200 - OK) {String}  error_message  is returned only if field valid is false, and contains error meesage that explain the decoded problem
+ * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
+ * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
+ * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
+ * @apiSuccess (200 - OK) {String}  token.type  token owner type
+ * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
+ * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
+ * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
- *
- *     {
- *
+ *      {
  *        "valid":"true"
  *        "token":{
  *                  "_id":"eQO7de4AJe-syk",
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                   "enabled:true
- *       }
- *    }
+ *                  "enabled:true
+ *                }
+ *      }
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 Ok
- *
- *     {
- *
+ *      HTTP/1.1 401 Ok
+ *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
- *    }
- *
+ *      }
  *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  *
  */
-router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function(req, res) {
-    decodeToken(req,res,function(err,decoded){
-        if(err){
-            decoded.error_message=decoded.error_message.replace("access_token", "decode_token")
-            res.status(err).send(decoded);   
-        }else res.status(200).send(decoded);
+router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    decodeToken(req, res, function (err, decoded) {
+        if (err) {
+            decoded.error_message = decoded.error_message.replace("access_token", "decode_token")
+            res.status(err).send(decoded);
+        } else res.status(200).send(decoded);
     });
+
 });
 
 
@@ -220,93 +201,85 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function(req, res) {
  * @apiName Token Decode and check auth
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It decode the token, check if this token type check if this token type
- * has the authorization to call a particular endpoint with a particular Http method (this parameter should be passed like http params ).
- * It return the contents bundled in the token and a filed valid that indicate if token is valid end enabled.
+ * @apiDescription Accessible only by microservice access tokens. Decodes the token, checking if this token type
+ * has the authorization to call a particular endpoint with a particular HTTP method (this parameter should be passed like http params ).
+ * It returns the contents bundled in the token and a field "valid" that indicates if token is valid end enabled.
  *
+ * @apiParam {String} access_token access_token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} decode_token token to be unboxed
+ * @apiParam {String} URI endpoint endpoint used to check if the token is authorized to call it
+ * @apiParam {String} method HTTP method URL used to check if the token is authorized to call it
  *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ body || as query param || header]
- * @apiParam {String} decode_token token that should be unboxed
- * @apiParam {String} URI endpoint URI on which check if the token is authorized to call it
- * @apiParam {String} method Http method url on which check if the token is authorized to call it
- *
- * @apiSuccess (200 - OK) {Boolean} valid  if true the decoded token is valid and this token type is enabled to call this URI with the specified http method.
- * If valid, a token field is returned otherwise if false the decoded token is not valid or authorized and a error_message field is returned
- * @apiSuccess (200 - OK) {Boolean} token   contains decoded token information only is valid field is true
- * @apiSuccess (200 - OK) {String}  token._id  contains id about token owner
- * @apiSuccess (200 - OK) {String}  token.email  contains email id about token owner
- * @apiSuccess (200 - OK) {String}  token.type  contains token owner type
- * @apiSuccess (200 - OK) {String}  token.enabled  if true the owner is enabled to access the resource
- * @apiSuccess (200 - OK) {String}  token.expires  contains information about token life
- * @apiSuccess (200 - OK) {String}  error_message  is returned only if field valid is false, and contains error message that explain the decoded or unauthorized problem
+ * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
+ * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
+ * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
+ * @apiSuccess (200 - OK) {String}  token.type  token owner type
+ * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
+ * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
+ * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
- *
- *     {
- *
+ *      {
  *        "valid":"true"
  *        "token":{
  *                  "_id":"eQO7de4AJe-syk",
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                   "enabled:true
- *       }
- *    }
+ *                  "enabled:true
+ *                }
+ *      }
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
- *
- *     {
- *
+ *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
- *    }
- *
+ *      }
  *  @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
- *
- *     {
- *
- *        "valid":"false"
- *        "error_message":"No auth roles defined for: GET /resource"
- *    }
- *
- * @apiUse Unauthorized
- *  @apiErrorExample Error-Response: 400 BadRequest
- *     HTTP/1.1 400 InvalidRequest
  *      {
- *         error:'BadRequest',
+ *         "valid":"false"
  *         "error_message":"No auth roles defined for: GET /resource"
  *      }
+ * @apiErrorExample Error-Response: 400 BadRequest
+ *     HTTP/1.1 400 InvalidRequest
+ *     {
+ *        "error":"BadRequest",
+ *        "error_message":"No auth roles defined for: GET /resource"
+ *     }
+ *
+ * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function(req, res) {
-    var URI=req.query.URI;
-    var method=req.query.method;
+router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    if(!URI) res.status(400).send({error:"BabRequest", error_message:"No URI param provided"});
-    if(!method) res.status(400).send({error:"BabRequest", error_message:"No method param provided"});
+    var URI = req.query.URI;
+    var method = req.query.method;
 
+    if (!URI) res.status(400).send({error: "BabRequest", error_message: "No URI param provided"});
+    if (!method) res.status(400).send({error: "BabRequest", error_message: "No method param provided"});
 
-
-
-    decodeToken(req,res,function(err,decoded){ // err == null token is valid else err== status_code to return
-        if(err){ // if err token is not valid
-            decoded.error_message=decoded.error_message.replace("access_token", "decode_token");
+    decodeToken(req, res, function (err, decoded) { // err == null token is valid else err== status_code to return
+        if (err) { // if err token is not valid
+            decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
             res.status(err).send(decoded);
-        }else{ // token is valid
-            authEnpoints.findOne({URI:URI,method:method},function(err,item){
-                if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
-                if(!item) return res.status(401).send({error:"BadRequest", error_message:"No auth roles defined for: " + method + " " + URI });
+        } else { // token is valid
+            authEnpoints.findOne({URI: URI, method: method}, function (err, item) {
+                if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
+                if (!item) return res.status(401).send({
+                    error: "BadRequest",
+                    error_message: "No auth roles defined for: " + method + " " + URI
+                });
 
-                if(item.authToken.indexOf(decoded.token.type)>=0)
+                if (item.authToken.indexOf(decoded.token.type) >= 0)
                     res.status(200).send(decoded);
-                else{
-                    decoded.valid=false;
-                    decoded.error_message="Only " + item.authToken +  " token types can access this resource";
+                else {
+                    decoded.valid = false;
+                    decoded.error_message = "Only " + item.authToken + " token types can access this resource";
                     res.status(200).send(decoded);
                 }
 
@@ -317,72 +290,65 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function(req, re
 });
 
 
+
 /**
  * @api {post} /actions/decodeToken Decode Token with post
  * @apiVersion 1.0.0
  * @apiName Token Decode
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It decode the token and return the contents bundled in the token
+ * @apiDescription Accessible only by microservice access tokens. Decodes the token and return the contents bundled in the token
  *
- *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ body || as query param || header]
- * @apiParam {String} decode_token token that should be unboxed
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} decode_token token to be unboxed
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "decode_token": "34243243jkh4k32h4k3h43k4"}
  *
- * @apiSuccess (201 - OK) {Boolean} valid  if true the decoded token is valid and a token field is returned otherwise if false the decoded token is not valid and a error_message field is returned
- * @apiSuccess (201 - OK) {Boolean} token  contains decoded token information only is valid field is true
- * @apiSuccess (201 - OK) {String}  token._id  contains id about token owner
- * @apiSuccess (201 - OK) {String}  token.email  contains email id about token owner
- * @apiSuccess (201 - OK) {String}  token.type  contains token owner type
- * @apiSuccess (201 - OK) {String}  token.enabled  if true the owner is enabled to access the resource
- * @apiSuccess (201 - OK) {String}  token.expires  contains information about token life
- * @apiSuccess (201 - OK) {String}  error_message  is returned only if field valid is false, and contains error meesage that explain the decoded problem
+ * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
+ * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
+ * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
+ * @apiSuccess (200 - OK) {String}  token.type  token owner type
+ * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
+ * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
+ * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 201 Ok
- *
- *     {
- *
+ *      HTTP/1.1 200 OK
+ *      {
  *        "valid":"true"
  *        "token":{
  *                  "_id":"eQO7de4AJe-syk",
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                   "enabled:true
- *       }
- *    }
+ *                  "enabled:true
+ *                }
+ *      }
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 201 Ok
- *
- *     {
- *
+ *      HTTP/1.1 200 OK
+ *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
- *    }
- *
+ *      }
  *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
     //console.log("Decode Token" + JSON.stringify(decode_results));
-    decodeToken(req,res,function(err,decoded){
-        if(err){
-            decoded.error_message=decoded.error_message.replace("access_token", "decode_token");
+    decodeToken(req, res, function (err, decoded) {
+        if (err) {
+            decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
             res.status(err).send(decoded);
-        }else res.status(201).send(decoded);
+        } else res.status(200).send(decoded);
     });
 
 });
-
-
 
 
 
@@ -392,112 +358,106 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function(req, res) {
  * @apiName Token Decode and check auth
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It decode the token, check if this token type check if this token type
- * has the authorization to call a particular endpoint with a particular Http method (this parameter should be passed like http params ).
- * It return the contents bundled in the token and a filed valid that indicate if token is valid end enabled.
+ * @apiDescription Accessible only by microservice access tokens. Decodes the token, checking if this token type
+ * has the authorization to call a particular endpoint with a particular HTTP method (this parameter should be passed like HTTP params ).
+ * It returns the contents bundled in the token and a field "valid" that indicates if token is valid end enabled.
  *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} decode_token token to be unboxed
+ * @apiParam {String} URI endpoint endpoint used to check if the token is authorized to call it
+ * @apiParam {String} method HTTP method URL used to check if the token is authorized to call it
  *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ body || as query param || header]
- * @apiParam {String} decode_token token that should be unboxed
- * @apiParam {String} URI endpoint URI on which check if the token is authorized to call it
- * @apiParam {String} method Http method url on which check if the token is authorized to call it
- *
- * @apiSuccess (201 - OK) {Boolean} valid  if true the decoded token is valid and this token type is enabled to call this URI with the specified http method.
- * If valid, a token field is returned otherwise if false the decoded token is not valid or authorized and a error_message field is returned
- * @apiSuccess (201 - OK) {Boolean} token   contains decoded token information only is valid field is true
- * @apiSuccess (201 - OK) {String}  token._id  contains id about token owner
- * @apiSuccess (201 - OK) {String}  token.email  contains email id about token owner
- * @apiSuccess (201 - OK) {String}  token.type  contains token owner type
- * @apiSuccess (201 - OK) {String}  token.enabled  if true the owner is enabled to access the resource
- * @apiSuccess (201 - OK) {String}  token.expires  contains information about token life
- * @apiSuccess (201 - OK) {String}  error_message  is returned only if field valid is false, and contains error message that explain the decoded or unauthorized problem
+ * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
+ * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
+ * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
+ * @apiSuccess (200 - OK) {String}  token.type  token owner type
+ * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
+ * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
+ * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 201 Ok
- *
- *     {
- *
+ *      HTTP/1.1 200 OK
+ *      {
  *        "valid":"true"
  *        "token":{
  *                  "_id":"eQO7de4AJe-syk",
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                   "enabled:true
- *       }
- *    }
- *
- *
+ *                  "enabled:true
+ *                }
+ *      }
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 201 Ok
- *
- *     {
- *
+ *      HTTP/1.1 200 OK
+ *      {
  *        "valid":"false",
- *        error_message=""Only userMs, WebUi token types can access this resource"
+ *        "error_message"="Only userMs, WebUi token types can access this resource"
  *        "token":{
  *                  "_id":"eQO7de4AJe-syk",
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                   "enabled:true
- *       }
- *    }
- *
+ *                  "enabled:true
+ *                }
+ *     }
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 201 Ok
- *
- *     {
+ *      HTTP/1.1 200 OK
+ *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
- *     }
- *
- *
- * @apiUse Unauthorized
- *  @apiErrorExample Error-Response: 400 BadRequest
+ *      }
+ * @apiErrorExample Error-Response: 400 BadRequest
  *     HTTP/1.1 400 InvalidRequest
  *      {
  *         error:'BadRequest',
  *         "error_message":"No auth roles defined for: GET /resource"
  *      }
+ *
+ * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, res) {
     //console.log("Decode Token" + JSON.stringify(decode_results));
-    var URI=req.body.URI;
-    var method=req.body.method;
+    var URI = req.body.URI;
+    var method = req.body.method;
 
-    if(!URI) res.status(400).send({error:"BabRequest", error_message:"No URI param provided"});
-    if(!method) res.status(400).send({error:"BabRequest", error_message:"No method param provided"});
+    if (!URI) res.status(400).send({error: "BabRequest", error_message: "No URI param provided"});
+    if (!method) res.status(400).send({error: "BabRequest", error_message: "No method param provided"});
 
-    decodeToken(req,res,function(err,decoded){ // err == null token is valid else err== status_code to return
-        if(err){ // if err token is not valid
-            decoded.error_message=decoded.error_message.replace("access_token", "decode_token");
+    decodeToken(req, res, function (err, decoded) { // err == null token is valid else err== status_code to return
+        if (err) { // if err token is not valid
+            decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
             res.status(err).send(decoded);
-        }else{ // token is valid
-            authEnpoints.findOne({URI:URI,method:method},function(err,item){
-               if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
-               if(!item) return res.status(401).send({error:"BadRequest", error_message:"No auth roles defined for: " + method + " " + URI });
+        } else { // token is valid
+            authEnpoints.findOne({URI: URI, method: method}, function (err, item) {
+                if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
+                if (!item) return res.status(401).send({
+                    error: "BadRequest",
+                    error_message: "No auth roles defined for: " + method + " " + URI
+                });
                 // if(!item){
                 //     decoded.valid=false;
                 //     decoded.error_message="No auth roles defined for: " + method + " " + URI;
                 //     res.status(201).send(decoded);
                 // }
 
-                if(item.authToken.indexOf(decoded.token.type)>=0)
-                    res.status(201).send(decoded);
-                else{
-                    decoded.valid=false;
-                    decoded.error_message="Only " + item.authToken +  " token types can access this resource";
-                    res.status(201).send(decoded);
+                if (item.authToken.indexOf(decoded.token.type) >= 0)
+                    res.status(200).send(decoded);
+                else {
+                    decoded.valid = false;
+                    decoded.error_message = "Only " + item.authToken + " token types can access this resource";
+                    res.status(200).send(decoded);
                 }
-
             });
         }
     });
+
 });
+
+
 
 /**
  * @api {post} /actions/refreshToken Renew the token
@@ -505,71 +465,67 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function(req, r
  * @apiName Renew Token
  * @apiGroup Token
  *
- * @apiDescription Accessible by Microservice access_token. It renew the token
+ * @apiDescription Accessible by microservice access tokens. Renews the token
  *
- *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ body || as query param || header]
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
  * @apiParam {String} refresh_token token used to renew the token
- *
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "refresh_token": "dsadasddfdf6g4fdgfh687gfhf"}
  *
- * @apiSuccess (201 - Created) {Object} apiKey  contains information about apiKey token
- * @apiSuccess (201 - Created) {String} apiKey.token  contains authapp Token
- * @apiSuccess (201 - Created) {String} apiKey.expires  contains information about token life
- * @apiSuccess (201 - Created) {Object} refreshToken  contains information about refreshToken used to renew token
- * @apiSuccess (201 - Created) {String} refreshToken.token  contains authapp refreshToken
- * @apiSuccess (201 - Created) {String} refreshToken.expires  contains information about refreshToken life
- * @apiSuccess (201 - Created) {String} userId  contains the id of app in authMS
+ * @apiSuccess (200 - OK) {Object} apiKey  contains information about apiKey token
+ * @apiSuccess (200 - OK) {String} apiKey.token  consumer token
+ * @apiSuccess (200 - OK) {String} apiKey.expires  token expiration date
+ * @apiSuccess (200 - OK) {Object} refreshToken  contains information about refreshToken used to renew a token
+ * @apiSuccess (200 - OK) {String} refreshToken.token  authapp refreshToken
+ * @apiSuccess (200 - OK) {String} refreshToken.expires  refreshToken expiration date
+ * @apiSuccess (200 - OK) {String} userId  consumer id
  *
- *
- * @apiSuccessExample {json} Example: 201 CREATED
- *      HTTP/1.1 201 CREATED
- *
- *     {
- *
+ * @apiSuccessExample {json} Example: 200 OK
+ *      HTTP/1.1 200 OK
+ *      {
  *        "apiKey":{
  *                  "token":"VppR5sHU_hV3U",
  *                  "expires":1466789299072
- *        },
+ *                 },
  *        "refreshToken":{
- *                  "token":"eQO7de4AJe-syk",
- *                  "expires":1467394099074
- *       },
- *       "userId":"4334f423432"
- *    }
+ *                        "token":"eQO7de4AJe-syk",
+ *                        "expires":1467394099074
+ *                       },
+ *        "userId":"4334f423432"
+ *      }
  *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.post('/refreshToken',jwtMiddle.ensureIsAuthorized, function(req, res){
+router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
     "use strict";
 
-        console.log("REFRESHTOKEN");
+    console.log("REFRESHTOKEN");
 
-        decodeToken(req,res,function(err,decoded){
-            if(err) {
-                decoded.error_message=decoded.error_message.replace("access_token", "refresh_token");
-                res.status(207).send({error: "refreshToken_error", error_message: decoded.error_message});
-            }
-            else if(decoded.token.mode=="user") { // è un token utente
-                console.log("Redirect to MS");
-                //res.redirect('/authuser/refreshToken');
-                res.status(201).send(commonfunctions.generateToken(decoded.token,"user"));
-            }else if(decoded.token.mode=="developer"){// è un token developer
-                console.log("Redirect to APP");
-                res.status(201).send(commonfunctions.generateToken(decoded.token,"developer"));
-            } else{
-                return res.status(401).send({error: "refreshToken_error",error_message:"Can not refresh this token Type"});
-            }
-        });
+    decodeToken(req, res, function (err, decoded) {
+        if (err) {
+            decoded.error_message = decoded.error_message.replace("access_token", "refresh_token");
+            res.status(207).send({error: "refreshToken_error", error_message: decoded.error_message});
+        }
+        else if (decoded.token.mode == "user") { // è un token utente
+            console.log("Redirect to MS");
+            //res.redirect('/authuser/refreshToken');
+            res.status(200).send(commonfunctions.generateToken(decoded.token, "user"));
+        } else if (decoded.token.mode == "developer") {// è un token developer
+            console.log("Redirect to APP");
+            res.status(200).send(commonfunctions.generateToken(decoded.token, "developer"));
+        } else {
+            return res.status(401).send({
+                error: "refreshToken_error",
+                error_message: "Can not refresh this token Type"
+            });
+        }
+    });
+
 });
-
-
-
 
 
 
@@ -579,10 +535,9 @@ router.post('/refreshToken',jwtMiddle.ensureIsAuthorized, function(req, res){
  * @apiName Get All Token Type List
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It get a list of valid token types.
+ * @apiDescription Accessible only by microservice access tokens. Gets a list of valid token types.
  *
- *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ as query param || header]
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
  *
  * @apiSuccess (200 - OK) {String[]} user  a list of valid and available users tokens
  * @apiSuccess (200 - OK) {String[]} app  a list of valid and available application tokens
@@ -590,24 +545,26 @@ router.post('/refreshToken',jwtMiddle.ensureIsAuthorized, function(req, res){
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
- *
- *     {
- *
- *
+ *      {
  *        "user":[ "userTypeOne" , "userTypeTwo" .....],
  *        "app":[ "appTypeOne" , "appTypeTwo" .....],
  *        "ms":[ "msTypeOne" , "msTypeTwo" .....]
- *     }
+ *      }
+ *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function(req, res) {
-    var userType=conf.getParam("userType");
-    var appType=conf.getParam("appType");
-    var msType=conf.getParam("msType");
-    res.status(200).send({user:userType,app:appType,ms:msType});
+router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    var userType = conf.getParam("userType");
+    var appType = conf.getParam("appType");
+    var msType = conf.getParam("msType");
+
+    res.status(200).send({user: userType, app: appType, ms: msType});
+
 });
+
 
 
 /**
@@ -616,34 +573,34 @@ router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function(req, res)
  * @apiName Get All admin Token Type List
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It get a list of valid admin token types.
+ * @apiDescription Accessible only by microservice access tokens. Gets a list of valid admin token types.
  *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
  *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ as query param || header]
- *
- * @apiSuccess (200 - OK) {String[]} superuser  a list of valid and available admin users tokens
+ * @apiSuccess (200 - OK) {String[]} superuser  a list of valid and available admin user tokens
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 Ok
- *
- *     {
+ *      HTTP/1.1 200 OK
+ *      {
  *          "superuser":[ "userTypeOne" , "userTypeTwo" .....]
- *     }
+ *      }
+ *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var list=[];
-    appsUsersType.find({super:true,type:"user"},function(err,values){
-        if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
-       async.each(values,function(val,clb){
+    var list = [];
+
+    appsUsersType.find({super: true, type: "user"}, function (err, values) {
+        if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
+        async.each(values, function (val, clb) {
             list.push(val.name);
-           clb();
-        },function(err){
-           res.status(200).send({superuser:list});
-       });
+            clb();
+        }, function (err) {
+            res.status(200).send({superuser: list});
+        });
     });
 
 });
@@ -656,37 +613,37 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function(req, 
  * @apiName Get All special app Token Type List
  * @apiGroup Token
  *
- * @apiDescription Accessible only by other microservice access_token. It get a list of valid super app token types.
+ * @apiDescription Accessible only by microservice access tokens. Gets a list of valid super app token types.
  *
- *
- * @apiParam {String} access_token access_token to access to this resource. it must be sended in [ as query param || header]
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
  *
  * @apiSuccess (200 - OK) {String[]} superapp  a list of valid and available admin app tokens
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
- *
- *     {
+ *      {
  *          "superapp":[ "appTypeOne" , "appTypeTwo" .....]
- *     }
+ *      }
+ *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var list=[];
-    appsUsersType.find({super:true,type:"app"},function(err,values){
-        if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
-        async.each(values,function(val,clb){
+    var list = [];
+
+    appsUsersType.find({super: true, type: "app"}, function (err, values) {
+        if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
+        async.each(values, function (val, clb) {
             list.push(val.name);
             clb();
-        },function(err){
-            res.status(200).send({superapp:list});
+        }, function (err) {
+            res.status(200).send({superapp: list});
         });
     });
-});
 
+});
 
 
 module.exports = router;
