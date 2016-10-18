@@ -4,6 +4,8 @@ var microservices = require('../models/microservices').Microservice;
 var authEnpoints = require('../models/authEndpoints').AuthEndPoint;
 var jwtMiddle = require('./jwtauth');
 var commonfunctions=require('./commonfunctions');
+var request=require("request");
+
 
 
 
@@ -12,23 +14,130 @@ var conf=require('../routes/configSettingManagment');
 var iconsList=conf.getParam("iconsList");
 
 
+router.get('/main', function(req, res) {
+    var action=req.signedCookies.action || null;
+
+    if(action=="log") {
+
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.render('main', {
+            MicroSL: conf.getParam("microserviceList"),
+            myUrl: conf.getParam("myMicroserviceBaseUrl"),
+            myToken: conf.getParam("MyMicroserviceToken"),
+            iconsList: iconsList
+        });
+    }
+    else {
+        res.status(401).send({error:"Unauthorized", error_message:"You are not authorized to access this resource"});
+    }
+});
+
+
+
 /* GET home page. */
 router.get('/configure', function(req, res) {
- //myUrl=myUrl+req.app.get('port');
- //console.log("XXXXXXX COLOR " + MicroSL + " " +  myUrl);
- console.log("Rendering " + conf.getParam("msType"));
-
- res.render('main', { MicroSL: conf.getParam("microserviceList"), myUrl:conf.getParam("myMicroserviceBaseUrl"), myToken:conf.getParam("MyMicroserviceToken"), iconsList:iconsList });
-
-
- // microservices.findAll(function (err,data) {
- //  if(err)
- //      return res.status(500).send({error:"InternalError", error_message:err});
- //
- //
- // });
-
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.render('start', {read:"No"});
 });
+
+
+
+/* GET home page. */
+router.get('/login', function(req, res) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.render('login', {
+        next: conf.getParam("myMicroserviceBaseUrl"),
+        at: conf.getParam("MyMicroserviceToken")
+    });
+});
+
+// /* GET home page. */
+// router.get('/configure', function(req, res) {
+//
+// var action=req.signedCookies.action || null;
+//
+//  console.log("XXXXXXXXXXXXXXX " + action + " XXXXXXXXXXXXXX");
+//
+//  console.log("Rendering " + conf.getParam("msType"));
+//
+//
+//     if(action=="log") {
+//
+//         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+//         res.render('main', {
+//             MicroSL: conf.getParam("microserviceList"),
+//             myUrl: conf.getParam("myMicroserviceBaseUrl"),
+//             myToken: conf.getParam("MyMicroserviceToken"),
+//             iconsList: iconsList
+//         });
+//     }
+//     else {
+//         //res.cookie("action","log");
+//         console.log("LOGIN");
+//         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+//         res.render('login', {
+//             next: conf.getParam("myMicroserviceBaseUrl"),
+//             at: conf.getParam("MyMicroserviceToken")
+//         });
+//     }
+// });
+
+
+
+/* GET home page. */
+router.post('/configure', function(req, res) {
+
+    var ms = {
+        "username": req.body.username,
+        "password": req.body.password
+    };
+    var userBody = JSON.stringify(ms);
+    // console.log("BODY " + userBody);
+
+    request.post({
+        url: conf.getParam("myMicroserviceBaseUrl")+"/authuser/signin",
+        body: userBody,
+        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.getParam("MyMicroserviceToken")}
+    }, function (error, response,body) {
+        console.log(body);
+        respb=JSON.parse(body);
+        if (respb.error_message){
+            res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+            res.render('login', {
+                next: conf.getParam("myMicroserviceBaseUrl"),
+                at: conf.getParam("MyMicroserviceToken"),
+                error_message:respb.error_message
+            });
+        }
+        else {
+            res.cookie("action","log",{ signed: true });
+            res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+            res.render('start', {read:"Yes"});
+        }
+    });
+});
+
+
+
+/* GET home page. */
+router.post('/logout', function(req, res) {
+    res.clearCookie("action");
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.render('start', {read:"No"});
+});
+
+
+
+// /* GET home page. */
+// router.post('/logout', function(req, res) {
+//     res.clearCookie("action");
+//     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+//     res.render('login', {
+//         next: conf.getParam("myMicroserviceBaseUrl"),
+//         at: conf.getParam("MyMicroserviceToken")
+//     });
+// });
+
 
 
 /* GET home page. */
