@@ -911,7 +911,8 @@ function login(url,myToken){
 
     var ms = {
         "username": $("input[name='username']").val(),
-        "password": $("input[name='password']").val()
+        "password": $("input[name='password']").val(),
+        "next": $("input[name='at']").val(),
     };
 
     $.ajax({
@@ -934,9 +935,24 @@ function login(url,myToken){
 }
 
 
-function logout(){
-    sessionStorage.removeItem("token");
-    getToken();
+function logout(url){
+    $.ajax({
+        url: url+"/logout",
+        type: 'POST',
+        contentType: "application/json",
+        success: function(data) {
+            sessionStorage.clear();
+            console.log("LOGOUT");
+            document.open();
+            document.write(data);
+            document.close();
+            //$('#logout').submit();
+
+        },
+        error: function(data) {
+            console.log("LOGOUT ERROR");
+        }
+    });
 }
 
 // refresh microservice info

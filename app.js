@@ -50,7 +50,8 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(passport.initialize());
-app.use(cookieParser());
+ app.use(cookieParser("supercalifragilistichespiralitoso"));
+//app.use(cookieParser());
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/doc', express.static('doc',{root:'doc'}));
