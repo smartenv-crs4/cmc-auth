@@ -261,7 +261,7 @@ describe('Apps API', function () {
                         if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                         else {
                             console.log("BODYYYYYYERRRR" + body);
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -957,7 +957,7 @@ describe('Apps API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             Apps.findOne({_id:ute._id}, function(err, usr){
 
                                 usr.enabled.should.be.true;
@@ -987,7 +987,7 @@ describe('Apps API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             Apps.findOne({_id:ute._id}, function(err, usr){
 
                                 usr.enabled.should.be.false;
@@ -1036,7 +1036,7 @@ describe('Apps API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('reset_token');
                         }
@@ -1082,7 +1082,7 @@ describe('Apps API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('reset_token');
                             var reset_token=results.reset_token;
@@ -1100,7 +1100,7 @@ describe('Apps API', function () {
                             }, function (error, response) {
                                 if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                                 else {
-                                    response.statusCode.should.be.equal(201);
+                                    response.statusCode.should.be.equal(200);
                                     var results = JSON.parse(response.body);
                                     results.should.have.property('apiKey');
                                     results.should.have.property('refreshToken');
@@ -1119,7 +1119,7 @@ describe('Apps API', function () {
                                     }, function (error, response) {
                                         if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                                         else {
-                                            response.statusCode.should.be.equal(201);
+                                            response.statusCode.should.be.equal(200);
                                             var results = JSON.parse(response.body);
                                             results.should.have.property('apiKey');
                                             results.should.have.property('refreshToken');
@@ -1152,7 +1152,7 @@ describe('Apps API', function () {
                                                     }, function (error, response) {
                                                         if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                                                         else {
-                                                            response.statusCode.should.be.equal(201);
+                                                            response.statusCode.should.be.equal(200);
                                                             var results = JSON.parse(response.body);
                                                             results.should.have.property('apiKey');
                                                             results.should.have.property('refreshToken');
@@ -1212,7 +1212,7 @@ describe('Apps API', function () {
                     }, function (error, response) {
                         if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -1231,7 +1231,7 @@ describe('Apps API', function () {
                             }, function (error, response) {
                                 if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                                 else {
-                                    response.statusCode.should.be.equal(201);
+                                    response.statusCode.should.be.equal(200);
                                     var results = JSON.parse(response.body);
                                     results.should.have.property('apiKey');
                                     results.should.have.property('refreshToken');
@@ -1264,7 +1264,7 @@ describe('Apps API', function () {
                                             }, function (error, response) {
                                                 if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                                                 else {
-                                                    response.statusCode.should.be.equal(201);
+                                                    response.statusCode.should.be.equal(200);
                                                     var results = JSON.parse(response.body);
                                                     results.should.have.property('apiKey');
                                                     results.should.have.property('refreshToken');

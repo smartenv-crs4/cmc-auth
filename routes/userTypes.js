@@ -121,11 +121,11 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
  * @apiParam {String} id the Application id
  *
- * @apiSuccess (204 - NO CONTENT) {String} _id the user type id
- * @apiSuccess (204 - NO CONTENT) {String} name the user type name
+ * @apiSuccess (200 - OK) {String} _id the user type id
+ * @apiSuccess (200 - OK) {String} name the user type name
  *
- * @apiSuccessExample {json} Example: 204 NO CONTENT
- *      HTTP/1.1 204 NO CONTENT
+ * @apiSuccessExample {json} Example: 200 Ok
+ *      HTTP/1.1 200 Ok
  *     {
  *        "_id":"543fdd60579e1281b8f6da92",
  *        "name":"externalWebUi"
@@ -216,7 +216,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                                     });
                                 } else {
                                     commonfunctions.updateUsers(function () { //update microservice List
-                                        return res.status(204).send(content);
+                                        return res.status(200).send(content);
                                     });
                                 }
                             }

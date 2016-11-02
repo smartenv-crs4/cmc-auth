@@ -222,7 +222,7 @@ exports.initMs = function(callb) {
                         console.log("TOKEN not present");
                         var token=JSON.parse(commonFunction.generateMsToken("authms")).token;
                         ms.create({name:"authms",icon:"fa-unlock-alt", color:"panel-info",baseUrl:conf.getParam("myMicroserviceBaseUrl"),token:token},function(err,val){
-                            if (err) console.log("ERROR in creation token for this microservice " + err);
+                            if (err) console.log("ERROR in token creation for this microservice " + err);
                             console.log("TOKEN created");
                             conf.setParam("MyMicroserviceToken",val.token);
                             callback(null, 'one');

@@ -166,7 +166,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
                             results.should.have.property('token');
@@ -588,7 +588,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE 588 should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -605,7 +605,7 @@ describe('AuthMS API', function () {
                             }, function (error, response) {
                                 if (error) console.log("######   ERRORE  605 should create a new Application: " + error +"  ######");
                                 else {
-                                    response.statusCode.should.be.equal(201);
+                                    response.statusCode.should.be.equal(200);
                                     var results = JSON.parse(response.body);
                                     results.should.have.property('valid');
                                     results.should.have.property('token');
@@ -683,7 +683,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE  683 should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -761,7 +761,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -891,7 +891,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
                             results.should.have.property('token');
@@ -1278,7 +1278,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE  1278 should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -1295,7 +1295,7 @@ describe('AuthMS API', function () {
                             }, function (error, response) {
                                 if (error) console.log("######   ERRORE 1295 should create a new Application: " + error +"  ######");
                                 else {
-                                    response.statusCode.should.be.equal(201);
+                                    response.statusCode.should.be.equal(200);
                                     var results = JSON.parse(response.body);
                                     results.should.have.property('valid');
                                     results.should.have.property('token');
@@ -1374,7 +1374,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE 1373 should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -1452,7 +1452,7 @@ describe('AuthMS API', function () {
                     }, function (error, response) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');

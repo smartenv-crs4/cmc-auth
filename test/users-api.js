@@ -253,7 +253,7 @@ describe('Users API', function () {
                     }, function (error, response) {
                         if (error) console.log("######  2 ERRORE should  login a Authuser: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -948,7 +948,7 @@ describe('Users API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             Users.findOne({_id:ute._id}, function(err, usr){
 
                                 usr.enabled.should.be.true;
@@ -978,7 +978,7 @@ describe('Users API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             Users.findOne({_id:ute._id}, function(err, usr){
 
                                 usr.enabled.should.be.false;
@@ -1027,7 +1027,7 @@ describe('Users API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('reset_token');
                             done();
@@ -1071,7 +1071,7 @@ describe('Users API', function () {
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('reset_token');
                             var reset_token=results.reset_token;
@@ -1089,7 +1089,7 @@ describe('Users API', function () {
                             }, function (error, response) {
                                 if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
                                 else {
-                                    response.statusCode.should.be.equal(201);
+                                    response.statusCode.should.be.equal(200);
                                     var results = JSON.parse(response.body);
                                     results.should.have.property('apiKey');
                                     results.should.have.property('refreshToken');
@@ -1108,7 +1108,7 @@ describe('Users API', function () {
                                     }, function (error, response) {
                                         if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
                                         else {
-                                            response.statusCode.should.be.equal(201);
+                                            response.statusCode.should.be.equal(200);
                                             var results = JSON.parse(response.body);
                                             results.should.have.property('apiKey');
                                             results.should.have.property('refreshToken');
@@ -1141,7 +1141,7 @@ describe('Users API', function () {
                                                     }, function (error, response) {
                                                         if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
                                                         else {
-                                                            response.statusCode.should.be.equal(201);
+                                                            response.statusCode.should.be.equal(200);
                                                             var results = JSON.parse(response.body);
                                                             results.should.have.property('apiKey');
                                                             results.should.have.property('refreshToken');
@@ -1200,7 +1200,7 @@ describe('Users API', function () {
                     }, function (error, response) {
                         if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
                         else {
-                            response.statusCode.should.be.equal(201);
+                            response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
                             results.should.have.property('refreshToken');
@@ -1219,7 +1219,7 @@ describe('Users API', function () {
                             }, function (error, response) {
                                 if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
                                 else {
-                                    response.statusCode.should.be.equal(201);
+                                    response.statusCode.should.be.equal(200);
                                     var results = JSON.parse(response.body);
                                     results.should.have.property('apiKey');
                                     results.should.have.property('refreshToken');
@@ -1252,7 +1252,7 @@ describe('Users API', function () {
                                             }, function (error, response) {
                                                 if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
                                                 else {
-                                                    response.statusCode.should.be.equal(201);
+                                                    response.statusCode.should.be.equal(200);
                                                     var results = JSON.parse(response.body);
                                                     results.should.have.property('apiKey');
                                                     results.should.have.property('refreshToken');
