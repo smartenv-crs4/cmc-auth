@@ -268,6 +268,9 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
             decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
             res.status(err).send(decoded);
         } else { // token is valid
+
+            URI=URI.endsWith("/") ? URI : URI+"/";
+            method=method.toUpperCase();
             authEnpoints.findOne({URI: URI, method: method}, function (err, item) {
                 if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
                 if (!item) return res.status(401).send({
@@ -432,6 +435,8 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
             decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
             res.status(err).send(decoded);
         } else { // token is valid
+            URI=URI.endsWith("/") ? URI : URI+"/";
+            method=method.toUpperCase();
             authEnpoints.findOne({URI: URI, method: method}, function (err, item) {
                 if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
                 if (!item) return res.status(401).send({

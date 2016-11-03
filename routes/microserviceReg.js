@@ -334,6 +334,9 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
         error_message: "No microservice method provided"
     });
 
+    microservice.URI=microservice.URI.endsWith("/") ? microservice.URI : microservice.URI+"/";
+    microservice.method=microservice.method.toUpperCase();
+
     AuthEP.findOne({URI: microservice.URI, method: microservice.method}, function (err, item) {
         if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
         if (item) return res.status(409).send({
@@ -396,8 +399,15 @@ router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
     var query = {};
 
     for (var v in req.query)
-        if (AuthEP.schema.path(v))
+        if (AuthEP.schema.path(v)) {
+
+            if(v.toString()=="URI")
+                req.query[v]= req.query[v].endsWith("/") ?  req.query[v] :  req.query[v]+"/";
+            else if(v.toString()=="method")
+                req.query[v]= req.query[v].toUpperCase();
+
             query[v] = req.query[v];
+        }
 
     AuthEP.findAll(query, fields, req.dbPagination, function (err, results) {
 
@@ -423,7 +433,7 @@ router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiName GetMicroserviceAuthRules
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all endpoint rules of a given.
+ * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all endpoint rules of a given microservice.
  * Set pagination skip and limit in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
  *
  * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
@@ -450,14 +460,22 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function (req, r
     var fields = req.dbQueryFields;
     var query = {name: name};
 
-    for (var v in req.query)
-        if (AuthEP.schema.path(v))
+    for (var v in req.query) {
+        if (AuthEP.schema.path(v)) {
+
+            if (v.toString() == "URI")
+                req.query[v] = req.query[v].endsWith("/") ? req.query[v] : req.query[v] + "/";
+            else if (v.toString() == "method")
+                req.query[v] = req.query[v].toUpperCase();
+
             query[v] = req.query[v];
+        }
+    }
+
 
     AuthEP.findAll(query, fields, req.dbPagination, function (err, results) {
 
         if (!err) {
-
             if (!_.isEmpty(results.authendpoints))
                 return res.status(200).send(results);
             else
@@ -640,6 +658,14 @@ router.put('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
         error: 'BadRequest',
         error_message: "microservice _id can not be updated"
     });
+
+
+    if(microservice.URI)
+        microservice.URI=microservice.URI.endsWith("/") ? microservice.URI : microservice.URI+"/";
+
+    if(microservice.method)
+        microservice.method=microservice.method.toUpperCase();
+
 
     var id = req.param('id').toString();
 

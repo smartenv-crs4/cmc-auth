@@ -6,14 +6,19 @@ console.dir(argv);
 
 var conf;
 
-if (process.env['NODE_ENV'] === 'dev') {
 
-    conf = config.dev;
-}
-else{
-    conf = config.production;
-}
+switch (process.env['NODE_ENV']) {
+    case 'dev':
+        conf = config.dev;
+        break;
+    case 'test':
+        conf = config.dev;
+        break;
+    default:
+        conf = config.production;
+        break;
 
+}
 
 
 async.each(conf, function(param, callback) {
