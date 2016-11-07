@@ -8,7 +8,7 @@ var logger = require('morgan');
 var jwtMiddle = require('./routes/jwtauth');
 var favicon = require('serve-favicon');
 
-var config = require('./config').generalConf;
+var conf = require('propertiesmanager').conf;
 //var User = require('./models/users').User;
 
 var routes = require('./routes/index');
@@ -19,17 +19,16 @@ var msReg = require('./routes/microserviceReg');
 var userType=require('./routes/userTypes');
 var appType=require('./routes/appTypes');
 
-
-
 var app = express();
-var conf = null;
 
-if (app.get('env') === 'dev') {
-    conf = config.dev;
-}
-else{
-    conf = config.production;
-}
+// var conf = null;
+//
+// if (app.get('env') === 'dev') {
+//     conf = config.dev;
+// }
+// else{
+//     conf = config.production;
+// }
 //require('./models/db')
 //connect to DB
 ///...
@@ -50,7 +49,7 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(passport.initialize());
- app.use(cookieParser("supercalifragilistichespiralitoso"));
+app.use(cookieParser("supercalifragilistichespiralitoso"));
 //app.use(cookieParser());
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
