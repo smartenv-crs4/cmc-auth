@@ -22,7 +22,7 @@ router.get('/main', function(req, res) {
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.render('main', {
             MicroSL: conf.getParam("microserviceList"),
-            myUrl: conf.getParam("myMicroserviceBaseUrl"),
+            myUrl: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort"),
             myToken: conf.getParam("MyMicroserviceToken"),
             iconsList: iconsList
         });
@@ -46,7 +46,7 @@ router.get('/configure', function(req, res) {
 router.get('/login', function(req, res) {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.render('login', {
-        next: conf.getParam("myMicroserviceBaseUrl"),
+        next: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort"),
         at: conf.getParam("MyMicroserviceToken")
     });
 });
@@ -95,7 +95,7 @@ router.post('/configure', function(req, res) {
     // console.log("BODY " + userBody);
 
     request.post({
-        url: conf.getParam("myMicroserviceBaseUrl")+"/authuser/signin",
+        url: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + "/authuser/signin",
         body: userBody,
         headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.getParam("MyMicroserviceToken")}
     }, function (error, response,body) {
@@ -104,7 +104,7 @@ router.post('/configure', function(req, res) {
         if (respb.error_message){
             res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
             res.render('login', {
-                next: conf.getParam("myMicroserviceBaseUrl"),
+                next: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort"),
                 at: conf.getParam("MyMicroserviceToken"),
                 error_message:respb.error_message
             });

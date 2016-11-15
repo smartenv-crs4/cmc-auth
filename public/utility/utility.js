@@ -1,47 +1,6 @@
 
 //var actionSave=true;
 
-function sendvalue() {
-
-
-    alert("inizio Send V");
-
-    var reqtoS={
-        user : {
-            "name": $("input[name='name']").val(),
-            "email": $("input[name='email']").val(),
-            "password": $("input[name='password']").val(),
-            "modules": $("input[name='modules']").val(),
-            "type": $("input[name='type']").val()
-        }
-
-    };
-
-    alert("afret JSON");
-
-    var  access_token=$("input[name='access_token']").val();
-    alert("afret AT");
-
-    var url = 'http://localhost:3080/signup';
-
-
-    alert("Before AJAX");
-
-    $.ajax({
-        url: url+"/authms",
-        type: 'POST',
-        data: JSON.stringify(reqtoS),
-        contentType: "application/json",
-        success: function(data) {
-            alert("Utente REgistarto");
-            console.log('RegistereD');
-        },
-        error: function(data) {
-            alert("error");
-            console.log('ERROR');
-        }
-    });
-}
 
 
 function generateToken(serviceType,url,myToken){
