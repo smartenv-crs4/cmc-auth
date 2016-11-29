@@ -90,7 +90,7 @@ router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
 
 router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     Microservice.findByIdAndRemove(id, function (err, content) {
         if (err) return res.status(500).send({
@@ -181,7 +181,8 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
     var respToWebUI = [];
     var nginxIp = [];
     var bUrl;
-    var msName = req.param('name').toString();
+
+    var msName = (req.params.name).toString();
 
     if (!msName) return res.status(400).send({error: "BadRequest", error_message: "no ms name provided"})
     var url = conf.getParam("consulProtocol") + "://" + conf.getParam("consulHost") + ":" + conf.getParam("consulPort") + conf.getParam("consulHealth") + "/";
@@ -455,7 +456,7 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function (req, r
     if (req.query.name)
         return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
 
-    var name = req.param('name').toString();
+    var name =  (req.params.name).toString();
 
     var fields = req.dbQueryFields;
     var query = {name: name};
@@ -524,7 +525,7 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function (req, r
  */
 router.get('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
     var fields = req.dbQueryFields;
 
     AuthEP.findById(id, fields, function (err, content) {
@@ -576,7 +577,7 @@ router.get('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
  */
 router.delete('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     AuthEP.findByIdAndRemove(id, function (err, content) {
         if (err) return res.status(500).send({
@@ -667,7 +668,7 @@ router.put('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
         microservice.method=microservice.method.toUpperCase();
 
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     AuthEP.findByIdAndUpdate(id, microservice, function (err, content) {
         if (err) return res.status(500).send({
