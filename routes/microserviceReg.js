@@ -128,7 +128,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized], function (req, res) {
 
-    var url = conf.getParam("consuleUrl");
+    var url = conf.getParam("consulProtocol") + "://" + conf.getParam("consulHost") + ":" + conf.getParam("consulPort") + conf.getParam("consulServices");
 
     //console.log("Consule URL:" + url );
 
@@ -184,7 +184,7 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
     var msName = req.param('name').toString();
 
     if (!msName) return res.status(400).send({error: "BadRequest", error_message: "no ms name provided"})
-    var url = conf.getParam("consuleUrlHealt");
+    var url = conf.getParam("consulProtocol") + "://" + conf.getParam("consulHost") + ":" + conf.getParam("consulPort") + conf.getParam("consulHealth") + "/";
 
     async.parallel([
             function (callback) {
