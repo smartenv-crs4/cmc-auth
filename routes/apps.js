@@ -256,7 +256,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     var fields = req.dbQueryFields;
     if (!fields)
@@ -307,7 +307,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.delete('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     App.findByIdAndRemove(id,function(err,content){
         if(err) return res.status(404).send({error: "delete_error",error_message: 'Unable to delete user (err:' + err + ')'});

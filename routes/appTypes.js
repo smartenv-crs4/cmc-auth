@@ -89,7 +89,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     tokenTypes.findById(id, function (err, content) {
         if (err) return res.status(500).send({
@@ -138,7 +138,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     tokenTypes.findByIdAndRemove(id, function (err, content) {
         if (err) return res.status(500).send({
@@ -271,7 +271,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var id = req.param('id').toString();
+    var id = (req.params.id).toString();
 
     if (!req.body) return res.status(400).send({error: "BadREquest", error_message: 'request body missing'});
 
