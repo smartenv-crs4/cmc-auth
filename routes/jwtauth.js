@@ -137,13 +137,16 @@ exports.ensureIsAuthorized = function(req, res, next) {
 
 
     
-    var URI;
-    var path=(req.route.path=="/") ? "" : req.route.path;
-    if(_.isEmpty(req.baseUrl))
-        URI=req.path+path;
-    else
-        URI=req.baseUrl+path;
+    // var URI;
+    // var path=(req.route.path=="/") ? "" : req.route.path;
+    // if(_.isEmpty(req.baseUrl))
+    //     URI=req.path+path;
+    // else
+    //     URI=req.baseUrl+path;
 
+    var path= (_.isEmpty(req.route)) ?  req.path : req.route.path;
+    var URI=(_.isEmpty(req.baseUrl)) ? path : (req.baseUrl+path) ;
+    URI=URI.endsWith("/") ? URI : URI+"/";
 
     authEnpoints.findOne({URI:URI,method:req.method},function(err,item){
         if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
