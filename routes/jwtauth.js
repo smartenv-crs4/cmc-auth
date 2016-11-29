@@ -173,9 +173,6 @@ exports.ensureIsAuthorized = function(req, res, next) {
                     .send({error: "invalid_token", error_message: "Only " + item.authToken +  " token types can access this resource"});
             }
         }
-
-
-
     });
 
 
