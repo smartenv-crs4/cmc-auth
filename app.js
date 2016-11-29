@@ -20,6 +20,8 @@ var userType=require('./routes/userTypes');
 var appType=require('./routes/appTypes');
 
 var app = express();
+var plugins=require('apiextender');
+plugins.extend(app);
 
 // var conf = null;
 //
