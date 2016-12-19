@@ -455,9 +455,11 @@ router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
                 error_message: "Microservice already registered at URL:" + val.baseUrl
             });
         } else {
+            var tokenV = JSON.parse(commonfunctions.generateMsToken(miroserviceName)).token;
             Microservice.create({
                 name: miroserviceName,
                 baseUrl: baseUrl,
+                token:tokenV,
                 icon: icon,
                 color: color
             }, function (err, mcsID) {
