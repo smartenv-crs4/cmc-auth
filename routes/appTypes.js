@@ -399,7 +399,7 @@ router.post('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
                     });
                 });
             } else {
-                return res.status(409).send({error: "Conflict", error_message: 'this App Type Already exixt'});
+                return res.status(409).send({error: "Conflict", error_message: 'this App Type:' + cont.name + ' Already exist'});
             }
         });
     } catch (e) {

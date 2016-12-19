@@ -233,7 +233,29 @@ html(lang='en')
                                                 .row
                                                     a(onclick="TokenTypeDetails('"+ myUrl + "','" + myToken + "')", data-toggle='modal' data-target='#tokenManagement').whiteString
                                                         span.fa.fa-key(aria-hidden='true')
-                                                        |Token Type
+                                                        |   Token Types
+                                                .row
+                                                    .btn-group
+                                                        a( type='button', data-toggle='dropdown').whiteString
+                                                            span.fa.fa-database(aria-hidden='true')
+                                                            |   Actions
+                                                            span.caret
+                                                        ul.dropdown-menu.pull-left(role='menu')
+                                                            li
+                                                                a(href="javascript:exportAuthendpoint('true','"+ myUrl + "','" + myToken + "');") Export AuthToken roles
+                                                            li#importauthroles
+                                                                a(href="javascript:openDialog('true','"+ myUrl+"','"+myToken+"');") Import AuthToken roles
+                                                            li.divider
+                                                            li
+                                                                a(href="javascript:exportTokenTypeList('"+ myUrl + "','" + myToken + "');") Export token Types list
+                                                            li#importtokentypelist
+                                                                a(href="javascript:loadTokenTypeList('"+ myUrl+"','"+myToken+"');") Import token Types list
+                                                            li.divider
+                                                            li
+                                                                a(href="javascript:exportMicroserviceList('"+ myUrl + "','" + myToken + "');") Export ms list
+                                                            li#importmicroservicelist
+                                                                a(href="javascript:loadMicroserviceList('"+ myUrl+"','"+myToken+"');") Import ms list
+
                                         // TODO OLD .col-xs-9.text-right
                                         .col-xs-7.text-right
                                             a.whiteString( data-toggle="confirmation", href="javascript:deleteMicroservice('"+ myUrl + "','" + myToken + "','" + item['_id'] +"');")
@@ -364,14 +386,10 @@ html(lang='en')
                                                         span.caret
                                                     ul.dropdown-menu.pull-right(role='menu')
                                                         li
-                                                            a(href='#') Action
+                                                            a(href='#') Export microservice settings
                                                         li
-                                                            a(href='#') Another action
-                                                        li
-                                                            a(href='#') Something else here
-                                                        li.divider
-                                                        li
-                                                            a(href='#') Separated link
+                                                            a(href='#') Import microservice settings
+
 
                                         // /.panel-heading
                                         panel-body
@@ -406,14 +424,9 @@ html(lang='en')
                                                         span.caret
                                                     ul.dropdown-menu.pull-right(role='menu')
                                                         li
-                                                            a(href='#') Action
-                                                        li
-                                                            a(href='#') Another action
-                                                        li
-                                                            a(href='#') Something else here
-                                                        li.divider
-                                                        li
-                                                            a(href='#') Separated link
+                                                            a(href="javascript:exportAuthendpoint(false,'" + myUrl + "','" + myToken + "');") Export AuthToken roles
+                                                        li#importauthroles
+                                                            a(href="javascript:openDialog(false,'" + myUrl + "','" + myToken + "');") Import AuthToken roles
                                         // /.panel-heading
                                         .panel-body
                                             .table-responsive
@@ -504,22 +517,32 @@ html(lang='en')
                                     // /.panel
                 // /.row
 
-            #myAlertMsg.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+            #myAlertMsg.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myAlertMsgModalLabel', aria-hidden='true')
+                .modal-dialog
+                    .modal-content
+                        .modal-header(style="background-color:#f0ad4e")
+                            button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                                span.fa.fa-times(aria-hidden='true')
+                            h4#myAlertMsgModalLabel.modal-title.center TESTO
+                        .modal-body.center
+                            p#AlertMsgMessage.wrap MESSAGGIO
+                        .modal-footer
+                            button.btn.btn-warning(data-dismiss='modal')
+                                span.fa.fa-times(aria-hidden='true')
+                                | &nbsp;Close
+            #myInfoMsg.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myAlertMsgModalLabel', aria-hidden='true')
                 .modal-dialog
                     .modal-content
                         .modal-header
                             button.close(type='button', data-dismiss='modal', aria-hidden='true')
                                 span.fa.fa-times(aria-hidden='true')
-                            h4#myModalLabel.modal-title.center TESTO
+                            h4#myInfoMsgModalLabel.modal-title.center TESTO
                         .modal-body.center
-                            p#token.wrap MESSAGGIO
+                            p#InfoMsgMessage.wrap MESSAGGIO
                         .modal-footer
                             button.btn.btn-info(data-dismiss='modal')
                                 span.fa.fa-times(aria-hidden='true')
                                 | &nbsp;Close
-                            button.btn.btn-primary(id='copy-button',data-clipboard-target='#token')
-                                span.glyphicon.glyphicon-copy(aria-hidden='true')
-                                |   &nbsp;Copy to clipboard
             // /#page-wrapper
         // /#wrapper
 
@@ -535,9 +558,12 @@ html(lang='en')
         script(src='bootstrapTemplate/dist/js/sb-admin-2.js')
         // port2020 script
         script(src="utility/utility.js")
+        script(src="utility/FileSaver.js")
         script(src="utility/bootstrap-confirmation.js")
         //copy to clipboard script
         script(src="node_modules/clipboard/dist/clipboard.min.js")
+        script(src="node_modules/async/dist/async.min.js")
+
         script.
             (function () {
                 new Clipboard('#copy-button');
