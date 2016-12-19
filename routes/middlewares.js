@@ -48,7 +48,10 @@ exports.parsePagination = function (req, res, next) {
     var skip = req.query.skip && !isNaN(parseInt(req.query.skip)) ? parseInt(req.query.skip) : conf.skip;
     var limit = req.query.limit && parseInt(req.query.limit) < conf.limit ? parseInt(req.query.limit) : conf.limit;
 
-    req.dbPagination = {"skip": skip, "limit": limit};
+    if((skip==-1) || (limit==-1))
+        req.dbPagination = {};
+    else
+        req.dbPagination = {"skip": skip, "limit": limit};
     next();
 
 };

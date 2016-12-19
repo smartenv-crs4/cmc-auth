@@ -19,10 +19,7 @@ UserAndAppTypesSchema.index({name:1,type:1},{ unique: true });
 // Static method to retrieve resource WITH metadata
 UserAndAppTypesSchema.statics.findAll = function (conditions, fields, options, callback) {
     return findAllFn(this, 'userandapptypes', conditions, fields, options, callback);
-
 };
-
-
 
 var UserAndAppTypes = mongoose.model('userandapptypes', UserAndAppTypesSchema);
 

@@ -1,7 +1,7 @@
 
 //var actionSave=true;
 
-
+var reloadPage=false;
 
 function generateToken(serviceType,url,myToken){
 
@@ -395,8 +395,9 @@ function refreshMs(url,myToken){
 
 
 function msDetails(url,myToken,msName){
-    
-    
+
+    $("#msNameAuth").val(msName); // set form name value for saving it in post
+    $("#msdetails").html( "&nbsp; " + msName + " microservice Details");
     
     $.ajax({
         url: url+"/authms/actions/healt/"+msName,
@@ -407,13 +408,7 @@ function msDetails(url,myToken,msName){
         contentType: "application/json",
         success: function(data) {
 
-
-            $("#msNameAuth").val(msName); // set form name value for saving it in post
             $(".msinstancelist").remove();
-
-            $("#msdetails").html( "&nbsp; " + msName + " microservice Details");
-
-
 
             //
             //
@@ -912,6 +907,297 @@ function logout(url){
             console.log("LOGOUT ERROR");
         }
     });
+}
+
+
+
+function exportMicroserviceList(url,myToken){
+
+    $.ajax({
+        url: url + "/authms/actions/microservicelist/export",
+        type: 'POST',
+        contentType: "application/json",
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        success: function(data) {
+            var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+            var d=new  Date();
+            var filename=  "microservicesListExport_"+ d.toJSON() +"_.json";
+            saveAs(blob, filename);
+        },
+        error: function(data) {
+            console.log(data);
+            $('#myAlertMsgModalLabel').text("Something blew up");
+            var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            $('#AlertMsgMessage').text(msg);
+            $('#myAlertMsg').modal({show:true,backdrop:false});
+        }
+    });
+}
+
+function loadMicroserviceList(url,myToken){
+    $('#importmicroservicelist').append("<form id=\"BrowseFile\"> " +
+        "<input name=\"filename\" type=\"file\" id=\"fileID\" onchange=\"importMicroservicesList('"+url+"','"+myToken+"')\"> " +
+        "</form>");
+    $('#fileID').click();
+}
+
+
+
+function importMicroservicesList(url,myToken){
+
+    var file=$('#fileID')[0].files[0];
+    var reader = new FileReader();
+    var originalUrl=url;
+    reader.onload = function(e) {
+        var contents ={ microservicelist: JSON.parse(e.target.result)};
+
+        $.ajax({
+            url: url+"/authms/actions/microservicelist/import",
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(contents),
+            headers: {
+                'Authorization': 'Bearer ' + myToken
+            },
+            success: function(data) {
+                //console.log(data);
+                $('#myInfoMsgModalLabel').text("Import Results");
+                $('#InfoMsgMessage').text("Microservice List import Done");
+                $('#myInfoMsg').modal({show:true,backdrop:false});
+                location.reload();
+
+            },
+            error: function(data) {
+                //console.log(data);
+                reloadPage=true;
+                $('#myAlertMsgModalLabel').text(data.responseJSON.error);
+                var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+                $('#AlertMsgMessage').text(msg);
+                $('#myAlertMsg').modal({show:true,backdrop:false});
+                $('#myAlertMsg').on('hidden.bs.modal', function (e) {
+                    if(reloadPage) {
+                        reloadPage=false;
+                        location.reload();
+                    }
+                });
+
+            }
+        });
+    };
+    reader.readAsText(file);
+    $('#BrowseFile').remove();
+}
+
+
+
+function exportAuthendpoint(all,url,myToken){
+    var filename="";
+    if (!all){
+        var name= $("input[name='msNameAuth']").val();
+        filename=name+"_";
+        url=url+"/authms/authendpoint/actions/export/" + name;
+    }else{
+        url=url+"/authms/authendpoint/actions/export";
+    }
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: "application/json",
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        success: function(data) {
+            var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+            var d=new  Date();
+            filename=  filename + "authEndPointRolesExport_"+ d.toJSON() +"_.json";
+            saveAs(blob, filename);
+
+        },
+        error: function(data) {
+            console.log(data);
+            $('#myAlertMsgModalLabel').text("Something blew up");
+            var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            $('#AlertMsgMessage').text(msg);
+            $('#myAlertMsg').modal({show:true,backdrop:false});
+        }
+    });
+}
+
+
+function importAuthendpoint(all,url,myToken){
+
+    var file=$('#fileID')[0].files[0];
+    var reader = new FileReader();
+    var originalUrl=url;
+    reader.onload = function(e) {
+        var contents ={ authendpoint: JSON.parse(e.target.result)};
+        if (!all){
+            var name= $("input[name='msNameAuth']").val();
+            url=url+"/authms/authendpoint/actions/import/" + name;
+        }else{
+            url=url+"/authms/authendpoint/actions/import";
+        }
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(contents),
+            headers: {
+                'Authorization': 'Bearer ' + myToken
+            },
+            success: function(data) {
+                //console.log(data);
+                $('#myInfoMsgModalLabel').text("Import Results");
+                $('#InfoMsgMessage').text("AuthEndpoint import Done");
+                $('#myInfoMsg').modal({show:true,backdrop:false});
+                msDetails(originalUrl,myToken,name || "authms");
+
+            },
+            error: function(data) {
+                //console.log(data);
+                $('#myAlertMsgModalLabel').text("Something blew up");
+                var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+                $('#AlertMsgMessage').text(msg);
+                $('#myAlertMsg').modal({show:true,backdrop:false});
+            }
+        });
+    };
+    reader.readAsText(file);
+    $('#BrowseFile').remove();
+}
+
+
+function openDialog(all,url,myToken){
+    // $('#importauthroles').append("<form method='POST' action='http://localhost:3005/authms/authendpoint/actions/import/userms?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzk2NDc4ODc4MzE1fQ.we6pV7Rn3iYUfJD5T-T8cj7Her4S6lIMQUoZbmlA7a0' enctype='multipart/form-data'> " +
+    //                                 "<input name=\"filename\" type=\"file\" id=\"fileID\"> " +
+    //                                 "CAMPO TESTO <input type=\"text\" name=\"testo1\">" +
+    //                                 "<input type=\"submit\"> " +
+    //                              "</form>");
+    $('#importauthroles').append("<form id=\"BrowseFile\"> " +
+                                    "<input name=\"filename\" type=\"file\" id=\"fileID\" onchange=\"importAuthendpoint("+all+",'"+url+"','"+myToken+"')\"> " +
+                                 "</form>");
+    $('#fileID').click();
+}
+
+
+function exportTokenTypeList(url,myToken){
+
+    $.ajax({
+        url: url+ "/usertypes?skip=-1&limit=-1",
+        type: 'GET',
+        contentType: "application/json",
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        success: function(datauser) {
+            console.log(datauser);
+            $.ajax({
+                url: url+ "/apptypes?skip=-1&limit=-1",
+                type: 'GET',
+                contentType: "application/json",
+                headers: {
+                    'Authorization': 'Bearer ' + myToken
+                },
+                success: function(dataapp) {
+                    var data=datauser.userandapptypes.concat(dataapp.userandapptypes);
+                    var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+                    var d=new  Date();
+                    var filename= "tokenTypeList_"+ d.toJSON() +"_.json";
+                    saveAs(blob, filename);
+
+                },
+                error: function(data) {
+                    console.log(data);
+                    $('#myAlertMsgModalLabel').text("Something blew up");
+                    var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+                    $('#AlertMsgMessage').text(msg);
+                    $('#myAlertMsg').modal({show:true,backdrop:false});
+                }
+            });
+        },
+        error: function(data) {
+            console.log(data);
+            $('#myAlertMsgModalLabel').text("Something blew up");
+            var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            $('#AlertMsgMessage').text(msg);
+            $('#myAlertMsg').modal({show:true,backdrop:false});
+        }
+    });
+}
+
+
+function importTokenTypeList(url,myToken){
+
+    var file=$('#fileID')[0].files[0];
+    var reader = new FileReader();
+    var originalUrl=url;
+    var content;
+    reader.onload = function(e) {
+        var list =JSON.parse(e.target.result);
+        var problems=null;
+
+        async.forEachOf(list, function (element, key, callback) {
+
+            if(element.type=="user") {
+                content={"usertype":element};
+                originalUrl = "/usertypes";
+            }
+            else {
+                content={"apptype":element};
+                originalUrl = "/apptypes";
+            }
+
+            $.ajax({
+                url: url + originalUrl ,
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(content),
+                headers: {
+                    'Authorization': 'Bearer ' + myToken
+                },
+                success: function(data) {
+                    callback();
+
+                },
+                error: function(data) {
+                    problems=data.responseJSON ? data.responseJSON.error_message : data.statusText;;
+                    callback();
+                }
+            });
+
+        }, function (err) {
+            if(problems){
+                $('#myAlertMsgModalLabel').text("Something blew up");
+                $('#AlertMsgMessage').text(problems);
+                $('#myAlertMsg').modal({show:true,backdrop:false});
+            }else{
+                $('#myInfoMsgModalLabel').text("Import Results");
+                $('#InfoMsgMessage').text("Token Types list import Done!");
+                $('#myInfoMsg').modal({show:true,backdrop:false});
+            }
+        });
+    };
+    
+    reader.readAsText(file);
+    $('#BrowseFile').remove();
+}
+
+
+
+function loadTokenTypeList(url,myToken){
+    // $('#importauthroles').append("<form method='POST' action='http://localhost:3005/authms/authendpoint/actions/import/userms?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzk2NDc4ODc4MzE1fQ.we6pV7Rn3iYUfJD5T-T8cj7Her4S6lIMQUoZbmlA7a0' enctype='multipart/form-data'> " +
+    //                                 "<input name=\"filename\" type=\"file\" id=\"fileID\"> " +
+    //                                 "CAMPO TESTO <input type=\"text\" name=\"testo1\">" +
+    //                                 "<input type=\"submit\"> " +
+    //                              "</form>");
+    $('#importtokentypelist').append("<form id=\"BrowseFile\"> " +
+        "<input name=\"filename\" type=\"file\" id=\"fileID\" onchange=\"importTokenTypeList('"+url+"','"+myToken+"')\"> " +
+        "</form>");
+    $('#fileID').click();
 }
 
 // refresh microservice info

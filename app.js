@@ -21,7 +21,7 @@ var appType=require('./routes/appTypes');
 
 var app = express();
 var plugins=require('apiextender');
-plugins.extend(app);
+
 
 // var conf = null;
 //
@@ -65,7 +65,7 @@ app.use('/node_modules', express.static('node_modules',{root:'node_modules'}));
 // passport-local-mongoose initialization
 //passport.use(new LocalStrategy(User.authenticate()));
 
-
+plugins.extend(app);
 
 app.use('/',routes);
 app.use('/main',routes);

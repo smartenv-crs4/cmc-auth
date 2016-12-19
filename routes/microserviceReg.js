@@ -18,6 +18,46 @@ router.use(middlewares.parseFields);
 
 
 
+
+router.post('/actions/microservicelist/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    Microservice.findAll({},null,{},function(err,data){
+        console.log(err + " " + JSON.stringify(data.microservices));
+        if(err)
+            return res.status(500).send({error:"Internal Error", error_message:err});
+        else
+            return res.status(200).send(data.microservices);
+    });
+});
+
+
+router.post('/actions/microservicelist/import', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+
+    var msList=req.body.microservicelist;
+    if (!msList)
+        return res.status(400).send({error: "BadRequest", error_message: "no microservicelist field provided"});
+
+    var errorMsg=null;
+    async.each(msList,function(microservice,callback){
+        Microservice.create(microservice, function (err, mcsID) {
+            if(err)
+             errorMsg= errorMsg!=null ?    errorMsg + "\n\r------------------ \n\r " + err : err;
+            callback();
+
+        });
+    },function(err){
+        commonfunctions.updateMicroservice(function () {
+            if(errorMsg)
+                return res.status(409).send({error:"Conflict. Done with alerts", error_message:errorMsg});
+            else
+                return res.status(201).send({results:"done"});
+        });
+    });
+});
+
+
+
 router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     //console.log("!!!!!!!!!!!!!!!" + util.inspect(req.body));
@@ -680,6 +720,224 @@ router.put('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
     });
 
 });
+
+
+/**
+ * @api {post} /authms/authendpoint/actions/export/:name Export authorization rules of a given microservice
+ * @apiVersion 1.0.0
+ * @apiName ExportMicroserviceAuthRules
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules of a given microservice.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} name Url params containg the name of the microservice
+ *
+ * @apiUse Unauthorized
+ * @apiUse NotFound
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.post('/authendpoint/actions/export/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
+//router.get('/authendpoint/actions/export/:name', function (req, res) {
+
+    if (req.query.name)
+        return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
+
+    var name =  (req.params.name).toString();
+
+
+    var query = {name: name};
+
+
+    exportAuth(query,function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+/**
+ * @api {post} /authms/authendpoint/actions/export Export all authorization rules
+ * @apiVersion 1.0.0
+ * @apiName ExportAllMicroserviceAuthRules
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ *
+ * @apiUse Unauthorized
+ * @apiUse NotFound
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+
+router.post('/authendpoint/actions/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
+//router.get('/authendpoint/actions/export', function (req, res) {
+
+    exportAuth({},function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+function exportAuth(query,exportedClb){
+
+    AuthEP.find(query,function (err, results) {
+
+        if (!err) {
+            var exported={};
+            async.eachOfSeries(results,function(value,key,callback){
+                if(!exported[value.name]) exported[value.name]={};
+                var role=exported[value.name][value.URI]||{POST:[],GET:[],PUT:[],DELETE:[]};
+                role[value.method]=value.authToken;
+                exported[value.name][value.URI]=role;
+                callback();
+            },function(err){
+                exportedClb(null,exported)
+            });
+        }
+        else {
+            exportedClb({error: 'internal_error', error_message: 'something blew up, ERROR:' + err},null);
+        }
+    });
+}
+
+
+
+/**
+ * @api {post} /authms/authendpoint/actions/export/:name Export authorization rules of a given microservice
+ * @apiVersion 1.0.0
+ * @apiName ExportMicroserviceAuthRules
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules of a given microservice.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} name Url params containg the name of the microservice
+ *
+ * @apiUse Unauthorized
+ * @apiUse NotFound
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.post('/authendpoint/actions/import/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
+//router.get('/authendpoint/actions/export/:name', function (req, res) {
+
+
+    //console.log("BODY " + JSON.stringify(req.body));
+
+    if (req.query.name)
+        return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
+
+    if (!req.body.authendpoint)
+        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
+
+    var name =  (req.params.name).toString();
+
+    //console.log("name:" + name);
+
+    importAuth(req.body.authendpoint,name,function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+/**
+ * @api {post} /authms/authendpoint/actions/export/:name Export authorization rules of a given microservice
+ * @apiVersion 1.0.0
+ * @apiName ExportMicroserviceAuthRules
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules of a given microservice.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} name Url params containg the name of the microservice
+ *
+ * @apiUse Unauthorized
+ * @apiUse NotFound
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
+router.post('/authendpoint/actions/import', jwtMiddle.ensureIsAuthorized, function (req, res) {
+//router.get('/authendpoint/actions/export/:name', function (req, res) {
+
+    if (!req.body.authendpoint)
+        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
+
+    importAuth(req.body.authendpoint,null,function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+function importAuth(roles,msName,exportedClb){
+
+    async.eachOfSeries(roles,function(value,key,callback){
+
+        //console.log("Key:" + key + " value:"+value+" msname:"+ msName);
+
+        if((!msName) || (key==msName)){
+            async.eachOfSeries(value,function(resource,URI,callbackrole){
+                async.eachOfSeries(resource,function(autToken,method,callbacktoken){
+                    if(autToken.length>0){
+                         AuthEP.findOne({URI: URI, method:method}, function (err, item) {
+                                if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
+                                if (item) return callbacktoken();
+                                try {
+
+                                    AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
+                                        // console.log("Creatig USER" + err);
+                                        console.log(Nitem);
+                                        if(!err) return callbacktoken();
+                                        else return callbacktoken(err);
+                                    });
+                                } catch (ex) {
+                                    return callbacktoken({
+                                            error: "InternalError",
+                                            error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'
+                                         });
+                                }
+                         });
+                    }else
+                        callbacktoken();
+
+                },function(err){
+                    if(!err) callbackrole();
+                    else callbackrole(err);
+                });
+            },function(err){
+                if(!err) callback();
+                else callback(err);
+            });
+
+        }else
+            callback();
+    },function(err){
+        if(!err)
+            exportedClb(null,{result:"import Done"});
+        else
+            exportedClb(err,null);
+    });
+}
+
+
+
 
 
 module.exports = router;
