@@ -17,6 +17,148 @@ router.use(middlewares.parsePagination);
 router.use(middlewares.parseFields);
 
 
+// ****************************************************************************************************
+// |                                                                                                  |
+// |                            Begin of endpoints used only by AuthMs User Interface                 |
+// |                                                                                                  |
+// ****************************************************************************************************
+
+router.post('/authendpoint/actions/export/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
+//router.get('/authendpoint/actions/export/:name', function (req, res) {
+
+    if (req.query.name)
+        return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
+
+    var name =  (req.params.name).toString();
+
+
+    var query = {name: name};
+
+
+    exportAuth(query,function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+router.post('/authendpoint/actions/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
+//router.get('/authendpoint/actions/export', function (req, res) {
+
+    exportAuth({},function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+function exportAuth(query,exportedClb){
+
+    AuthEP.find(query,function (err, results) {
+
+        if (!err) {
+            var exported={};
+            async.eachOfSeries(results,function(value,key,callback){
+                if(!exported[value.name]) exported[value.name]={};
+                var role=exported[value.name][value.URI]||{POST:[],GET:[],PUT:[],DELETE:[]};
+                role[value.method]=value.authToken;
+                exported[value.name][value.URI]=role;
+                callback();
+            },function(err){
+                exportedClb(null,exported)
+            });
+        }
+        else {
+            exportedClb({error: 'internal_error', error_message: 'something blew up, ERROR:' + err},null);
+        }
+    });
+}
+
+
+router.post('/authendpoint/actions/import/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    if (req.query.name)
+        return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
+
+    if (!req.body.authendpoint)
+        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
+
+    var name =  (req.params.name).toString();
+
+    importAuth(req.body.authendpoint,name,function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+router.post('/authendpoint/actions/import', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    if (!req.body.authendpoint)
+        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
+
+    importAuth(req.body.authendpoint,null,function(err,exported){
+        if(!err)
+            res.status(200).send(exported);
+        else
+            res.status(500).send(err);
+    });
+});
+
+
+function importAuth(roles,msName,exportedClb){
+
+    async.eachOfSeries(roles,function(value,key,callback){
+
+        if((!msName) || (key==msName)){
+            async.eachOfSeries(value,function(resource,URI,callbackrole){
+                async.eachOfSeries(resource,function(autToken,method,callbacktoken){
+                    if(autToken.length>0){
+                        AuthEP.findOne({URI: URI, method:method}, function (err, item) {
+                            if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
+                            if (item) return callbacktoken();
+                            try {
+
+                                AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
+                                    // console.log("Creatig USER" + err);
+                                    console.log(Nitem);
+                                    if(!err) return callbacktoken();
+                                    else return callbacktoken(err);
+                                });
+                            } catch (ex) {
+                                return callbacktoken({
+                                    error: "InternalError",
+                                    error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'
+                                });
+                            }
+                        });
+                    }else
+                        callbacktoken();
+
+                },function(err){
+                    if(!err) callbackrole();
+                    else callbackrole(err);
+                });
+            },function(err){
+                if(!err) callback();
+                else callback(err);
+            });
+
+        }else
+            callback();
+    },function(err){
+        if(!err)
+            exportedClb(null,{result:"import Done"});
+        else
+            exportedClb(err,null);
+    });
+}
 
 
 router.post('/actions/microservicelist/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
@@ -55,116 +197,6 @@ router.post('/actions/microservicelist/import', jwtMiddle.ensureIsAuthorized, fu
         });
     });
 });
-
-
-
-router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
-
-    //console.log("!!!!!!!!!!!!!!!" + util.inspect(req.body));
-    var serviceType = req.body.serviceType;
-    if (!serviceType)
-        return res.status(400).send({error: "BadRequest", error_message: "no serviceType provided"});
-
-    var tokenV = JSON.parse(commonfunctions.generateMsToken(serviceType)).token;
-    Microservice.findOneAndUpdate({name: serviceType}, {token: tokenV}, {new: true}, function (error, ute) {
-        if (error || (!ute)) {
-            //console.log("ERROR:" + (error || "No Microservice Type Found"));
-            res.status(404).send({error: "NotFound", error_message: error || "No Microservice Type Found"});
-        } else {
-            //console.log("Info:Microservice Type Found");
-            res.status(201).send({token: tokenV});
-        }
-    });
-
-});
-
-
-router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
-
-    //Authorization - anybody, without token
-    if (!req.body) return res.status(400).send({error: 'request body missing'});
-
-    var miroserviceName = req.body.name;
-    var baseUrl = req.body.baseUrl;
-    var color = req.body.color;
-    var icon = req.body.icon;
-
-    if (!miroserviceName) return res.status(400).send({
-        error: 'BadREquest',
-        error_message: "No microservice name provided"
-    });
-    if (!baseUrl) return res.status(400).send({error: 'BadREquest', error_message: "No url provided"});
-    if (!color) return res.status(400).send({error: 'BadREquest', error_message: "No color provided"});
-    if (!icon) return res.status(400).send({error: 'BadREquest', error_message: "No icon provided"});
-
-    Microservice.findOne({name: miroserviceName}, function (err, val) {
-        if (err) return res.status(500).send({error: 'internal Error', error_message: " problem saving microservice"});
-
-        if (val) {
-            return res.status(409).send({
-                error: 'Conflict',
-                error_message: "Microservice already registered at URL:" + val.baseUrl
-            });
-        } else {
-            Microservice.create({
-                name: miroserviceName,
-                baseUrl: baseUrl,
-                icon: icon,
-                color: color
-            }, function (err, mcsID) {
-
-                if (err) return res.status(500).send({
-                    error: 'internal Error',
-                    error_message: "problem saving microservice " + err
-                });
-
-                commonfunctions.updateMicroservice(function () { //update microservice List
-                    return res.status(201).send(mcsID);
-                });
-            });
-        }
-    });
-
-});
-
-
-router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
-
-    var id = (req.params.id).toString();
-
-    Microservice.findByIdAndRemove(id, function (err, content) {
-        if (err) return res.status(500).send({
-            error: "delete_error",
-            error_message: 'Unable to delete microservice:' + err + ')'
-        });
-        if (_.isEmpty(content)) return res.status(404).send({
-            error: "Not Found",
-            error_message: 'no microservice found with id ' + id
-        });
-
-        AuthEP.remove({name: content.name}, function (err, contentRoles) {
-            if (err) {
-                Microservice.create(content, function (errC, contentN) {
-                    if (errC) return res.status(409).send({
-                        error: "Conflict",
-                        error_message: 'Microservice deleted but authorization rules for this microservice should exixst'
-                    });
-                    return res.status(500).send({
-                        error: "delete_error",
-                        error_message: 'Unable to delete microservice:' + err + ')'
-                    });
-                });
-
-            } else {
-                commonfunctions.updateMicroservice(function () { //update microservice List
-                    return res.status(200).send(content);
-                });
-            }
-        });
-    });
-
-});
-
 
 router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized], function (req, res) {
 
@@ -297,6 +329,215 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
             if (err) return res.status(500).send({error: "InternalError", error_message: err});
             return res.status(200).send({nginx: nginxIp, service: respToWebUI, baseUrl: bUrl});
         });
+
+});
+
+
+// ******************************^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^  *******************
+// |                             | | | | | | | | | | | | | | | | | | | | | | | | | |                  |
+// |                            END of endpoints used only by AuthMs User Interface                   |
+// |                                                                                                  |
+// ****************************************************************************************************
+
+
+
+
+
+/**
+ * @api {post} /authms/renewtoken Renew Token
+ * @apiVersion 1.0.0
+ * @apiName Create a new Token for a Microservice type
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Creates a new Acess token for a given microservice type.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} serviceType the name of the microservice on wich create access_token
+ *
+ * @apiParamExample {json} Request-Example:
+ * HTTP/1.1 POST request
+ *  Body:{ "serviceType": "userms" }
+ *
+ * @apiSuccess (201 - OK) {String} token The microservice access_token
+ *
+ * @apiSuccessExample {json} Example: 200 Ok
+ *      HTTP/1.1 201 CREATED
+ *      {
+ *        "token":"9804H4334HFN......"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    var serviceType = req.body.serviceType;
+    if (!serviceType)
+        return res.status(400).send({error: "BadRequest", error_message: "no serviceType provided"});
+
+    var tokenV = JSON.parse(commonfunctions.generateMsToken(serviceType)).token;
+    Microservice.findOneAndUpdate({name: serviceType}, {token: tokenV}, {new: true}, function (error, ute) {
+        if (error || (!ute)) {
+            //console.log("ERROR:" + (error || "No Microservice Type Found"));
+            res.status(404).send({error: "NotFound", error_message: error || "No Microservice Type Found"});
+        } else {
+            //console.log("Info:Microservice Type Found");
+            res.status(201).send({token: tokenV});
+        }
+    });
+
+});
+
+
+
+/**
+ * @api {post} /authms/signup Create aand save new microservice
+ * @apiVersion 1.0.0
+ * @apiName Create and save a new Microservice type
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Creates a new microservice type.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} name the name of the microservice to create
+ * @apiParam {String} baseUrl the microservice gateway/loadbalance base url
+ * @apiParam {String} color the color used in the UI to represent the microservice
+ * @apiParam {String} icon the icon used in the UI to represent the microservice
+ *
+ * @apiParamExample {json} Request-Example:
+ * HTTP/1.1 POST request
+ *  Body:{ "name": "userms",
+ *        "baseUrl":"localhost:3000/nginx",
+ *        "color":"yellow",
+ *        "icon":"fa-users"
+ *       }
+ *
+ * @apiSuccess (201 - OK) {Object}  The created resource
+ *
+ * @apiSuccessExample {json} Example: 200 Ok
+ *      HTTP/1.1 201 CREATED
+ *      {
+ *        "name":"userms",
+ *        "baseUrl":"localhost:3000/nginx",
+ *        "color":"yellow",
+ *        "icon":"fa-users"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
+
+    //Authorization - anybody, without token
+    if (!req.body) return res.status(400).send({error: 'request body missing'});
+
+    var miroserviceName = req.body.name;
+    var baseUrl = req.body.baseUrl;
+    var color = req.body.color;
+    var icon = req.body.icon;
+
+    if (!miroserviceName) return res.status(400).send({
+        error: 'BadREquest',
+        error_message: "No microservice name provided"
+    });
+    if (!baseUrl) return res.status(400).send({error: 'BadREquest', error_message: "No url provided"});
+    if (!color) return res.status(400).send({error: 'BadREquest', error_message: "No color provided"});
+    if (!icon) return res.status(400).send({error: 'BadREquest', error_message: "No icon provided"});
+
+    Microservice.findOne({name: miroserviceName}, function (err, val) {
+        if (err) return res.status(500).send({error: 'internal Error', error_message: " problem saving microservice"});
+
+        if (val) {
+            return res.status(409).send({
+                error: 'Conflict',
+                error_message: "Microservice already registered at URL:" + val.baseUrl
+            });
+        } else {
+            Microservice.create({
+                name: miroserviceName,
+                baseUrl: baseUrl,
+                icon: icon,
+                color: color
+            }, function (err, mcsID) {
+
+                if (err) return res.status(500).send({
+                    error: 'internal Error',
+                    error_message: "problem saving microservice " + err
+                });
+
+                commonfunctions.updateMicroservice(function () { //update microservice List
+                    return res.status(201).send(mcsID);
+                });
+            });
+        }
+    });
+
+});
+
+
+/**
+ * @api {delete} /authms/:id
+ * @apiVersion 1.0.0
+ * @apiName Delete a microservice
+ * @apiGroup Authms
+ *
+ * @apiDescription Accessible only by microservice access tokens. Deletes a microservice type.
+ *
+ * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiParam {String} id(url param) id the microservice id to delete
+ *
+ * @apiSuccess (201 - OK) {Object}  The deleted resource
+ *
+ * @apiSuccessExample {json} Example: 200 Ok
+ *      HTTP/1.1 200 Deleted
+ *      {
+ *        "name":"userms",
+ *        "baseUrl":"localhost:3000/nginx",
+ *        "color":"yellow",
+ *        "icon":"fa-users"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ * @apiUse NotFound
+ */
+router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+    var id = (req.params.id).toString();
+
+    Microservice.findByIdAndRemove(id, function (err, content) {
+        if (err) return res.status(500).send({
+            error: "delete_error",
+            error_message: 'Unable to delete microservice:' + err + ')'
+        });
+        if (_.isEmpty(content)) return res.status(404).send({
+            error: "Not Found",
+            error_message: 'no microservice found with id ' + id
+        });
+
+        AuthEP.remove({name: content.name}, function (err, contentRoles) {
+            if (err) {
+                Microservice.create(content, function (errC, contentN) {
+                    if (errC) return res.status(409).send({
+                        error: "Conflict",
+                        error_message: 'Microservice deleted but authorization rules for this microservice should exixst'
+                    });
+                    return res.status(500).send({
+                        error: "delete_error",
+                        error_message: 'Unable to delete microservice:' + err + ')'
+                    });
+                });
+
+            } else {
+                commonfunctions.updateMicroservice(function () { //update microservice List
+                    return res.status(200).send(content);
+                });
+            }
+        });
+    });
 
 });
 
@@ -720,221 +961,6 @@ router.put('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
     });
 
 });
-
-
-/**
- * @api {post} /authms/authendpoint/actions/export/:name Export authorization rules of a given microservice
- * @apiVersion 1.0.0
- * @apiName ExportMicroserviceAuthRules
- * @apiGroup Authms
- *
- * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules of a given microservice.
- *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} name Url params containg the name of the microservice
- *
- * @apiUse Unauthorized
- * @apiUse NotFound
- * @apiUse BadRequest
- * @apiUse ServerError
- */
-//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
-router.post('/authendpoint/actions/export/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
-//router.get('/authendpoint/actions/export/:name', function (req, res) {
-
-    if (req.query.name)
-        return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
-
-    var name =  (req.params.name).toString();
-
-
-    var query = {name: name};
-
-
-    exportAuth(query,function(err,exported){
-        if(!err)
-            res.status(200).send(exported);
-        else
-            res.status(500).send(err);
-    });
-});
-
-
-/**
- * @api {post} /authms/authendpoint/actions/export Export all authorization rules
- * @apiVersion 1.0.0
- * @apiName ExportAllMicroserviceAuthRules
- * @apiGroup Authms
- *
- * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules.
- *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- *
- * @apiUse Unauthorized
- * @apiUse NotFound
- * @apiUse BadRequest
- * @apiUse ServerError
- */
-
-router.post('/authendpoint/actions/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
-//router.get('/authendpoint/actions/export', function (req, res) {
-
-    exportAuth({},function(err,exported){
-        if(!err)
-            res.status(200).send(exported);
-        else
-            res.status(500).send(err);
-    });
-});
-
-
-function exportAuth(query,exportedClb){
-
-    AuthEP.find(query,function (err, results) {
-
-        if (!err) {
-            var exported={};
-            async.eachOfSeries(results,function(value,key,callback){
-                if(!exported[value.name]) exported[value.name]={};
-                var role=exported[value.name][value.URI]||{POST:[],GET:[],PUT:[],DELETE:[]};
-                role[value.method]=value.authToken;
-                exported[value.name][value.URI]=role;
-                callback();
-            },function(err){
-                exportedClb(null,exported)
-            });
-        }
-        else {
-            exportedClb({error: 'internal_error', error_message: 'something blew up, ERROR:' + err},null);
-        }
-    });
-}
-
-
-
-/**
- * @api {post} /authms/authendpoint/actions/export/:name Export authorization rules of a given microservice
- * @apiVersion 1.0.0
- * @apiName ExportMicroserviceAuthRules
- * @apiGroup Authms
- *
- * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules of a given microservice.
- *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} name Url params containg the name of the microservice
- *
- * @apiUse Unauthorized
- * @apiUse NotFound
- * @apiUse BadRequest
- * @apiUse ServerError
- */
-//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
-router.post('/authendpoint/actions/import/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
-//router.get('/authendpoint/actions/export/:name', function (req, res) {
-
-
-    //console.log("BODY " + JSON.stringify(req.body));
-
-    if (req.query.name)
-        return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
-
-    if (!req.body.authendpoint)
-        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
-
-    var name =  (req.params.name).toString();
-
-    //console.log("name:" + name);
-
-    importAuth(req.body.authendpoint,name,function(err,exported){
-        if(!err)
-            res.status(200).send(exported);
-        else
-            res.status(500).send(err);
-    });
-});
-
-
-/**
- * @api {post} /authms/authendpoint/actions/export/:name Export authorization rules of a given microservice
- * @apiVersion 1.0.0
- * @apiName ExportMicroserviceAuthRules
- * @apiGroup Authms
- *
- * @apiDescription Accessible only by microservice access tokens. Returns an export list of all endpoint rules of a given microservice.
- *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} name Url params containg the name of the microservice
- *
- * @apiUse Unauthorized
- * @apiUse NotFound
- * @apiUse BadRequest
- * @apiUse ServerError
- */
-//router.get('/:name/authendpoint', jwtMiddle.ensureIsAuthorized, function(req, res) {
-router.post('/authendpoint/actions/import', jwtMiddle.ensureIsAuthorized, function (req, res) {
-//router.get('/authendpoint/actions/export/:name', function (req, res) {
-
-    if (!req.body.authendpoint)
-        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
-
-    importAuth(req.body.authendpoint,null,function(err,exported){
-        if(!err)
-            res.status(200).send(exported);
-        else
-            res.status(500).send(err);
-    });
-});
-
-
-function importAuth(roles,msName,exportedClb){
-
-    async.eachOfSeries(roles,function(value,key,callback){
-
-        //console.log("Key:" + key + " value:"+value+" msname:"+ msName);
-
-        if((!msName) || (key==msName)){
-            async.eachOfSeries(value,function(resource,URI,callbackrole){
-                async.eachOfSeries(resource,function(autToken,method,callbacktoken){
-                    if(autToken.length>0){
-                         AuthEP.findOne({URI: URI, method:method}, function (err, item) {
-                                if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
-                                if (item) return callbacktoken();
-                                try {
-
-                                    AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
-                                        // console.log("Creatig USER" + err);
-                                        console.log(Nitem);
-                                        if(!err) return callbacktoken();
-                                        else return callbacktoken(err);
-                                    });
-                                } catch (ex) {
-                                    return callbacktoken({
-                                            error: "InternalError",
-                                            error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'
-                                         });
-                                }
-                         });
-                    }else
-                        callbacktoken();
-
-                },function(err){
-                    if(!err) callbackrole();
-                    else callbackrole(err);
-                });
-            },function(err){
-                if(!err) callback();
-                else callback(err);
-            });
-
-        }else
-            callback();
-    },function(err){
-        if(!err)
-            exportedClb(null,{result:"import Done"});
-        else
-            exportedClb(err,null);
-    });
-}
 
 
 

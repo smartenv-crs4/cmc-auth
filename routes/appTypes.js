@@ -17,6 +17,10 @@ router.use(middlewares.parseFields);
 
 
 
+
+
+
+
 /**
  * @api {get} /apptypes Get all application types
  * @apiVersion 1.0.0
