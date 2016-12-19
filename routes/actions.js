@@ -36,6 +36,14 @@ function decodeToken(req,res,callb){
  */
 
 /**
+ * @apiDefine  Conflict
+ * @apiError 409_Conflict <b>Conflict:</b> Indicates that the request could not be processed because of conflict in the request.
+ * For Example a resource could not be deleted because is used from other resource
+ * <b>request.body.error</b> contains an error name specifing the Error.<BR>
+ * <b>request.body.erro_messager</b> contains an error message specifing the conflict.<BR>
+ */
+
+/**
  * @apiDefine Metadata
  * @apiSuccess {Object} _metadata Object containing metadata for pagination info
  * @apiSuccess {Number} _metadata.skip Number of results of this query skipped
