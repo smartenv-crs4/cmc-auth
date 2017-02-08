@@ -729,7 +729,8 @@ describe('UserAndAppTypes API', function () {
                 else{
                     response.statusCode.should.be.equal(409);
                     var results = JSON.parse(body);
-                    results.error_message.indexOf("this User Type Already exixt").should.be.not.equal(-1);
+                    results.error_message.indexOf("this User Type").should.be.not.equal(-1);
+                    results.error_message.indexOf("Already exist").should.be.not.equal(-1);
                     done();
                 }
             });

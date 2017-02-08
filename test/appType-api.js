@@ -735,7 +735,8 @@ describe('appType-Api API', function () {
                 else{
                     response.statusCode.should.be.equal(409);
                     var results = JSON.parse(body);
-                    results.error_message.indexOf("this App Type Already exixt").should.be.not.equal(-1);
+                    results.error_message.indexOf("this App Type").should.be.not.equal(-1);
+                    results.error_message.indexOf("Already exist").should.be.not.equal(-1);
                     done();
                 }
             });
