@@ -97,7 +97,7 @@ router.post('/configure', function(req, res) {
     };
     var userBody = JSON.stringify(ms);
     // console.log("BODY " + userBody);
-
+                                    
     var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
     var gwConf= (gwBaseUrl!="") ? gwBaseUrl + "/" + conf.getParam("apiVersion") : "";
     request.post({
