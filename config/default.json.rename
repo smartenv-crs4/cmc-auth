@@ -52,7 +52,5 @@
     "consulPort":"8500",
     "consulServices":"/v1/agent/services",
     "consulHealth":"/v1/health/service"
-
   }
-
 }
