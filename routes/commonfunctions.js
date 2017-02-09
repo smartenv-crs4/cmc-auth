@@ -221,8 +221,11 @@ exports.initMs = function(callb) {
                     if(!val){
                         console.log("TOKEN not present");
                         var token=JSON.parse(commonFunction.generateMsToken("authms")).token;
+
                         var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
-                        var gwConf= (gwBaseUrl!="") ? gwBaseUrl + "/" + conf.getParam("apiVersion") : "";
+                        var gwVersion=conf.getParam("apiVersion");
+                        var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
+                        gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
                         ms.create({name:"authms",icon:"fa-unlock-alt", color:"panel-info",baseUrl:conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf, token:token},function(err,val){
                             if (err) console.log("ERROR in token creation for this microservice " + err);
                             console.log("TOKEN created");
