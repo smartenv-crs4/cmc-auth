@@ -21,7 +21,9 @@ router.get('/main', function(req, res) {
 
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
-        var gwConf= (gwBaseUrl!="") ? gwBaseUrl + "/" + conf.getParam("apiVersion") : "";
+        var gwVersion=conf.getParam("apiVersion");
+        var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
+        gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
         res.render('main', {
             MicroSL: conf.getParam("microserviceList"),
             myUrl: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf,
@@ -48,7 +50,9 @@ router.get('/configure', function(req, res) {
 router.get('/login', function(req, res) {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
-    var gwConf= (gwBaseUrl!="") ? gwBaseUrl + "/" + conf.getParam("apiVersion") : "";
+    var gwVersion=conf.getParam("apiVersion");
+    var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
+    gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
     res.render('login', {
         next: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf,
         at: conf.getParam("MyMicroserviceToken")
@@ -97,9 +101,11 @@ router.post('/configure', function(req, res) {
     };
     var userBody = JSON.stringify(ms);
     // console.log("BODY " + userBody);
-                                    
+
     var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
-    var gwConf= (gwBaseUrl!="") ? gwBaseUrl + "/" + conf.getParam("apiVersion") : "";
+    var gwVersion=conf.getParam("apiVersion");
+    var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
+    gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
     request.post({
         url: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf + "/authuser/signin",
         body: userBody,
@@ -110,7 +116,9 @@ router.post('/configure', function(req, res) {
         if (respb.error_message){
             res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
             var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
-            var gwConf= (gwBaseUrl!="") ? gwBaseUrl + "/" + conf.getParam("apiVersion") : "";
+            var gwVersion=conf.getParam("apiVersion");
+            var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
+            gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
             res.render('login', {
                 next: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf,
                 at: conf.getParam("MyMicroserviceToken"),
