@@ -5,7 +5,7 @@ var authEnpoints = require('../models/authEndpoints').AuthEndPoint;
 var jwtMiddle = require('./jwtauth');
 var commonfunctions=require('./commonfunctions');
 var request=require("request");
-
+var _ = require('underscore')._;
 
 
 
