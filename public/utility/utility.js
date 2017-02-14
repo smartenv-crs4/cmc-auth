@@ -106,7 +106,7 @@ function deleteMicroservice(url,myToken,id){
 
 function createNewAuth(ms,url,myToken){
 
-    console.log("Create new Auth:" + JSON.stringify(ms));
+    //console.log("Create new Auth:" + JSON.stringify(ms));
 
     $.ajax({
         url: url+"/authms/authendpoint",
@@ -201,7 +201,7 @@ function saveNewAuth(url,myToken){
 
 
     //console.log("MS-->" + JSON.stringify(ms));
-    console.log("MS-->" + url);
+    //console.log("MS-->" + url);
 
     var id=$("input[name='msId']").val();
 
@@ -791,10 +791,10 @@ function updateTokenType(id,name,type,superuser){
             $("#optionschecksuper").prop('checked',false);
 
         if(type=="app"){
-            console.log("APP");
+            //console.log("APP");
             $(":radio[value='app']").prop('checked',true);
         }else{
-            console.log("USER");
+            //console.log("USER");
             $(":radio[value='user']").prop('checked',true);
         }
 
@@ -896,7 +896,7 @@ function logout(url){
         contentType: "application/json",
         success: function(data) {
             sessionStorage.clear();
-            console.log("LOGOUT");
+            //console.log("LOGOUT");
             document.open();
             document.write(data);
             document.close();
@@ -927,7 +927,7 @@ function exportMicroserviceList(url,myToken){
             saveAs(blob, filename);
         },
         error: function(data) {
-            console.log(data);
+            //console.log(data);
             $('#myAlertMsgModalLabel').text("Something blew up");
             var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
             $('#AlertMsgMessage').text(msg);
@@ -1017,7 +1017,7 @@ function exportAuthendpoint(all,url,myToken){
 
         },
         error: function(data) {
-            console.log(data);
+            //console.log(data);
             $('#myAlertMsgModalLabel').text("Something blew up");
             var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
             $('#AlertMsgMessage').text(msg);
@@ -1070,6 +1070,9 @@ function importAuthendpoint(all,url,myToken){
     $('#BrowseFile').remove();
 }
 
+function deleteOpenDialog(){
+    $('#BrowseFile').remove();
+}
 
 function openDialog(all,url,myToken){
     // $('#importauthroles').append("<form method='POST' action='http://localhost:3005/authms/authendpoint/actions/import/userms?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzk2NDc4ODc4MzE1fQ.we6pV7Rn3iYUfJD5T-T8cj7Her4S6lIMQUoZbmlA7a0' enctype='multipart/form-data'> " +
@@ -1094,7 +1097,7 @@ function exportTokenTypeList(url,myToken){
             'Authorization': 'Bearer ' + myToken
         },
         success: function(datauser) {
-            console.log(datauser);
+            //console.log(datauser);
             $.ajax({
                 url: url+ "/apptypes?skip=-1&limit=-1",
                 type: 'GET',
@@ -1111,7 +1114,7 @@ function exportTokenTypeList(url,myToken){
 
                 },
                 error: function(data) {
-                    console.log(data);
+                    //console.log(data);
                     $('#myAlertMsgModalLabel').text("Something blew up");
                     var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
                     $('#AlertMsgMessage').text(msg);
@@ -1120,7 +1123,7 @@ function exportTokenTypeList(url,myToken){
             });
         },
         error: function(data) {
-            console.log(data);
+            //console.log(data);
             $('#myAlertMsgModalLabel').text("Something blew up");
             var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
             $('#AlertMsgMessage').text(msg);
