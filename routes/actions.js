@@ -279,7 +279,9 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
 
             URI=URI.endsWith("/") ? URI : URI+"/";
             method=method.toUpperCase();
-            authEnpoints.findOne({URI: URI, method: method}, function (err, item) {
+            var typeT=req.decode_results.type;
+
+            authEnpoints.findOne({URI: URI, method: method, name:typeT}, function (err, item) {
                 if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
                 if (!item) return res.status(401).send({
                     error: "BadRequest",

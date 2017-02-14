@@ -133,10 +133,6 @@ exports.decodeToken = function(req, res, next) {
 
 
 exports.ensureIsAuthorized = function(req, res, next) {
-
-
-
-    
     // var URI;
     // var path=(req.route.path=="/") ? "" : req.route.path;
     // if(_.isEmpty(req.baseUrl))

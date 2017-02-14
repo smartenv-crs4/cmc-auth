@@ -181,7 +181,7 @@ describe('MS Auth Model', function(){
                     done();
                 });
             }catch(ex) {
-                console.log("ex:" + ex);
+                //console.log("ex:" + ex);
                 ex.message.should.be.equal("Field `notInSchema` is not in schema and strict mode is set to throw.");
                 done();
             }
@@ -200,12 +200,12 @@ describe('MS Auth Model', function(){
                 },function(err,val){
                     should.exist(err);
                     var errstring="err:"+ err
-                    console.log(errstring);
+                    //console.log(errstring);
                     errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for app field `type`[webui,ext,user,ms].");
                     done();
                 });
             }catch(ex) {
-                console.log("ex:" + ex);
+                //console.log("ex:" + ex);
                 done();
             }
         });
@@ -224,7 +224,7 @@ describe('MS Auth Model', function(){
                     done();
                 });
             }catch(ex) {
-                console.log("ex:" + ex);
+                //console.log("ex:" + ex);
                 done();
             }
         });

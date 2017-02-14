@@ -240,7 +240,7 @@ describe('Apps API', function () {
                 if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                 else {
 
-                    console.log("BODYYYYYYERRRR" + body);
+                    //console.log("BODYYYYYYERRRR" + body);
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');
@@ -260,7 +260,7 @@ describe('Apps API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                         else {
-                            console.log("BODYYYYYYERRRR" + body);
+                            //console.log("BODYYYYYYERRRR" + body);
                             response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
@@ -776,7 +776,7 @@ describe('Apps API', function () {
                     }
                    // console.log("ENDONE");
 
-                    console.log("BODYBODY" + body);
+                    //console.log("BODYBODY" + body);
 
                     request.get({
                         url: APIURL + '?skip=0&limit=2',
@@ -885,7 +885,7 @@ describe('Apps API', function () {
             request.get({url:url,headers:{'Authorization' : "Bearer "+ conf.MyMicroserviceToken}},function(error, response, body){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
-                    console.log("ERRORO"+body);
+                    //("ERRORO"+body);
                     response.statusCode.should.be.equal(404);
                 }
                 done();
@@ -1068,7 +1068,7 @@ describe('Apps API', function () {
                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                 else {
 
-                    console.log("+++++++++++++ RRR " + body + " ++++++++++");
+                    //console.log("+++++++++++++ RRR " + body + " ++++++++++");
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');
@@ -1194,7 +1194,7 @@ describe('Apps API', function () {
             }, function (error, response,body) {
                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                 else {
-                    console.log("+++++++++++++ RRR " + body + " ++++++++++");
+                    //console.log("+++++++++++++ RRR " + body + " ++++++++++");
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');

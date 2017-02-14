@@ -6,7 +6,7 @@ var db = require("./dbTest");
 var User = require('../models/users').User;
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
-var conf=require('../config').conf;
+var conf=require('../routes/configSettingManagment');
 
 var util = require('util');
 
@@ -31,7 +31,7 @@ describe('MS Auth Model', function(){
   beforeEach(function(done){
 
     var range = _.range(100);
-    var type=conf.userType;
+    var type=conf.getParam("userType");
     async.each(range, function(e,cb){
 
 
@@ -174,19 +174,19 @@ describe('MS Auth Model', function(){
         it('must thow an exception for invalid USER Type', function(done){
 
             try {
-                conf.setParam("appType",["valid"]);
+                conf.setParam("userType",["valid"]);
                 User.create({
                     email:"email@email.it",
                     type: "INVALID"
                 },function(err,val){
                     should.exist(err);
                     var errstring="err:"+ err
-                    console.log(errstring);
+                    //console.log("errString: " + errstring);
                     errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for user field `type`[valid].");
                     done();
                 });
             }catch(ex) {
-                console.log("ex:" + ex);
+                //console.log("ex:" + ex);
                 done();
             }
         });
