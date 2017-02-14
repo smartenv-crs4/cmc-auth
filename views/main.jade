@@ -236,7 +236,7 @@ html(lang='en')
                                                         |   Token Types
                                                 .row
                                                     .btn-group
-                                                        a( type='button', data-toggle='dropdown').whiteString
+                                                        a( onclick="deleteOpenDialog()",type='button', data-toggle='dropdown').whiteString
                                                             span.fa.fa-database(aria-hidden='true')
                                                             |   Actions
                                                             span.caret
@@ -386,9 +386,9 @@ html(lang='en')
                                                         span.caret
                                                     ul.dropdown-menu.pull-right(role='menu')
                                                         li
-                                                            a(href='#') Export microservice settings
+                                                            a(href="javascript:exportMicroserviceList('"+ myUrl + "','" + myToken + "');") Export microservice settings
                                                         li
-                                                            a(href='#') Import microservice settings
+                                                            a(href="javascript:loadMicroserviceList('"+ myUrl+"','"+myToken+"');") Import microservice settings
 
 
                                         // /.panel-heading
