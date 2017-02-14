@@ -472,7 +472,7 @@ describe('appType-Api API', function () {
 
         it('must return error 409 in delete  due some auth token rules include this app type ', function(done){
 
-            console.log("MS TYPE " + conf.msType[0] + " app type: " + conf.appType[0] );
+            //console.log("MS TYPE " + conf.msType[0] + " app type: " + conf.appType[0] );
 
             authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[conf.appType[0]]},function(err,valAuth){
                 if (err) console.log("######   ERRORE1: " + err + "  ######");

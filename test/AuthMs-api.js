@@ -97,7 +97,7 @@ describe('AuthMS API', function () {
                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                 else {
 
-                    console.log("@@@@@@@@@@@@@@@@@ BOFY" + body);
+                    //console.log("@@@@@@@@@@@@@@@@@ BOFY" + body);
 
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
@@ -218,7 +218,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -268,7 +268,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -368,7 +368,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -419,7 +419,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                           // console.log("BOSY " + body)
                             response.statusCode.should.be.equal(207);
                             var results = JSON.parse(response.body);
                             results.should.have.property('error');
@@ -559,7 +559,7 @@ describe('AuthMS API', function () {
             var appBody = JSON.stringify({user:user});
             //console.log("BODY " + appBody);
 
-            console.log("XXXXXXXXXXXXXXX BEFORE 522");
+            //console.log("XXXXXXXXXXXXXXX BEFORE 522");
 
             var url = APIURL + '/authuser/signup';
             request.post({
@@ -943,7 +943,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body)
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -993,7 +993,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -1093,7 +1093,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body)
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -1144,7 +1144,7 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            console.log("BOSY " + body)
+                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(207);
                             var results = JSON.parse(response.body);
                             results.should.have.property('error');
@@ -1251,7 +1251,7 @@ describe('AuthMS API', function () {
             //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
 
-            console.log("XXXXXXXXXXXXXXX BEFORE 1243");
+            //console.log("XXXXXXXXXXXXXXX BEFORE 1243");
 
             request.post({
                 url: url,

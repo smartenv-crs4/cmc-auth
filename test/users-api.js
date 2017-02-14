@@ -876,7 +876,7 @@ describe('Users API', function () {
             request.get({url:url,headers:{'Authorization' : "Bearer "+ conf.MyMicroserviceToken}},function(error, response, body){
                 if(error) console.log("######   ERRORE: 401 2 " + error + "  ######");
                 else{
-                    console.log("ERRORO"+body);
+                    //console.log("ERRORO"+body);
                     response.statusCode.should.be.equal(404);
                 }
                 done();
@@ -1237,7 +1237,6 @@ describe('Users API', function () {
                                             results.should.have.property('error');
                                             results.should.have.property('error_message');
                                             results.error_message.indexOf("You are not correctly authenticated").should.be.greaterThan(-1);
-
                                             user = {
                                                 "username": "mario@caport.com",
                                                 "password": "maciomacio"
