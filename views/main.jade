@@ -242,19 +242,24 @@ html(lang='en')
                                                             span.caret
                                                         ul.dropdown-menu.pull-left(role='menu')
                                                             li
-                                                                a(href="javascript:exportAuthendpoint('true','"+ myUrl + "','" + myToken + "');") Export AuthToken roles
+                                                                a(href="javascript:exportAuthendpoint('true','true','"+ myUrl + "','" + myToken + "');") Export AuthToken roles
                                                             li#importauthroles
                                                                 a(href="javascript:openDialog('true','"+ myUrl+"','"+myToken+"');") Import AuthToken roles
                                                             li.divider
                                                             li
-                                                                a(href="javascript:exportTokenTypeList('"+ myUrl + "','" + myToken + "');") Export token Types list
+                                                                a(href="javascript:exportTokenTypeList('true','"+ myUrl + "','" + myToken + "');") Export token Types list
                                                             li#importtokentypelist
                                                                 a(href="javascript:loadTokenTypeList('"+ myUrl+"','"+myToken+"');") Import token Types list
                                                             li.divider
                                                             li
-                                                                a(href="javascript:exportMicroserviceList('"+ myUrl + "','" + myToken + "');") Export ms list
+                                                                a(href="javascript:exportMicroserviceList('true','"+ myUrl + "','" + myToken + "');") Export ms list
                                                             li#importmicroservicelist
                                                                 a(href="javascript:loadMicroserviceList('"+ myUrl+"','"+myToken+"');") Import ms list
+                                                            li.divider
+                                                            li
+                                                                a(href="javascript:exportEnvironmentConfig('" + myUrl + "','" + myToken + "');") Export Architecture
+                                                            li#importarchitecture
+                                                                a(href="javascript:loadMicroserviceList('" + myUrl + "','" + myToken + "');") Import Architecture
 
                                         // TODO OLD .col-xs-9.text-right
                                         .col-xs-7.text-right
@@ -386,7 +391,7 @@ html(lang='en')
                                                         span.caret
                                                     ul.dropdown-menu.pull-right(role='menu')
                                                         li
-                                                            a(href="javascript:exportMicroserviceList('"+ myUrl + "','" + myToken + "');") Export microservice settings
+                                                            a(href="javascript:exportMicroserviceList('true','"+ myUrl + "','" + myToken + "');") Export microservice settings
                                                         li
                                                             a(href="javascript:loadMicroserviceList('"+ myUrl+"','"+myToken+"');") Import microservice settings
 
@@ -424,7 +429,7 @@ html(lang='en')
                                                         span.caret
                                                     ul.dropdown-menu.pull-right(role='menu')
                                                         li
-                                                            a(href="javascript:exportAuthendpoint(false,'" + myUrl + "','" + myToken + "');") Export AuthToken roles
+                                                            a(href="javascript:exportAuthendpoint('true','false','" + myUrl + "','" + myToken + "');") Export AuthToken roles
                                                         li#importauthroles
                                                             a(href="javascript:openDialog(false,'" + myUrl + "','" + myToken + "');") Import AuthToken roles
                                         // /.panel-heading

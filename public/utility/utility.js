@@ -910,8 +910,43 @@ function logout(url){
 }
 
 
+function showError(msg){
+    $('#myAlertMsgModalLabel').text("Something blew up");
+    $('#AlertMsgMessage').text(msg);
+    $('#myAlertMsg').modal({show: true, backdrop: false});
+}
 
-function exportMicroserviceList(url,myToken){
+function exportEnvironmentConfig(url,myToken){
+
+    exportMicroserviceList(false,url,myToken,function(err,response){
+        console.log("ERRML:"+ err);
+        if(err) showError("Incomplete export due " + err + " in Microservice list generation");
+        var microservice=response||[];
+        exportAuthendpoint(false,true,url,myToken,function(err,response){
+            console.log("AUTH:"+ err);
+            if(err) showError("Incomplete export due " + err + " in resource access list roles generation");
+            var roles=response||{};
+            exportTokenTypeList(false,url,myToken,function(err,response){
+                console.log("TOKENTYPE:"+ err);
+                if(err) showError("Incomplete export due " + err + " in Token type list generation");
+                var tokenTypes=response||[];
+                var exportJson={
+                    microservice:microservice,
+                    roles:roles,
+                    token:tokenTypes
+                };
+
+                var blob = new Blob([JSON.stringify(exportJson)], {type: "text/plain;charset=utf-8"});
+                var d = new Date();
+                var filename = "Port2020Architecture" + d.toJSON() + ".json";
+                saveAs(blob, filename);
+            });
+        });
+    });
+}
+
+
+function exportMicroserviceList(save,url,myToken,callback){
 
     $.ajax({
         url: url + "/authms/actions/microservicelist/export",
@@ -921,17 +956,25 @@ function exportMicroserviceList(url,myToken){
             'Authorization': 'Bearer ' + myToken
         },
         success: function(data) {
-            var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
-            var d=new  Date();
-            var filename=  "microservicesListExport_"+ d.toJSON() +"_.json";
-            saveAs(blob, filename);
+            if(save) {
+                var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+                var d = new Date();
+                var filename = "microservicesListExport_" + d.toJSON() + "_.json";
+                saveAs(blob, filename);
+            }else{
+                callback(null,data);
+            }
         },
         error: function(data) {
             //console.log(data);
-            $('#myAlertMsgModalLabel').text("Something blew up");
-            var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-            $('#AlertMsgMessage').text(msg);
-            $('#myAlertMsg').modal({show:true,backdrop:false});
+            var msg = data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            if(save) {
+                $('#myAlertMsgModalLabel').text("Something blew up");
+                $('#AlertMsgMessage').text(msg);
+                $('#myAlertMsg').modal({show: true, backdrop: false});
+            }else{
+                callback(msg,null);
+            }
         }
     });
 }
@@ -945,46 +988,49 @@ function loadMicroserviceList(url,myToken){
 
 
 
-function importMicroservicesList(url,myToken){
+function importMicroservicesListCall(contents,url,myToken){
 
+    $.ajax({
+        url: url+"/authms/actions/microservicelist/import",
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify(contents),
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        success: function(data) {
+            //console.log(data);
+            $('#myInfoMsgModalLabel').text("Import Results");
+            $('#InfoMsgMessage').text("Microservice List import Done");
+            $('#myInfoMsg').modal({show:true,backdrop:false});
+            location.reload();
+
+        },
+        error: function(data) {
+            //console.log(data);
+            reloadPage=true;
+            $('#myAlertMsgModalLabel').text(data.responseJSON.error);
+            var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            $('#AlertMsgMessage').text(msg);
+            $('#myAlertMsg').modal({show:true,backdrop:false});
+            $('#myAlertMsg').on('hidden.bs.modal', function (e) {
+                if(reloadPage) {
+                    reloadPage=false;
+                    location.reload();
+                }
+            });
+
+        }
+    });
+}
+
+
+function importMicroservicesList(url,myToken){
     var file=$('#fileID')[0].files[0];
     var reader = new FileReader();
-    var originalUrl=url;
     reader.onload = function(e) {
         var contents ={ microservicelist: JSON.parse(e.target.result)};
-
-        $.ajax({
-            url: url+"/authms/actions/microservicelist/import",
-            type: 'POST',
-            contentType: "application/json",
-            data: JSON.stringify(contents),
-            headers: {
-                'Authorization': 'Bearer ' + myToken
-            },
-            success: function(data) {
-                //console.log(data);
-                $('#myInfoMsgModalLabel').text("Import Results");
-                $('#InfoMsgMessage').text("Microservice List import Done");
-                $('#myInfoMsg').modal({show:true,backdrop:false});
-                location.reload();
-
-            },
-            error: function(data) {
-                //console.log(data);
-                reloadPage=true;
-                $('#myAlertMsgModalLabel').text(data.responseJSON.error);
-                var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-                $('#AlertMsgMessage').text(msg);
-                $('#myAlertMsg').modal({show:true,backdrop:false});
-                $('#myAlertMsg').on('hidden.bs.modal', function (e) {
-                    if(reloadPage) {
-                        reloadPage=false;
-                        location.reload();
-                    }
-                });
-
-            }
-        });
+        importMicroservicesListCall(contents,url,myToken);
     };
     reader.readAsText(file);
     $('#BrowseFile').remove();
@@ -992,7 +1038,7 @@ function importMicroservicesList(url,myToken){
 
 
 
-function exportAuthendpoint(all,url,myToken){
+function exportAuthendpoint(save,all,url,myToken,callback){
     var filename="";
     if (!all){
         var name= $("input[name='msNameAuth']").val();
@@ -1010,10 +1056,45 @@ function exportAuthendpoint(all,url,myToken){
             'Authorization': 'Bearer ' + myToken
         },
         success: function(data) {
-            var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
-            var d=new  Date();
-            filename=  filename + "authEndPointRolesExport_"+ d.toJSON() +"_.json";
-            saveAs(blob, filename);
+            if(save) {
+                var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+                var d = new Date();
+                filename = filename + "authEndPointRolesExport_" + d.toJSON() + "_.json";
+                saveAs(blob, filename);
+            }else{
+                callback (null,data);
+            }
+
+        },
+        error: function(data) {
+            //console.log(data);
+            var msg = data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            if(save) {
+                $('#myAlertMsgModalLabel').text("Something blew up");
+                $('#AlertMsgMessage').text(msg);
+                $('#myAlertMsg').modal({show: true, backdrop: false});
+            }else{
+                callback(msg,null);
+            }
+        }
+    });
+}
+
+function importAuthendpointCall(contents,baseUrl,urlToCall,myToken){
+    $.ajax({
+        url: urlToCall,
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify(contents),
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        success: function(data) {
+            //console.log(data);
+            $('#myInfoMsgModalLabel').text("Import Results");
+            $('#InfoMsgMessage').text("AuthEndpoint import Done");
+            $('#myInfoMsg').modal({show:true,backdrop:false});
+            msDetails(baseUrl,myToken,name || "authms");
 
         },
         error: function(data) {
@@ -1025,7 +1106,6 @@ function exportAuthendpoint(all,url,myToken){
         }
     });
 }
-
 
 function importAuthendpoint(all,url,myToken){
 
@@ -1041,30 +1121,8 @@ function importAuthendpoint(all,url,myToken){
             url=url+"/authms/authendpoint/actions/import";
         }
 
-        $.ajax({
-            url: url,
-            type: 'POST',
-            contentType: "application/json",
-            data: JSON.stringify(contents),
-            headers: {
-                'Authorization': 'Bearer ' + myToken
-            },
-            success: function(data) {
-                //console.log(data);
-                $('#myInfoMsgModalLabel').text("Import Results");
-                $('#InfoMsgMessage').text("AuthEndpoint import Done");
-                $('#myInfoMsg').modal({show:true,backdrop:false});
-                msDetails(originalUrl,myToken,name || "authms");
+        importAuthendpointCall(contents,originalUrl,url,myToken);
 
-            },
-            error: function(data) {
-                //console.log(data);
-                $('#myAlertMsgModalLabel').text("Something blew up");
-                var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-                $('#AlertMsgMessage').text(msg);
-                $('#myAlertMsg').modal({show:true,backdrop:false});
-            }
-        });
     };
     reader.readAsText(file);
     $('#BrowseFile').remove();
@@ -1087,8 +1145,7 @@ function openDialog(all,url,myToken){
 }
 
 
-function exportTokenTypeList(url,myToken){
-
+function exportApplicationTokenTypeList(url,myToken,callback){
     $.ajax({
         url: url+ "/usertypes?skip=-1&limit=-1",
         type: 'GET',
@@ -1097,98 +1154,126 @@ function exportTokenTypeList(url,myToken){
             'Authorization': 'Bearer ' + myToken
         },
         success: function(datauser) {
-            //console.log(datauser);
-            $.ajax({
-                url: url+ "/apptypes?skip=-1&limit=-1",
-                type: 'GET',
-                contentType: "application/json",
-                headers: {
-                    'Authorization': 'Bearer ' + myToken
-                },
-                success: function(dataapp) {
-                    var data=datauser.userandapptypes.concat(dataapp.userandapptypes);
-                    var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
-                    var d=new  Date();
-                    var filename= "tokenTypeList_"+ d.toJSON() +"_.json";
-                    saveAs(blob, filename);
+           callback(null,datauser);
 
-                },
-                error: function(data) {
-                    //console.log(data);
-                    $('#myAlertMsgModalLabel').text("Something blew up");
-                    var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-                    $('#AlertMsgMessage').text(msg);
-                    $('#myAlertMsg').modal({show:true,backdrop:false});
-                }
-            });
         },
         error: function(data) {
-            //console.log(data);
-            $('#myAlertMsgModalLabel').text("Something blew up");
-            var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-            $('#AlertMsgMessage').text(msg);
-            $('#myAlertMsg').modal({show:true,backdrop:false});
+            var msg = data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            callback(msg,null);
+        }
+    });
+}
+
+function exportUserTokenTypeList(url,myToken,callback){
+    $.ajax({
+        url: url+ "/apptypes?skip=-1&limit=-1",
+        type: 'GET',
+        contentType: "application/json",
+        headers: {
+            'Authorization': 'Bearer ' + myToken
+        },
+        success: function(dataapp) {
+            callback(null,dataapp);
+
+
+        },
+        error: function(data) {
+            var msg = data.responseJSON ? data.responseJSON.error_message : data.statusText;
+            callback(msg,null);
         }
     });
 }
 
 
+function exportTokenTypeList(save,url,myToken,callback){
+
+
+    exportApplicationTokenTypeList(url,myToken,function(errapp,dataapp){
+        exportUserTokenTypeList(url,myToken,function(erruser,datauser){
+            var data;
+            if(erruser && errapp) return showError("Incomplete export  in token type list generation");
+            if(errapp){
+                data=datauser.userandapptypes;
+                showError("Incomplete export due " + errapp + " in application token type list generation");
+            } else if(erruser){
+                data=dataapp.userandapptypes;
+                showError("Incomplete export due " + erruser + " in user token type list generation");
+            } else data = datauser.userandapptypes.concat(dataapp.userandapptypes);
+
+
+            if(save) {
+                var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+                var d = new Date();
+                var filename = "tokenTypeList_" + d.toJSON() + "_.json";
+                saveAs(blob, filename);
+            }else{
+                callback(null,data);
+            }
+        });
+    });
+}
+
+
+function importTokenTypeListCall(list,url,myToken){
+
+    var problems=null;
+    var originalUrl=url;
+    var content;
+
+    async.forEachOf(list, function (element, key, callback) {
+
+        if(element.type=="user") {
+            content={"usertype":element};
+            originalUrl = "/usertypes";
+        }
+        else {
+            content={"apptype":element};
+            originalUrl = "/apptypes";
+        }
+
+        $.ajax({
+            url: url + originalUrl ,
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify(content),
+            headers: {
+                'Authorization': 'Bearer ' + myToken
+            },
+            success: function(data) {
+                callback();
+
+            },
+            error: function(data) {
+                problems=data.responseJSON ? data.responseJSON.error_message : data.statusText;;
+                callback();
+            }
+        });
+
+    }, function (err) {
+        if(problems){
+            $('#myAlertMsgModalLabel').text("Something blew up");
+            $('#AlertMsgMessage').text(problems);
+            $('#myAlertMsg').modal({show:true,backdrop:false});
+        }else{
+            $('#myInfoMsgModalLabel').text("Import Results");
+            $('#InfoMsgMessage').text("Token Types list import Done!");
+            $('#myInfoMsg').modal({show:true,backdrop:false});
+        }
+    });
+}
+
 function importTokenTypeList(url,myToken){
 
     var file=$('#fileID')[0].files[0];
     var reader = new FileReader();
-    var originalUrl=url;
-    var content;
     reader.onload = function(e) {
         var list =JSON.parse(e.target.result);
-        var problems=null;
-
-        async.forEachOf(list, function (element, key, callback) {
-
-            if(element.type=="user") {
-                content={"usertype":element};
-                originalUrl = "/usertypes";
-            }
-            else {
-                content={"apptype":element};
-                originalUrl = "/apptypes";
-            }
-
-            $.ajax({
-                url: url + originalUrl ,
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify(content),
-                headers: {
-                    'Authorization': 'Bearer ' + myToken
-                },
-                success: function(data) {
-                    callback();
-
-                },
-                error: function(data) {
-                    problems=data.responseJSON ? data.responseJSON.error_message : data.statusText;;
-                    callback();
-                }
-            });
-
-        }, function (err) {
-            if(problems){
-                $('#myAlertMsgModalLabel').text("Something blew up");
-                $('#AlertMsgMessage').text(problems);
-                $('#myAlertMsg').modal({show:true,backdrop:false});
-            }else{
-                $('#myInfoMsgModalLabel').text("Import Results");
-                $('#InfoMsgMessage').text("Token Types list import Done!");
-                $('#myInfoMsg').modal({show:true,backdrop:false});
-            }
-        });
+       importTokenTypeListCall(list,url,myToken);
     };
     
     reader.readAsText(file);
     $('#BrowseFile').remove();
 }
-
 
 
 function loadTokenTypeList(url,myToken){
