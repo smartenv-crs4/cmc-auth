@@ -268,9 +268,10 @@ exports.initMs = function(callb) {
 
 
 exports.updateMicroservice=function(clbk){
-    ms.find(function(err,values){
+    ms.find(null,null,{sort:{_id:1}},function(err,values){
         if(!err && values){
             conf.setParam("microserviceList",values);
+            console.log("############ VAçUES --> " +util.inspect(values));
             var msNameList=[];
             for (var msName in values){
                 msNameList.push(values[msName].name);
@@ -278,9 +279,6 @@ exports.updateMicroservice=function(clbk){
             //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("msType",msNameList);
             clbk();
-
-
-
         }else clbk();
     });
 };
