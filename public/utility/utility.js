@@ -946,6 +946,53 @@ function exportEnvironmentConfig(url,myToken){
 }
 
 
+
+function ImportEnvironmentConfig(url,myToken){
+
+
+    var file=$('#fileID')[0].files[0];
+    var reader = new FileReader();
+    var problems=null;
+    reader.onload = function(e) {
+        var contents = JSON.parse(e.target.result);
+        console.log(contents);
+        importMicroservicesListCall({ microservicelist: contents.microservice },url,myToken,function(err){
+            if(err) problems="----------------------------IMPORT MICROSERVICE LIST---------------------------\n\r" + err;
+            importAuthendpointCall({authendpoint:contents.roles},url,url+"/authms/authendpoint/actions/import",myToken,function(err){
+                if(err) problems=(problems||"") + "----------------------------IMPORT AUTHORIZATION ROLES LIST---------------------------\n\r" + err;
+                importTokenTypeListCall(contents.token,url,myToken,function(err){
+                    if(err) problems=(problems||"") + "----------------------------IMPORT TOKEN TYPES LIST---------------------------\n\r" + err;
+
+                    if(problems) return showError(problems);
+
+                    $('#myInfoMsgModalLabel').text("Import Results");
+                    $('#InfoMsgMessage').text("Architecture import setting Done");
+                    $('#myInfoMsg').modal({show: true, backdrop: false});
+                    reloadPage=true;
+                    $('#myInfoMsg').on('hidden.bs.modal', function (e) {
+                        if (reloadPage) {
+                            reloadPage = false;
+                            location.reload();
+                        }
+                    });
+
+                })
+            });
+        });
+    };
+    reader.readAsText(file);
+    $('#BrowseFile').remove();
+}
+
+
+function loadEnviromnmentSetting(url,myToken){
+    $('#importarchitecture').append("<form id=\"BrowseFile\"> " +
+        "<input name=\"filename\" type=\"file\" id=\"fileID\" onchange=\"ImportEnvironmentConfig('"+url+"','"+myToken+"')\"> " +
+        "</form>");
+    $('#fileID').click();
+}
+
+
 function exportMicroserviceList(save,url,myToken,callback){
 
     $.ajax({
@@ -988,7 +1035,7 @@ function loadMicroserviceList(url,myToken){
 
 
 
-function importMicroservicesListCall(contents,url,myToken){
+function importMicroservicesListCall(contents,url,myToken,callback){
 
     $.ajax({
         url: url+"/authms/actions/microservicelist/import",
@@ -1000,25 +1047,40 @@ function importMicroservicesListCall(contents,url,myToken){
         },
         success: function(data) {
             //console.log(data);
-            $('#myInfoMsgModalLabel').text("Import Results");
-            $('#InfoMsgMessage').text("Microservice List import Done");
-            $('#myInfoMsg').modal({show:true,backdrop:false});
-            location.reload();
+            if(callback){
+             callback(null);
+            }else {
+                $('#myInfoMsgModalLabel').text("Import Results");
+                $('#InfoMsgMessage').text("Microservice List import Done");
+                $('#myInfoMsg').modal({show: true, backdrop: false});
+                reloadPage=true;
+                $('#myInfoMsg').on('hidden.bs.modal', function (e) {
+                    if (reloadPage) {
+                        reloadPage = false;
+                        location.reload();
+                    }
+                });
+
+            }
 
         },
         error: function(data) {
             //console.log(data);
-            reloadPage=true;
-            $('#myAlertMsgModalLabel').text(data.responseJSON.error);
             var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-            $('#AlertMsgMessage').text(msg);
-            $('#myAlertMsg').modal({show:true,backdrop:false});
-            $('#myAlertMsg').on('hidden.bs.modal', function (e) {
-                if(reloadPage) {
-                    reloadPage=false;
-                    location.reload();
-                }
-            });
+            if(callback){
+                callback(msg);
+            }else {
+                reloadPage = true;
+                $('#myAlertMsgModalLabel').text(data.responseJSON.error);
+                $('#AlertMsgMessage').text(msg);
+                $('#myAlertMsg').modal({show: true, backdrop: false});
+                $('#myAlertMsg').on('hidden.bs.modal', function (e) {
+                    if (reloadPage) {
+                        reloadPage = false;
+                        location.reload();
+                    }
+                });
+            }
 
         }
     });
@@ -1080,7 +1142,7 @@ function exportAuthendpoint(save,all,url,myToken,callback){
     });
 }
 
-function importAuthendpointCall(contents,baseUrl,urlToCall,myToken){
+function importAuthendpointCall(contents,baseUrl,urlToCall,myToken,callback){
     $.ajax({
         url: urlToCall,
         type: 'POST',
@@ -1091,18 +1153,26 @@ function importAuthendpointCall(contents,baseUrl,urlToCall,myToken){
         },
         success: function(data) {
             //console.log(data);
-            $('#myInfoMsgModalLabel').text("Import Results");
-            $('#InfoMsgMessage').text("AuthEndpoint import Done");
-            $('#myInfoMsg').modal({show:true,backdrop:false});
-            msDetails(baseUrl,myToken,name || "authms");
+            if(callback){
+                callback(null);
+            }else {
+                $('#myInfoMsgModalLabel').text("Import Results");
+                $('#InfoMsgMessage').text("AuthEndpoint import Done");
+                $('#myInfoMsg').modal({show: true, backdrop: false});
+                msDetails(baseUrl, myToken, name || "authms");
+            }
 
         },
         error: function(data) {
             //console.log(data);
-            $('#myAlertMsgModalLabel').text("Something blew up");
             var msg= data.responseJSON ? data.responseJSON.error_message : data.statusText;
-            $('#AlertMsgMessage').text(msg);
-            $('#myAlertMsg').modal({show:true,backdrop:false});
+            if(callback){
+                callback(msg);
+            }else {
+                $('#myAlertMsgModalLabel').text("Something blew up");
+                $('#AlertMsgMessage').text(msg);
+                $('#myAlertMsg').modal({show: true, backdrop: false});
+            }
         }
     });
 }
@@ -1145,7 +1215,7 @@ function openDialog(all,url,myToken){
 }
 
 
-function exportApplicationTokenTypeList(url,myToken,callback){
+function exportUserTokenTypeList(url,myToken,callback){
     $.ajax({
         url: url+ "/usertypes?skip=-1&limit=-1",
         type: 'GET',
@@ -1164,7 +1234,7 @@ function exportApplicationTokenTypeList(url,myToken,callback){
     });
 }
 
-function exportUserTokenTypeList(url,myToken,callback){
+function exportApplicationTokenTypeList(url,myToken,callback){
     $.ajax({
         url: url+ "/apptypes?skip=-1&limit=-1",
         type: 'GET',
@@ -1200,7 +1270,6 @@ function exportTokenTypeList(save,url,myToken,callback){
                 showError("Incomplete export due " + erruser + " in user token type list generation");
             } else data = datauser.userandapptypes.concat(dataapp.userandapptypes);
 
-
             if(save) {
                 var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
                 var d = new Date();
@@ -1214,7 +1283,7 @@ function exportTokenTypeList(save,url,myToken,callback){
 }
 
 
-function importTokenTypeListCall(list,url,myToken){
+function importTokenTypeListCall(list,url,myToken,respnsecallback){
 
     var problems=null;
     var originalUrl=url;
@@ -1232,32 +1301,58 @@ function importTokenTypeListCall(list,url,myToken){
         }
 
         $.ajax({
-            url: url + originalUrl ,
-            type: 'POST',
+            url: url + originalUrl+ "?name=" + element.name +"&type=" + element.type ,
+            type: 'GET',
             contentType: "application/json",
-            data: JSON.stringify(content),
             headers: {
                 'Authorization': 'Bearer ' + myToken
             },
             success: function(data) {
-                callback();
+                if(data._metadata.totalCount>0){
+                    callback();
+                } else {
+                    $.ajax({
+                        url: url + originalUrl,
+                        type: 'POST',
+                        contentType: "application/json",
+                        data: JSON.stringify(content),
+                        headers: {
+                            'Authorization': 'Bearer ' + myToken
+                        },
+                        success: function (data) {
+                            callback();
 
+                        },
+                        error: function (data) {
+                            problems = (problems || "") + " " + (data.responseJSON ? data.responseJSON.error_message : data.statusText);
+                            callback();
+                        }
+                    });
+                }
             },
             error: function(data) {
-                problems=data.responseJSON ? data.responseJSON.error_message : data.statusText;;
+                problems=(problems || "") + " "+ (data.responseJSON ? data.responseJSON.error_message : data.statusText);
                 callback();
             }
         });
 
     }, function (err) {
         if(problems){
-            $('#myAlertMsgModalLabel').text("Something blew up");
-            $('#AlertMsgMessage').text(problems);
-            $('#myAlertMsg').modal({show:true,backdrop:false});
+            if(respnsecallback){
+               respnsecallback(problems);
+            }else {
+                $('#myAlertMsgModalLabel').text("Something blew up");
+                $('#AlertMsgMessage').text(problems);
+                $('#myAlertMsg').modal({show: true, backdrop: false});
+            }
         }else{
-            $('#myInfoMsgModalLabel').text("Import Results");
-            $('#InfoMsgMessage').text("Token Types list import Done!");
-            $('#myInfoMsg').modal({show:true,backdrop:false});
+            if(respnsecallback){
+                respnsecallback(null);
+            }else {
+                $('#myInfoMsgModalLabel').text("Import Results");
+                $('#InfoMsgMessage').text("Token Types list import Done!");
+                $('#myInfoMsg').modal({show: true, backdrop: false});
+            }
         }
     });
 }

@@ -101,7 +101,7 @@ router.post('/authendpoint/actions/import/:name', jwtMiddle.ensureIsAuthorized, 
 router.post('/authendpoint/actions/import', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     if (!req.body.authendpoint)
-        return res.status(400).send({error: 'BadRequest', error_message: "No file uploaded"});
+        return res.status(400).send({error: 'BadRequest', error_message: "No authendpoint field provided"});
 
     importAuth(req.body.authendpoint,null,function(err,exported){
         if(!err)
@@ -120,9 +120,9 @@ function importAuth(roles,msName,exportedClb){
             async.eachOfSeries(value,function(resource,URI,callbackrole){
                 async.eachOfSeries(resource,function(autToken,method,callbacktoken){
                     if(autToken.length>0){
-                        AuthEP.findOne({URI: URI, method:method}, function (err, item) {
+                        AuthEP.findOneAndRemove({URI: URI, method:method}, function (err, item) {
                             if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
-                            if (item) return callbacktoken();
+                            //if (item) return callbacktoken();
                             try {
 
                                 AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
@@ -181,13 +181,23 @@ router.post('/actions/microservicelist/import', jwtMiddle.ensureIsAuthorized, fu
         return res.status(400).send({error: "BadRequest", error_message: "no microservicelist field provided"});
 
     var errorMsg=null;
-    async.each(msList,function(microservice,callback){
-        Microservice.create(microservice, function (err, mcsID) {
-            if(err)
-             errorMsg= errorMsg!=null ?    errorMsg + "\n\r------------------ \n\r " + err : err;
-            callback();
+    async.eachSeries(msList,function(microservice,callback){
+        Microservice.findOneAndRemove({name:microservice.name},function(err,document){
+            if(err) {
+                errorMsg = errorMsg != null ? errorMsg + "\n\r------------------ \n\r " + err : err;
+                callback();
+            }
+            else{
+                //console.log("#################### " + microservice.name);
+                Microservice.create(microservice, function (err, mcsID) {
+                    if(err)
+                        errorMsg= errorMsg!=null ?    errorMsg + "\n\r------------------ \n\r " + err : err;
+                    callback();
+                });
+            }
 
         });
+
     },function(err){
         commonfunctions.updateMicroservice(function () {
             if(errorMsg)
