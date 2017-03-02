@@ -28,6 +28,7 @@ html(lang='en')
 
 
         input.form-control(type="hidden", name="read", value="#{read}")
+        input.form-control(type="hidden", name="adminToken", value="#{adminToken}")
         // jQuery
         script(src='bootstrapTemplate/bower_components/jquery/dist/jquery.min.js')
         // Bootstrap Core JavaScript
@@ -50,12 +51,13 @@ html(lang='en')
                 var read=$("input[name='read']").val();
                 var sessiontoken=sessionStorage.getItem("sessiontoken");
                 var url;
+                var adminT=$("input[name='adminToken']").val() || null;
                 if(sessiontoken){
-                    url="main";
+                    url="main?adminToken="+adminT;
                 }else{
                     if (read == "Yes") {
                         sessionStorage.setItem("sessiontoken","Ok")
-                        url="main";
+                        url="main?adminToken="+adminT;
                     } else {
                         url="login";
                     }

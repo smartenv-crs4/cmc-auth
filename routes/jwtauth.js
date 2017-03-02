@@ -173,14 +173,6 @@ exports.ensureIsAuthorized = function(req, res, next) {
             }
         }
     });
-
-
-
-
-
-
-
-
 };
 
 
