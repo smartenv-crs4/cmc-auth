@@ -67,7 +67,7 @@ html(lang='en')
                             i.fa.fa-caret-down
                         ul.dropdown-menu.dropdown-user
                             li
-                                a(href='#')
+                                a(onclick="getadminProfile('"+ adminToken + "')",data-toggle='modal' data-target='#adminManagement')
                                     i.fa.fa-user.fa-fw
                                     |  User Profile
                             li
@@ -217,6 +217,30 @@ html(lang='en')
                                         span.fa.fa-times(aria-hidden='true')
                                         | &nbsp;Close
 
+                .row
+                    #adminManagement.modal.fade(data-backdrop="static" data-keyboard="false" tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+                        .modal-dialog
+                            .modal-content
+                                .modal-header
+                                    button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                                        span.fa.fa-times(aria-hidden='true')
+                                    h4.modal-title.center Admin Settings
+                                .modal-body.center
+                                    .row
+                                        .col-lg-12
+                                            .panel.panel-default
+                                                .panel-heading
+                                                    i.fa.fa-key.fa-fw
+                                                    |  Admin Token managment
+                                                .panel-body
+                                                    p#admintoken.wrap Lorem ipsum TOKEN
+                                .modal-footer
+                                    button.btn.btn-info(data-dismiss='modal')
+                                        span.fa.fa-times(aria-hidden='true')
+                                        | &nbsp;Close
+                                    button.btn.btn-primary(id='copy-button',data-clipboard-target='#admintoken')
+                                        span.glyphicon.glyphicon-copy(aria-hidden='true')
+                                        |   &nbsp;Copy to clipboard
 
                 .row
 

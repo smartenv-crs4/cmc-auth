@@ -3,6 +3,12 @@
 
 var reloadPage=false;
 
+
+
+function getadminProfile(myToken){
+    $('#admintoken').text(myToken);
+}
+
 function generateToken(serviceType,url,myToken){
 
         //$('#token').text('Tieni il Token ' + myToken);

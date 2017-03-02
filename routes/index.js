@@ -24,11 +24,13 @@ router.get('/main', function(req, res) {
         var gwVersion=conf.getParam("apiVersion");
         var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
         gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
+        var adminToken=req.query.adminToken || null;
         res.render('main', {
             MicroSL: conf.getParam("microserviceList"),
             myUrl: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf,
             myToken: conf.getParam("MyMicroserviceToken"),
-            iconsList: iconsList
+            iconsList: iconsList,
+            adminToken:adminToken
         });
     }
     else {
@@ -128,7 +130,7 @@ router.post('/configure', function(req, res) {
         else {
             res.cookie("action","log",{ signed: true });
             res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-            res.render('start', {read:"Yes"});
+            res.render('start', {read:"Yes", adminToken:respb.apiKey.token});
         }
     });
 });
