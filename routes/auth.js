@@ -27,7 +27,14 @@ passport.use(new LocalStrategy(User.authenticate()));
  *
  * @apiDescription Accessible only by microservice access tokens. Logs in the User and returns the access credentials.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} username the email
  * @apiParam {String} password the password
  *
@@ -98,7 +105,14 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a new User object and returns the access credentials.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} user the User dictionary with all the fields, only email, password and type are mandatory.
  *
  * @apiParamExample {json} Request-Example:
@@ -191,7 +205,14 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all Users.
  * Set the pagination skip and limit in the URL request, e.g. "get /authuser?skip=10&limit=50"
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
  * @apiUse GetResource
@@ -244,7 +265,14 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access_token. Returns info about Application in AuthMs microservice.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the User id
  *
  * @apiSuccess {String} User.id Application id identifier
@@ -296,8 +324,15 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Deletes the User and returns the deleted resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} id the Application id *
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} UserField_1 Contains field 1 defined in User Schema (example name)
  * @apiSuccess (200 - OK) {String} UserField_2 Contains field 2 defined in User Schema (example notes)
@@ -400,7 +435,14 @@ function enable_disable(id, value, cb) {
  *
  * @apiDescription Accessible only by microservices access_token. Grants access to the User.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} status  the new User status
@@ -437,7 +479,14 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  *
  * @apiDescription Accessible only by microservice access tokens. Denies access to the User.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} status  the new Application status
@@ -475,7 +524,14 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a reset password Token.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} reset_token  the grant token to set the new password
@@ -522,7 +578,14 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
  *
  * @apiDescription Accessible only by microservice access tokens. Updates the User password.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the User id
  * @apiParam {String} oldpassword the current password to be changed. Overwrites reset_token parameter.
  * @apiParam {String} newpassword the new password

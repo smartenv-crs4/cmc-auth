@@ -25,7 +25,14 @@ router.use(middlewares.parseFields);
  *
  * @apiDescription Accessible only by other microservice access tokens. Returns a paginated list of all available user types.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
  * @apiUse GetResource
@@ -70,7 +77,14 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by other microservice access tokens. Given an user type Id, returns its info.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the user type id
  *
  * @apiSuccess {String} _id the user type id
@@ -118,7 +132,14 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Deletes the user type and returns the deleted resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} _id the user type id
@@ -241,7 +262,14 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Updates  theuser type info and returns the updated resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the user type id
  * @apiParam {Object} usertype the user type dictionary with all the updatable fields
  * @apiParam {Object} usertype.name the user type name
@@ -345,7 +373,14 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a new user type and returns the created resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {Object} body.usertype the user type dictionary with all the fields. "Name" field is mandatory
  * @apiParam {Object} body.usertype.name the user type name
  *

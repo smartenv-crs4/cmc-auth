@@ -361,7 +361,14 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a new Acess token for a given microservice type.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} serviceType the name of the microservice on wich create access_token
  *
  * @apiParamExample {json} Request-Example:
@@ -409,7 +416,14 @@ router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a new microservice type.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} name the name of the microservice to create
  * @apiParam {String} baseUrl the microservice gateway/loadbalance base url
  * @apiParam {String} color the color used in the UI to represent the microservice
@@ -497,7 +511,14 @@ router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Deletes a microservice type.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id(url param) id the microservice id to delete
  *
  * @apiSuccess (201 - OK) {Object}  The deleted resource
@@ -563,7 +584,14 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a new authorization rule and returns it.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} name the name of the microservice whose access is managed by the rule
  * @apiParam {Object} body.microservice the microservice role dictionary. URI, authToken and method are mandatory fields.
  * @apiParam {String} body.microservice.URI URI of resource whose access is managed by the rule
@@ -598,8 +626,6 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-
-//router.post('/:name/authendpoint',jwtMiddle.ensureIsAuthorized, function (req, res) {
 router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     if (!req.body || _.isEmpty(req.body)) return res.status(400).send({
@@ -672,7 +698,14 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all endpoint rules.
  * Set pagination skip and limit in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {Number} skip pagination skip param
  * @apiParam {Number} limit pagination limit param
  *
@@ -730,7 +763,14 @@ router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all endpoint rules of a given microservice.
  * Set pagination skip and limit in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} name the name of the microservice
  * @apiParam {Number} skip pagination skip param
  * @apiParam {Object} limit pagination limit param
@@ -792,7 +832,14 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function (req, r
  *
  * @apiDescription Accessible only by microservice access_token, it returns an authorization rule by id.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id authorization rule id
  *
  * @apiSuccess (200 - OK) {String} _id  rule identifier
@@ -844,7 +891,14 @@ router.get('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
  *
  * @apiDescription Accessible only by microservice access_token, it delete an authorization rule by id.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id authorization rule id
  *
  * @apiSuccess (204 - NO CONTENT) {String} _id  rule identifier
@@ -897,7 +951,14 @@ router.delete('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, 
  *
  * @apiDescription Accessible only by microservice access tokens. Updates an authorization rule by id.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id rule identifier
  * @apiParam {Object} body.microservice the microservice role dictionary with updatable fields defined below
  * @apiParam {String} body.microservice.URI URI of the resource whose access is managed by the rule
