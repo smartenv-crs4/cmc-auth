@@ -151,13 +151,20 @@ function decodeToken(req,res,callb){
  * @apiName Token Decode
  * @apiGroup Token
  *
- * @apiDescription Accessible only by microservice access tokens. Decodes the token and returns the contents bundled in the token
+ * @apiDescription Accessible by access tokens, it decodes a token and returns the contents bundled in the token
  *
- * @apiParam {String} access_token access token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} decode_token token to be unboxed
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam (Query parameter) {String} decode_token token to be unboxed
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
- * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {Object}  token  decoded token information - returned only if valid field is true
  * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
  * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
  * @apiSuccess (200 - OK) {String}  token.type  token owner type
@@ -178,8 +185,8 @@ function decodeToken(req,res,callb){
  *                }
  *      }
  *
- * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 401 Ok
+ * @apiSuccessExample {json} Example: 401
+ *      HTTP/1.1 401 Not Authorized
  *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
@@ -204,19 +211,26 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /actions/checkiftokenisauth Decode Token and check authorizations
+ * @api {get} /actions/checkiftokenisauth Decode Token and check authorizations roles
  * @apiVersion 1.0.0
  * @apiName Token Decode and check auth
  * @apiGroup Token
  *
- * @apiDescription Accessible only by microservice access tokens. Decodes the token, checking if this token type
- * has the authorization to call a particular endpoint with a particular HTTP method (this parameter should be passed like http params ).
- * It returns the contents bundled in the token and a field "valid" that indicates if token is valid end enabled.
+ * @apiDescription Accessible only by access tokens, it decodes a token boxed in decode_token parameter and check if this token type
+ * has the authorization to access a resource with a particular HTTP method. Returns the contents bundled in the token and
+ * a field "valid" that indicates if token is valid end enabled.
  *
- * @apiParam {String} access_token access_token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} decode_token token to be unboxed
- * @apiParam {String} URI endpoint endpoint used to check if the token is authorized to call it
- * @apiParam {String} method HTTP method URL used to check if the token is authorized to call it
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam (Query parameter) {String} decode_token token to be unboxed and verified
+ * @apiParam (Query parameter) {String} URI endpoint resource on which you want to access  with a token boxed in decode_token parameter
+ * @apiParam (Query parameter) {String} method HTTP resource method on which you want to access with a token boxed in decode_token parameter
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
  * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
@@ -240,14 +254,14 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *                }
  *      }
  *
- * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 Ok
+ * @apiSuccessExample {json} Example: 401  Not Authorized
+ *      HTTP/1.1 401 Not Authorized
  *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
  *      }
- *  @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 Ok
+ *  @apiSuccessExample {json} Example:401  Not Authorized
+ *      HTTP/1.1 401 Not Authorized
  *      {
  *         "valid":"false"
  *         "error_message":"No auth roles defined for: GET /resource"
@@ -256,7 +270,7 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *     HTTP/1.1 400 InvalidRequest
  *     {
  *        "error":"BadRequest",
- *        "error_message":"No auth roles defined for: GET /resource"
+ *        "error_message":"decode_token parameter is mandatory"
  *     }
  *
  * @apiUse Unauthorized
@@ -310,17 +324,20 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
  * @apiName Token Decode
  * @apiGroup Token
  *
- * @apiDescription Accessible only by microservice access tokens. Decodes the token and return the contents bundled in the token
+ * @apiDescription Accessible by access tokens, it decodes a token and returns the contents bundled in the token
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} decode_token token to be unboxed
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
  *
- * @apiParamExample {json} Request-Example:
- * HTTP/1.1 POST request
- *  Body:{ "decode_token": "34243243jkh4k32h4k3h43k4"}
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam (Query parameter) {String} decode_token token to be unboxed
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
- * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {Object}  token  decoded token information - returned only if valid field is true
  * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
  * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
  * @apiSuccess (200 - OK) {String}  token.type  token owner type
@@ -329,7 +346,7 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
  * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 OK
+ *      HTTP/1.1 200 Ok
  *      {
  *        "valid":"true"
  *        "token":{
@@ -341,8 +358,8 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
  *                }
  *      }
  *
- * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 OK
+ * @apiSuccessExample {json} Example: 401
+ *      HTTP/1.1 401 Not Authorized
  *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
@@ -371,14 +388,21 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiName Token Decode and check auth
  * @apiGroup Token
  *
- * @apiDescription Accessible only by microservice access tokens. Decodes the token, checking if this token type
- * has the authorization to call a particular endpoint with a particular HTTP method (this parameter should be passed like HTTP params ).
- * It returns the contents bundled in the token and a field "valid" that indicates if token is valid end enabled.
+ * @apiDescription Accessible only by access tokens, it decodes a token boxed in decode_token parameter and check if this token type
+ * has the authorization to access a resource with a particular HTTP method. Returns the contents bundled in the token and
+ * a field "valid" that indicates if token is valid end enabled.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} decode_token token to be unboxed
- * @apiParam {String} URI endpoint endpoint used to check if the token is authorized to call it
- * @apiParam {String} method HTTP method URL used to check if the token is authorized to call it
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam (Body parameter) {String} decode_token token to be unboxed and verified
+ * @apiParam (Body parameter) {String} URI endpoint resource on which you want to access  with a token boxed in decode_token parameter
+ * @apiParam (Body parameter) {String} method HTTP resource method on which you want to access with a token boxed in decode_token parameter
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
  * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
@@ -390,7 +414,7 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 OK
+ *      HTTP/1.1 200 Ok
  *      {
  *        "valid":"true"
  *        "token":{
@@ -402,32 +426,24 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *                }
  *      }
  *
- * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 OK
- *      {
- *        "valid":"false",
- *        "error_message"="Only userMs, WebUi token types can access this resource"
- *        "token":{
- *                  "_id":"eQO7de4AJe-syk",
- *                  "expires":1467394099074,
- *                  "email":"prova@prova.it",
- *                  "type":"webUI",
- *                  "enabled:true
- *                }
- *     }
- * @apiSuccessExample {json} Example: 200 OK
- *      HTTP/1.1 200 OK
+ * @apiSuccessExample {json} Example: 401  Not Authorized
+ *      HTTP/1.1 401 Not Authorized
  *      {
  *        "valid":"false"
  *        "error_message":"token is expired"
  *      }
- * @apiErrorExample Error-Response: 400 BadRequest
- *     HTTP/1.1 400 InvalidRequest
+ *  @apiSuccessExample {json} Example: 401  Not Authorized
+ *      HTTP/1.1 401 Not Authorized
  *      {
- *         error:'BadRequest',
+ *         "valid":"false"
  *         "error_message":"No auth roles defined for: GET /resource"
  *      }
- *
+ * @apiErrorExample Error-Response: 400 BadRequest
+ *     HTTP/1.1 400 InvalidRequest
+ *     {
+ *        "error":"BadRequest",
+ *        "error_message":"decode_token parameter is mandatory"
+ *     }
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
@@ -480,10 +496,17 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
  * @apiName Renew Token
  * @apiGroup Token
  *
- * @apiDescription Accessible by microservice access tokens. Renews the token
+ * @apiDescription Accessible by access tokens, renews the token
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
- * @apiParam {String} refresh_token token used to renew the token
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam (Body parameter) {String} refresh_token token used to renew the token
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -545,14 +568,21 @@ router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /actions/gettokentypelist Decode Token and check authorizations
+ * @api {get} /actions/gettokentypelist Get token type list
  * @apiVersion 1.0.0
  * @apiName Get All Token Type List
  * @apiGroup Token
  *
  * @apiDescription Accessible only by microservice access tokens. Gets a list of valid token types.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiSuccess (200 - OK) {String[]} user  a list of valid and available users tokens
  * @apiSuccess (200 - OK) {String[]} app  a list of valid and available application tokens
@@ -583,14 +613,21 @@ router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function (req, res
 
 
 /**
- * @api {get} /actions/getsupeusertokenlist Return admin user list
+ * @api {get} /actions/getsupeusertokenlist get admin user token type list
  * @apiVersion 1.0.0
  * @apiName Get All admin Token Type List
  * @apiGroup Token
  *
- * @apiDescription Accessible only by microservice access tokens. Gets a list of valid admin token types.
+ * @apiDescription Accessible only by microservice access tokens. gets a list of valid admin token types.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiSuccess (200 - OK) {String[]} superuser  a list of valid and available admin user tokens
  *
@@ -623,14 +660,21 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req,
 
 
 /**
- * @api {get} /actions/getsuperapptokenlist Return special app list
+ * @api {get} /actions/getsuperapptokenlist get admin application token type list(special admin app list)
  * @apiVersion 1.0.0
  * @apiName Get All special app Token Type List
  * @apiGroup Token
  *
- * @apiDescription Accessible only by microservice access tokens. Gets a list of valid super app token types.
+ * @apiDescription Accessible only by access tokens, gets a list of valid super app token types.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiSuccess (200 - OK) {String[]} superapp  a list of valid and available admin app tokens
  *

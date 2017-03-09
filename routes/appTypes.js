@@ -29,7 +29,14 @@ router.use(middlewares.parseFields);
  *
  * @apiDescription Accessible only by microservice access tokens. Returns a paginated list of all available application types.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
  * @apiUse GetResource
@@ -75,7 +82,14 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Given an Id, it returns the application type info.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the Application type id
  *
  * @apiSuccess {String} _id Application type identifier
@@ -121,7 +135,14 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Deletes Application type and returns the deleted resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id the Application type id
  *
  * @apiSuccess (200 - OK) {String} _id Application type identifier
@@ -246,7 +267,14 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Updates the Application type info and returns the updated resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {String} id Application type id
  * @apiParam {Object} apptype  Application type dictionary with all the fields to update.
  * @apiParam {Object} apptype.name Application type name
@@ -349,7 +377,14 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiDescription Accessible only by microservice access tokens. Creates a new Application type and returns the created resource.
  *
- * @apiParam {String} access_token token that grants access to this resource. It must be sent in [ body || as query param || header]
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * if set, the same  token sent in Authorization header should be undefined
  * @apiParam {Object} apptype the application type dictionary with all the fields. Name is mandatory.
  * @apiParam {Object} apptype.name the application type name
  *
