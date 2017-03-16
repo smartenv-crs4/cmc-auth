@@ -25,7 +25,11 @@
     "consulHost":"your_consul_host",
     "consulPort":"8500",
     "consulServices":"/v1/agent/services",
-    "consulHealth":"/v1/health/service"
+    "consulHealth":"/v1/health/service",
+    "tokenLF":{
+      "unit":"years",
+      "value":"7"
+    }
   },
 
   "production":{
@@ -51,6 +55,10 @@
     "consulHost":"your_consul_host",
     "consulPort":"8500",
     "consulServices":"/v1/agent/services",
-    "consulHealth":"/v1/health/service"
+    "consulHealth":"/v1/health/service",
+    "tokenLF":{
+      "unit":"years",
+      "value":"7"
+    }
   }
 }
