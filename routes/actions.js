@@ -53,10 +53,10 @@ function decodeToken(req,res,callb){
 
 /**
  * @apiDefine  ServerError
- * @apiError 500_ServerError Internal Server Error. <BR>
+ * @apiError (Error 5xx) {Object} 500_ServerError Internal Server Error. <BR>
  * <b>request.body.error</b>: error type message specifying the problem, e.g. <i>Db Internal Microservice Error ....</i><BR>
  * <b>request.body.error_message</b>: error message specifying the problem e.g. <i>Connection Down</i><BR>
- * @apiErrorExample Error-Response: 500 Internal Server Error
+ * @apiErrorExample {Object} Error-Response: 500 Internal Server Error
  *     HTTP/1.1 500 Internal Server Error
  *      {
  *         "error": 'Internal Error'
@@ -142,13 +142,59 @@ function decodeToken(req,res,callb){
  *     }
  */
 
+
+
+/**
+ * @apiDefine GetAppTypeResource
+ * @apiSuccess {Object[]} userandapptypes a paginated array list of application types objects
+ * @apiSuccess {String} userandapptypes._id application type id
+ * @apiSuccess {String} userandapptypes.name application token type name
+ * @apiSuccess {String} userandapptypes.type must be equal to "app"
+ * @apiSuccess {String} userandapptypes.super if set true, the application token type is like an admin token
+ * @apiSuccess {String} [userandapptypes.field1] field 1: other field defined in application type schema
+ * @apiSuccess {String} [userandapptypes.field2] field 2: other field defined in application type schema
+ * @apiSuccess {String} [userandapptypes.fieldN] field N: other field defined in application type schema
+ */
+
+ /**
+ * @apiDefine GetAppTypeResourceExample
+ * @apiSuccessExample {json} Example: 200 OK, Success Response
+ *     {
+ *       "userandapptypes":[
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "name": "externalApp",
+ *                          "type": "app",
+ *                          "super": false
+ *                      },
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "name": "externalWebUi",
+ *                          "type": "app",
+ *                          "super": true
+ *                     },
+ *                    ...
+ *                 ],
+ *
+ *       "_metadata":{
+ *                   "skip":10,
+ *                   "limit":50,
+ *                   "totalCount":100
+ *                   }
+ *     }
+ */
+
+
+
+
+
 // End Macro
 
 
 /**
- * @api {get} /actions/decodeToken Decode Token
+ * @api {get} /actions/decodeToken GetDecodeToken
  * @apiVersion 1.0.0
- * @apiName Token Decode
+ * @apiName GetDecodeToken
  * @apiGroup Token
  *
  * @apiDescription Accessible by access tokens, it decodes a token and returns the contents bundled in the token
@@ -164,13 +210,13 @@ function decodeToken(req,res,callb){
  * @apiParam (Query parameter) {String} decode_token token to be unboxed
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
- * @apiSuccess (200 - OK) {Object}  token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {Object}  [token]  decoded token information - returned only if valid field is true
  * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
  * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
  * @apiSuccess (200 - OK) {String}  token.type  token owner type
  * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
  * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
- * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
+ * @apiSuccess (200 - OK) {String}  [error_message]  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
@@ -181,7 +227,7 @@ function decodeToken(req,res,callb){
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                  "enabled:true
+ *                  "enabled":true
  *                }
  *      }
  *
@@ -211,14 +257,14 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /actions/checkiftokenisauth Decode Token and check authorizations roles
+ * @api {get} /actions/checkiftokenisauth GetAuthorizationByRole
  * @apiVersion 1.0.0
- * @apiName Token Decode and check auth
+ * @apiName GetAuthorizationByRole
  * @apiGroup Token
  *
  * @apiDescription Accessible only by access tokens, it decodes a token boxed in decode_token parameter and check if this token type
  * has the authorization to access a resource with a particular HTTP method. Returns the contents bundled in the token and
- * a field "valid" that indicates if token is valid end enabled.
+ * a field "valid" that indicates if token is enabled and authorised.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -232,14 +278,14 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiParam (Query parameter) {String} URI endpoint resource on which you want to access  with a token boxed in decode_token parameter
  * @apiParam (Query parameter) {String} method HTTP resource method on which you want to access with a token boxed in decode_token parameter
  *
- * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
- * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field with unboxed content is returned. If false, the decoded token is not valid and an error_message field is returned
+ * @apiSuccess (200 - OK) {Object} [token]  decoded token information - returned only if valid field is true
  * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
  * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
  * @apiSuccess (200 - OK) {String}  token.type  token owner type
  * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
  * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
- * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
+ * @apiSuccess (200 - OK) {String} [error_message]  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
@@ -250,7 +296,7 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                  "enabled:true
+ *                  "enabled":true
  *                }
  *      }
  *
@@ -319,9 +365,9 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
 
 
 /**
- * @api {post} /actions/decodeToken Decode Token with post
+ * @api {post} /actions/decodeToken PostDecodeToken
  * @apiVersion 1.0.0
- * @apiName Token Decode
+ * @apiName PostDecodeToken
  * @apiGroup Token
  *
  * @apiDescription Accessible by access tokens, it decodes a token and returns the contents bundled in the token
@@ -337,13 +383,13 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
  * @apiParam (Query parameter) {String} decode_token token to be unboxed
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
- * @apiSuccess (200 - OK) {Object}  token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {Object}  [token]  decoded token information - returned only if valid field is true
  * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
  * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
  * @apiSuccess (200 - OK) {String}  token.type  token owner type
  * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
  * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
- * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
+ * @apiSuccess (200 - OK) {String}  [error_message]  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
@@ -354,7 +400,7 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                  "enabled:true
+ *                  "enabled":true
  *                }
  *      }
  *
@@ -383,9 +429,9 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /actions/checkiftokenisauth Decode Token and check authorizations with POST
+ * @api {post} /actions/checkiftokenisauth PostAuthorizationByRole
  * @apiVersion 1.0.0
- * @apiName Token Decode and check auth
+ * @apiName Decode tPostAuthorizationByRole
  * @apiGroup Token
  *
  * @apiDescription Accessible only by access tokens, it decodes a token boxed in decode_token parameter and check if this token type
@@ -405,13 +451,13 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiParam (Body parameter) {String} method HTTP resource method on which you want to access with a token boxed in decode_token parameter
  *
  * @apiSuccess (200 - OK) {Boolean} valid  if true, the decoded token is valid, this token type is enabled to call this URI with the specified http method and a token field is returned. If false, the decoded token is not valid and an error_message field is returned
- * @apiSuccess (200 - OK) {Boolean} token  decoded token information - returned only if valid field is true
+ * @apiSuccess (200 - OK) {Object} [token]  decoded token information - returned only if valid field is true
  * @apiSuccess (200 - OK) {String}  token._id  id of the token owner
  * @apiSuccess (200 - OK) {String}  token.email email address of the token owner
  * @apiSuccess (200 - OK) {String}  token.type  token owner type
  * @apiSuccess (200 - OK) {String}  token.enabled  if true, the owner is allowed to access the resource
  * @apiSuccess (200 - OK) {String}  token.expires  token expiration date
- * @apiSuccess (200 - OK) {String}  error_message  error message explaining the problem in decoding the token - returned only if field "valid" is false
+ * @apiSuccess (200 - OK) {String} [error_message]  error message explaining the problem in decoding the token - returned only if field "valid" is false
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 Ok
@@ -422,7 +468,7 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *                  "expires":1467394099074,
  *                  "email":"prova@prova.it",
  *                  "type":"webUI",
- *                  "enabled:true
+ *                  "enabled":true
  *                }
  *      }
  *
@@ -463,7 +509,9 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
         } else { // token is valid
             URI=URI.endsWith("/") ? URI : URI+"/";
             method=method.toUpperCase();
-            authEnpoints.findOne({URI: URI, method: method}, function (err, item) {
+            var typeT=req.decode_results.type;
+
+            authEnpoints.findOne({URI: URI, method: method, name:typeT}, function (err, item) {
                 if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
                 if (!item) return res.status(401).send({
                     error: "BadRequest",
@@ -483,6 +531,7 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
                     res.status(200).send(decoded);
                 }
             });
+
         }
     });
 
@@ -491,9 +540,9 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
 
 
 /**
- * @api {post} /actions/refreshToken Renew the token
+ * @api {post} /actions/refreshToken RefreshToken
  * @apiVersion 1.0.0
- * @apiName Renew Token
+ * @apiName RefreshToken
  * @apiGroup Token
  *
  * @apiDescription Accessible by access tokens, renews the token
@@ -568,9 +617,9 @@ router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /actions/gettokentypelist Get token type list
+ * @api {get} /actions/gettokentypelist GetTokenTypeList
  * @apiVersion 1.0.0
- * @apiName Get All Token Type List
+ * @apiName GetTokenTypeList
  * @apiGroup Token
  *
  * @apiDescription Accessible only by microservice access tokens. Gets a list of valid token types.
@@ -613,9 +662,9 @@ router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function (req, res
 
 
 /**
- * @api {get} /actions/getsupeusertokenlist get admin user token type list
+ * @api {get} /actions/getsupeusertokenlist GetSuperUserTokenList
  * @apiVersion 1.0.0
- * @apiName Get All admin Token Type List
+ * @apiName GetSuperUserTokenList
  * @apiGroup Token
  *
  * @apiDescription Accessible only by microservice access tokens. gets a list of valid admin token types.
@@ -660,9 +709,9 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req,
 
 
 /**
- * @api {get} /actions/getsuperapptokenlist get admin application token type list(special admin app list)
+ * @api {get} /actions/getsuperapptokenlist GetAdminApplicationTokenList
  * @apiVersion 1.0.0
- * @apiName Get All special app Token Type List
+ * @apiName GetAdminApplicationTokenList
  * @apiGroup Token
  *
  * @apiDescription Accessible only by access tokens, gets a list of valid super app token types.

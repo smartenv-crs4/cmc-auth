@@ -18,8 +18,7 @@ var ms=require('../models/microservices').Microservice;
 var tokenTypes=require('../models/userAndAppTypes').UserAndAppTypes;
 var msAuth=require('../models/authEndpoints').AuthEndPoint;
 var _=require('underscore');
-
-
+var tokenLife=conf.getParam("tokenLife");
 
 
 
@@ -64,7 +63,11 @@ exports.generateMsToken= function (type){
 
 exports.generateToken= function (resource,mode){
     "use strict";
-    var expires = moment().add(7, 'days').valueOf();
+
+     var unit= tokenLife.unit || 'days';
+     var value= parseInt(tokenLife.value) || 7;
+
+    var expires = moment().add(value, unit).valueOf();
     var secret = require('../app').get('jwtTokenSecret');
 
     var token = jwt.encode({
