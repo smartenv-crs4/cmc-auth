@@ -220,7 +220,7 @@ exports.initMs = function(callb) {
                 //     console.log("TOKEN NOT SETTED");
                 //
                 // }else  callback(null, 'one');
-                ms.findOne({name:"authms"},function(err,val){
+                ms.findOne({name:authmsName},function(err,val){
                     console.log("Find My TOKEN");
                     if (err) console.log("ERROR in creation token for this microservice " + err);
                     if(!val){
