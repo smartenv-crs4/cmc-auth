@@ -22,6 +22,8 @@ var tokenLife=conf.getParam("tokenLife");
 
 
 
+
+
 exports.createUser = function(user, password, callb) {
 
     try {
@@ -209,7 +211,7 @@ exports.decode=function(token,callb){
 exports.initMs = function(callb) {
     //console.log("In Get My token #" + conf.MyMicroserviceToken +"#");
 
-
+    var authmsName= conf.getParam("authMsName") || "authms";
 
     async.series([
             function(callback){  // init Ms Token
@@ -229,7 +231,7 @@ exports.initMs = function(callb) {
                         var gwVersion=conf.getParam("apiVersion");
                         var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
                         gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
-                        ms.create({name:"authms",icon:"fa-unlock-alt", color:"panel-info",baseUrl:conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf, token:token},function(err,val){
+                        ms.create({name:authmsName,icon:"fa-unlock-alt", color:"panel-info",baseUrl:conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf, token:token},function(err,val){
                             if (err) console.log("ERROR in token creation for this microservice " + err);
                             console.log("TOKEN created");
                             conf.setParam("MyMicroserviceToken",val.token);
