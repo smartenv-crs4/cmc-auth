@@ -181,6 +181,10 @@ router.post('/actions/microservicelist/import', jwtMiddle.ensureIsAuthorized, fu
         return res.status(400).send({error: "BadRequest", error_message: "no microservicelist field provided"});
 
     var errorMsg=null;
+
+    Microservice.remo
+
+
     async.eachSeries(msList,function(microservice,callback){
         Microservice.findOneAndRemove({name:microservice.name},function(err,document){
             if(err) {
@@ -354,12 +358,12 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
 
 
 /**
- * @api {post} /authms/renewtoken Renew Token
+ * @api {post} /authms/renewtoken Refresh microservice token
  * @apiVersion 1.0.0
- * @apiName Create a new Token for a Microservice type
+ * @apiName Refresh microservice token
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Creates a new Acess token for a given microservice type.
+ * @apiDescription Accessible only by access tokens, creates a new acess_token for a given microservice type.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -369,7 +373,7 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} serviceType the name of the microservice on wich create access_token
+ * @apiParam (Body parameter) {String} serviceType the name of the microservice token type
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -409,12 +413,12 @@ router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /authms/signup Create aand save new microservice
+ * @api {post} /authms/signup Create a new Microservice
  * @apiVersion 1.0.0
- * @apiName Create and save a new Microservice type
+ * @apiName Create a new Microservice
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Creates a new microservice type.
+ * @apiDescription Accessible only by access tokens, creates a new microservice type.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -424,10 +428,10 @@ router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} name the name of the microservice to create
- * @apiParam {String} baseUrl the microservice gateway/loadbalance base url
- * @apiParam {String} color the color used in the UI to represent the microservice
- * @apiParam {String} icon the icon used in the UI to represent the microservice
+ * @apiParam (Body parameter) {String} name the name of the microservice to create
+ * @apiParam (Body parameter) {String} baseUrl the microservice gateway/loadbalance base url
+ * @apiParam (Body parameter) {String} color the color used in the UI to represent the microservice
+ * @apiParam (Body parameter) {String} icon the icon used in the UI to represent the microservice
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -437,7 +441,10 @@ router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *        "icon":"fa-users"
  *       }
  *
- * @apiSuccess (201 - OK) {Object}  The created resource
+ * @apiSuccess (201 - OK) {String}  name The microservice name
+ * @apiSuccess (201 - OK) {String}  baseUrl microservice base url
+ * @apiSuccess (201 - OK) {String}  color  color in configure interface
+ * @apiSuccess (201 - OK) {String}  icon  icon in configure interface
  *
  * @apiSuccessExample {json} Example: 200 Ok
  *      HTTP/1.1 201 CREATED
@@ -502,14 +509,13 @@ router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
 
 });
 
-
 /**
- * @api {delete} /authms/:id
+ * @api {delete} /authms/:id Delete a microservice
  * @apiVersion 1.0.0
  * @apiName Delete a microservice
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Deletes a microservice type.
+ * @apiDescription Accessible only by access tokens, deletes a microservice.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -519,9 +525,12 @@ router.post('/signup', [jwtMiddle.ensureIsAuthorized], function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id(url param) id the microservice id to delete
+ * @apiParam (URL parameter) {String} id the microservice id to delete
  *
- * @apiSuccess (201 - OK) {Object}  The deleted resource
+ * @apiSuccess (200 - OK) {String}  name The microservice name
+ * @apiSuccess (200 - OK) {String}  baseUrl microservice base url
+ * @apiSuccess (200 - OK) {String}  color  color in configure interface
+ * @apiSuccess (200 - OK) {String}  icon  icon in configure interface
  *
  * @apiSuccessExample {json} Example: 200 Ok
  *      HTTP/1.1 200 Deleted
@@ -556,7 +565,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 Microservice.create(content, function (errC, contentN) {
                     if (errC) return res.status(409).send({
                         error: "Conflict",
-                        error_message: 'Microservice deleted but authorization rules for this microservice should exixst'
+                        error_message: 'Microservice deleted but authorization roles for this microservice should exixst'
                     });
                     return res.status(500).send({
                         error: "delete_error",
@@ -577,12 +586,12 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /authms/authendpoint Create a new authorization rule
+ * @api {post} /authms/authendpoint Create a new authorization role
  * @apiVersion 1.0.0
- * @apiName Create a new authorization rule
+ * @apiName Create a new authorization role
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Creates a new authorization rule and returns it.
+ * @apiDescription Accessible only by access tokens, creates a new authorization role and returns it.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -592,11 +601,11 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} name the name of the microservice whose access is managed by the rule
- * @apiParam {Object} body.microservice the microservice role dictionary. URI, authToken and method are mandatory fields.
- * @apiParam {String} body.microservice.URI URI of resource whose access is managed by the rule
- * @apiParam {String[]} body.microservice.authToken a list of token types allowed to access this resource managed by the rule
- * @apiParam {String} body.microservice.method HTTP method (GET, POST, PUT, DELETE) that can be set to specialize the rule
+ * @apiParam (Body parameter) {Object} microservice the microservice role dictionary. URI, authToken and method are mandatory fields.
+ * @apiParam (Body parameter) {String} [microservice.name] the name of the microservice whose access is managed by the role
+ * @apiParam (Body parameter) {String} microservice.URI URI of resource whose access is managed by the role
+ * @apiParam (Body parameter) {String[]} microservice.authToken a list of token types allowed to access this resource managed by the role
+ * @apiParam (Body parameter) {String} microservice.method HTTP method (GET, POST, PUT, DELETE) that MUST be set to specialize the role
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -608,9 +617,11 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *              }
  *  }
  *
+ * @apiSuccess (201 - OK) {String} _id role identifier
  * @apiSuccess (201 - OK) {String} URI URI of the resource
  * @apiSuccess (201 - OK) {String[]} authToken list of token types allowed to access the resource
- * @apiSuccess (201 - OK) {String} method HTTP method (GET, POST, PUT, DELETE) that can be set to specialize the rule
+ * @apiSuccess (201 - OK) {String} method HTTP method (GET, POST, PUT, DELETE) that can be set to specialize the role
+ * @apiSuccess (201 - OK) {String} [name] microservice name on which role are set
  *
  * @apiSuccessExample {json} Example: 200 Ok
  *      HTTP/1.1 201 CREATED
@@ -690,13 +701,13 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /authms/authendpoint Get all authorization rules
+ * @api {get} /authms/authendpoint Get all authorization roles
  * @apiVersion 1.0.0
- * @apiName GetAuthRules
+ * @apiName GetAuthroles
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all endpoint rules.
- * Set pagination skip and limit in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
+ * @apiDescription Accessible only by access tokens, returns a paginated list of all endpoint roles.<BR>
+ * Set pagination skip and limit or other filters in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -706,8 +717,13 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {Number} skip pagination skip param
- * @apiParam {Number} limit pagination limit param
+ * @apiParam (Query parameter) {Number} [skip] pagination skip param
+ * @apiParam (Query parameter) {Number} [limit] pagination limit param
+ * @apiParam (Query parameter) {String} [URI] Filter by URI
+ * @apiParam (Query parameter) {String="GET","POST","PUT","DELETE"} [method] Filter by method
+ * @apiParam (Query parameter) {String} [name] filter by the name of the microservice (is not recommended, use /authendpoint/:name enpoint)
+ * @apiParam (Query parameter) {String} [_id] filter by the id of the microservice (is not recommended, use /authendpoint/:id enpoint)
+ *
  *
  * @apiUse Metadata
  * @apiUse GetResource
@@ -755,13 +771,13 @@ router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /authms/authendpoint:/name Get authorization rules of a given microservice
+ * @api {get} /authms/authendpoint/:name Get authorization roles of a given microservice
  * @apiVersion 1.0.0
- * @apiName GetMicroserviceAuthRules
+ * @apiName GetMicroserviceAuthroles
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all endpoint rules of a given microservice.
- * Set pagination skip and limit in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
+ * @apiDescription Accessible only by access tokens, returns the paginated list of all endpoint roles of a given microservice.<BR>
+ * Set pagination skip and limit or other filters in the URL request, e.g. "get /authms/authendpoint?skip=10&limit=50"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -771,9 +787,11 @@ router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} name the name of the microservice
- * @apiParam {Number} skip pagination skip param
- * @apiParam {Object} limit pagination limit param
+ * @apiParam (URL parameter) {String} name the name of the microservice
+ * @apiParam (Query parameter) {Number} [skip] pagination skip param
+ * @apiParam (Query parameter) {Number} [limit] pagination limit param
+ * @apiParam (Query parameter) {String} [URI] Filter by URI
+ * @apiParam (Query parameter) {String="GET","POST","PUT","DELETE"} [method] Filter by method
  *
  * @apiUse Metadata
  * @apiUse GetResource
@@ -825,12 +843,12 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function (req, r
 
 
 /**
- * @api {get} /authms/authendpoint/:id Get authorization rule by Id
+ * @api {get} /authms/authendpoint/:id Get authorization role by Id
  * @apiVersion 1.0.0
- * @apiName GetAuthRulesById
+ * @apiName GetAuthrolesById
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access_token, it returns an authorization rule by id.
+ * @apiDescription Accessible only by access_token, it returns an authorization role by id.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -840,12 +858,12 @@ router.get('/authendpoint/:name', jwtMiddle.ensureIsAuthorized, function (req, r
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id authorization rule id
+ * @apiParam (URL parameter) {String} id authorization role id
  *
- * @apiSuccess (200 - OK) {String} _id  rule identifier
- * @apiSuccess (200 - OK) {String} name the name of the microservice whose access is managed by the rule
- * @apiSuccess (200 - OK) {String} URI  URI of resource whose access is managed by the rule
- * @apiSuccess (200 - OK) {String} method  HTTP method (GET, POST, PUT, DELETE) that can be set to specialize the rule
+ * @apiSuccess (200 - OK) {String} _id  role identifier
+ * @apiSuccess (200 - OK) {String} [name] the name of the microservice whose access is managed by the role
+ * @apiSuccess (200 - OK) {String} URI  URI of resource whose access is managed by the role
+ * @apiSuccess (200 - OK) {String} method  HTTP method (GET, POST, PUT, DELETE) that can be set to specialize the role
  * @apiSuccess (200 - OK) {String[]} authToken list of token types allowed to access the resource
  *
  * @apiSuccessExample {json} Example: 200 OK
@@ -884,12 +902,12 @@ router.get('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
 
 
 /**
- * @api {delete} /authms/authendpoint/:id Delete authorization rule by Id
+ * @api {delete} /authms/authendpoint/:id Delete authorization role by Id
  * @apiVersion 1.0.0
- * @apiName DeleteAuthRulesById
+ * @apiName DeleteAuthrolesById
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access_token, it delete an authorization rule by id.
+ * @apiDescription Accessible only by access_token, it delete an authorization role by id.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -899,12 +917,12 @@ router.get('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, res
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id authorization rule id
+ * @apiParam (URL parameter) {String} id authorization role id
  *
- * @apiSuccess (204 - NO CONTENT) {String} _id  rule identifier
- * @apiSuccess (204 - NO CONTENT) {String} name the name of the microservice whose access is managed by the rule
- * @apiSuccess (204 - NO CONTENT) {String} URI  URI of the resource whose access is managed by the rule
- * @apiSuccess (204 - NO CONTENT) {String} method  HTTP method (GET, POST, PUT, DELETE) that could have been set to specialize the rule
+ * @apiSuccess (204 - NO CONTENT) {String} _id  role identifier
+ * @apiSuccess (204 - NO CONTENT) {String} [name] the name of the microservice whose access is managed by the role
+ * @apiSuccess (204 - NO CONTENT) {String} URI  URI of the resource whose access is managed by the role
+ * @apiSuccess (204 - NO CONTENT) {String} method  HTTP method (GET, POST, PUT, DELETE) that could have been set to specialize the role
  * @apiSuccess (204 - NO CONTENT) {String[]} authToken a list of token types allowed to access the resource
  *
  * @apiSuccessExample {json} Example: 204 NO CONTENT
@@ -944,12 +962,12 @@ router.delete('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, 
 
 
 /**
- * @api {put} /authms/authendpoint/:id Update authorization rule by Id
+ * @api {put} /authms/authendpoint/:id Update authorization role by Id
  * @apiVersion 1.0.0
- * @apiName UpdateAuthRulesById
+ * @apiName UpdateAuthrolesById
  * @apiGroup Authms
  *
- * @apiDescription Accessible only by microservice access tokens. Updates an authorization rule by id.
+ * @apiDescription Accessible only by access tokens, updates an authorization role by id.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -959,27 +977,26 @@ router.delete('/authendpoint/:id', jwtMiddle.ensureIsAuthorized, function (req, 
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id rule identifier
- * @apiParam {Object} body.microservice the microservice role dictionary with updatable fields defined below
- * @apiParam {String} body.microservice.URI URI of the resource whose access is managed by the rule
- * @apiParam {String[]} body.microservice.authToken a list of token types enabled to access to this resource that are subject of the rule.
- * @apiParam {String} body.microservice.method HTTP method (GET, POST, PUT, DELETE) that could have been set to specialize the rule
+ * @apiParam (URL parameter){String} id role identifier
+ * @apiParam (Body parameter) {Object} microservice the role dictionary with updatable fields defined below
+ * @apiParam (Body parameter) {String} [microservice.URI] URI of the resource whose access is managed by the role
+ * @apiParam (Body parameter) {String[]} [microservice.authToken] authToken a list of token types enabled to access to this resource that are subject of the role.
+ * @apiParam (Body parameter) {String} [microservice.method] method HTTP method (GET, POST, PUT, DELETE) that could have been set to specialize the role
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "microservice": {
- *               "name":"AuthMs",
  *               "URI":"/users",
  *               "authToken":["WebUI", "UserMS"],
  *               "method":"POST"
  *              }
  *       }
  *
- * @apiSuccess (200 - OK) {String} _id  resource access rule id identifier
- * @apiSuccess (200 - OK) {String} name name of microservice which has set the rule.
- * @apiSuccess (200 - OK) {String} URI URI of resource on which has set the rule.
+ * @apiSuccess (200 - OK) {String} _id  resource access role id identifier
+ * @apiSuccess (200 - OK) {String} name name of microservice which has set the role.
+ * @apiSuccess (200 - OK) {String} URI URI of resource on which has set the role.
  * @apiSuccess (200 - OK) {String[]} authToken list of token types allowed to access the resource
- * @apiSuccess (200 - OK) {String} method HTTP method (GET, POST, PUT, DELETE) that could have been set to specialize the rule
+ * @apiSuccess (200 - OK) {String} method HTTP method (GET, POST, PUT, DELETE) that could have been set to specialize the role
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK

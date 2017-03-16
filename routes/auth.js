@@ -25,7 +25,7 @@ passport.use(new LocalStrategy(User.authenticate()));
  * @apiName Login User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Logs in the User and returns the access credentials.
+ * @apiDescription Accessible only by access tokens, SignIn the User and returns the access credentials.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -35,8 +35,8 @@ passport.use(new LocalStrategy(User.authenticate()));
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} username the email
- * @apiParam {String} password the password
+ * @apiParam (Body parameter) {String} username the email
+ * @apiParam (Body parameter) {String} password the password
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -98,12 +98,12 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /authuser/signup Register a new User
+ * @api {post} /authuser/signup SignUp a new User
  * @apiVersion 1.0.0
- * @apiName Create User
+ * @apiName SignUp User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Creates a new User object and returns the access credentials.
+ * @apiDescription Accessible only by access token, creates a new User and returns the access credentials.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -113,7 +113,14 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} user the User dictionary with all the fields, only email, password and type are mandatory.
+ * @apiParam (Body parameter) {Object} user the User dictionary with all the fields, only email, password and type are mandatory.
+ * @apiParam (Body parameter) {String} user.email  user email valid as username to login
+ * @apiParam (Body parameter) {String} user.password  user password
+ * @apiParam (Body Parameter) {String} user.type user type. for example admin, cruiser...
+ * @apiParam (Body Parameter) {String} [user.name] user name
+ * @apiParam (Body Parameter) {String} [user.surname] user surname
+ * @apiParam (Body Parameter) {String} [application.avatar] user avatar image id in uploadms
+ * @apiParam (Body Parameter) {String} [application.notes]  user notes
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -197,13 +204,13 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /authuser Get all Applications in authMs
+ * @api {get} /authuser Get all Users
  * @apiVersion 1.0.0
  * @apiName Get User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Returns the paginated list of all Users.
- * Set the pagination skip and limit in the URL request, e.g. "get /authuser?skip=10&limit=50"
+ * @apiDescription Accessible only by access tokens, returns a paginated list of all Users.<BR>
+ * Set pagination skip and limit and other filters in the URL request, e.g. "get /authuser?skip=10&limit=50&name=Mario"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -258,12 +265,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /authuser/:id Get the User in AuthMs by id
+ * @api {get} /authuser/:id Get the User by id
  * @apiVersion 1.0.0
  * @apiName Get User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access_token. Returns info about Application in AuthMs microservice.
+ * @apiDescription Accessible only by access_token, returns user dictionary.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -273,7 +280,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id the User id
+ * @apiParam (URL parameter) {String} id the User id
  *
  * @apiSuccess {String} User.id Application id identifier
  * @apiSuccess {String} User.field1 field 1 defined in schema
@@ -317,12 +324,12 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {delete} /authuser/:id delete User in AuthMS
+ * @api {delete} /authuser/:id delete user
  * @apiVersion 1.0.0
  * @apiName Delete User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Deletes the User and returns the deleted resource.
+ * @apiDescription Accessible only by access tokens, deletes the User and returns the deleted resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -332,7 +339,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id the Application id
+ * @apiParam (URL parameter) {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} UserField_1 Contains field 1 defined in User Schema (example name)
  * @apiSuccess (200 - OK) {String} UserField_2 Contains field 2 defined in User Schema (example notes)
@@ -428,12 +435,12 @@ function enable_disable(id, value, cb) {
 
 
 /**
- * @api {post} /authuser/:id/actions/enable enable User in AuthMs
+ * @api {post} /authuser/:id/actions/enable enable user
  * @apiVersion 1.0.0
  * @apiName Enable User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservices access_token. Grants access to the User.
+ * @apiDescription Accessible only by access_token, enables the User.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -443,7 +450,7 @@ function enable_disable(id, value, cb) {
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id the Application id
+ * @apiParam (URL parameter) {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} status  the new User status
  *
@@ -472,12 +479,12 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
 
 
 /**
- * @api {post} /authuser/:id/actions/disable disable User in AuthMs
+ * @api {post} /authuser/:id/actions/disable disable user
  * @apiVersion 1.0.0
  * @apiName Disable User
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Denies access to the User.
+ * @apiDescription Accessible only by access tokens, disables the User.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -487,7 +494,7 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id the Application id
+ * @apiParam (URL parameter) {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} status  the new Application status
  *
@@ -517,12 +524,12 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
 
 
 /**
- * @api {post} /authuser/:id/actions/resetpassword Reset User password in AuthMs
+ * @api {post} /authuser/:id/actions/resetpassword Reset user password
  * @apiVersion 1.0.0
  * @apiName ResetPassword
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Creates a reset password Token.
+ * @apiDescription Accessible only by access tokens, reset user password
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -532,9 +539,9 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id the Application id
+ * @apiParam (URL parameter) {String} id the Application id
  *
- * @apiSuccess (200 - OK) {String} reset_token  the grant token to set the new password
+ * @apiSuccess (200 - OK) {String} reset_token  the reset token to set the new password
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -571,12 +578,12 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
 
 
 /**
- * @api {post} /authuser/:id/actions/setpassword Update the User password in AuthMs
+ * @api {post} /authuser/:id/actions/setpassword Update the User password
  * @apiVersion 1.0.0
  * @apiName SetPassword
  * @apiGroup User
  *
- * @apiDescription Accessible only by microservice access tokens. Updates the User password.
+ * @apiDescription Accessible only by access tokens, updates the User password.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -586,10 +593,11 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same  token sent in Authorization header should be undefined
- * @apiParam {String} id the User id
- * @apiParam {String} oldpassword the current password to be changed. Overwrites reset_token parameter.
- * @apiParam {String} newpassword the new password
- * @apiParam {String} reset_token a token used to set a new password. It is overwritten by oldpassword parameter
+ * @apiParam (URL parameter) {String} id the User id
+ * @apiParam (Body Parameter) {String} [oldpassword] the old password to update. If set, reset_token must be undefined
+ * @apiParam (Body Parameter) {String} newpassword the new password
+ * @apiParam (Body Parameter) {String} [reset_token] this token is used to update password. If set, oldpassword must be undefined
+ *
  *
  * @apiSuccess (200 - OK) {Object} apiKey  contains information about apiKey token
  * @apiSuccess (200 - OK) {String} apiKey.token  User Token
