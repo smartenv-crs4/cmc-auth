@@ -40,7 +40,7 @@ router.use(middlewares.parseFields);
  * @apiUse GetResourceExample
  * @apiUse Unauthorized
  * @apiUse BadRequest
- * @apiUse NotFound
+ * @apiUse NoContent
  * @apiUse ServerError
  */
 router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
@@ -59,7 +59,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
             if (!_.isEmpty(usertypeslist.userandapptypes))
                 return res.status(200).send(usertypeslist);
             else
-                return res.status(404).send({error: "Not found", error_message: "Resource not found"});
+                return res.status(204).send(usertypeslist);
         }
         else {
             return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});

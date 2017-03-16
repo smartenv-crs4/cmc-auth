@@ -117,37 +117,39 @@ function importAuth(roles,msName,exportedClb){
     async.eachOfSeries(roles,function(value,key,callback){
 
         if((!msName) || (key==msName)){
-            async.eachOfSeries(value,function(resource,URI,callbackrole){
-                async.eachOfSeries(resource,function(autToken,method,callbacktoken){
-                    if(autToken.length>0){
-                        AuthEP.findOneAndRemove({URI: URI, method:method}, function (err, item) {
-                            if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
-                            //if (item) return callbacktoken();
-                            try {
+            AuthEP.remove({name:key},function(err){
+                async.eachOfSeries(value,function(resource,URI,callbackrole){
+                    async.eachOfSeries(resource,function(autToken,method,callbacktoken){
+                        if(autToken.length>0){
+                            AuthEP.findOneAndRemove({URI: URI, method:method}, function (err, item) {
+                                if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
+                                //if (item) return callbacktoken();
+                                try {
 
-                                AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
-                                    // console.log("Creatig USER" + err);
-                                    console.log(Nitem);
-                                    if(!err) return callbacktoken();
-                                    else return callbacktoken(err);
-                                });
-                            } catch (ex) {
-                                return callbacktoken({
-                                    error: "InternalError",
-                                    error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'
-                                });
-                            }
-                        });
-                    }else
-                        callbacktoken();
+                                    AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
+                                        // console.log("Creatig USER" + err);
+                                        console.log(Nitem);
+                                        if(!err) return callbacktoken();
+                                        else return callbacktoken(err);
+                                    });
+                                } catch (ex) {
+                                    return callbacktoken({
+                                        error: "InternalError",
+                                        error_message: 'Unable to register microservice Auth Tokens (err:' + ex + ')'
+                                    });
+                                }
+                            });
+                        }else
+                            callbacktoken();
 
+                    },function(err){
+                        if(!err) callbackrole();
+                        else callbackrole(err);
+                    });
                 },function(err){
-                    if(!err) callbackrole();
-                    else callbackrole(err);
+                    if(!err) callback();
+                    else callback(err);
                 });
-            },function(err){
-                if(!err) callback();
-                else callback(err);
             });
 
         }else
@@ -182,34 +184,31 @@ router.post('/actions/microservicelist/import', jwtMiddle.ensureIsAuthorized, fu
 
     var errorMsg=null;
 
-    Microservice.remo
-
-
-    async.eachSeries(msList,function(microservice,callback){
-        Microservice.findOneAndRemove({name:microservice.name},function(err,document){
-            if(err) {
-                errorMsg = errorMsg != null ? errorMsg + "\n\r------------------ \n\r " + err : err;
-                callback();
-            }
-            else{
-                //console.log("#################### " + microservice.name);
+    Microservice.remove({},function(err){
+        if(err) {
+            errorMsg = errorMsg != null ? errorMsg + "\n\r------------------ \n\r " + err : err;
+            return res.status(500).send({error:"InternalError", error_message:"Can not import microservice list due can't delete microservices"});
+        }else{
+            async.eachSeries(msList,function(microservice,callback){
                 Microservice.create(microservice, function (err, mcsID) {
                     if(err)
                         errorMsg= errorMsg!=null ?    errorMsg + "\n\r------------------ \n\r " + err : err;
                     callback();
                 });
-            }
 
-        });
-
-    },function(err){
-        commonfunctions.updateMicroservice(function () {
-            if(errorMsg)
-                return res.status(409).send({error:"Conflict. Done with alerts", error_message:errorMsg});
-            else
-                return res.status(201).send({results:"done"});
-        });
+            },function(err){
+                commonfunctions.updateMicroservice(function () {
+                    if(errorMsg)
+                        return res.status(409).send({error:"Conflict. Done with alerts", error_message:errorMsg});
+                    else
+                        return res.status(201).send({results:"done"});
+                });
+            });
+        }
     });
+
+
+
 });
 
 router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized], function (req, res) {
