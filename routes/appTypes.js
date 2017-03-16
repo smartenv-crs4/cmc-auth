@@ -21,6 +21,9 @@ router.use(middlewares.parseFields);
 
 
 
+
+
+
 /**
  * @api {get} /apptypes Get all application token types
  * @apiVersion 1.0.0
@@ -44,7 +47,7 @@ router.use(middlewares.parseFields);
  * @apiUse GetAppTypeResourceExample
  * @apiUse Unauthorized
  * @apiUse BadRequest
- * @apiUse NotFound
+ * @apiUse NoContent
  * @apiUse ServerError
  */
 router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
@@ -60,11 +63,10 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
     tokenTypes.findAll(query, req.dbQueryFields, req.dbPagination, function (err, results) {
 
         if (!err) {
-
             if (!_.isEmpty(results.userandapptypes))
                 return res.status(200).send(results);
             else
-                return res.status(404).send({error: "Not found", error_message: "Resource not found"});
+                return res.status(204).send(results);
         }
         else {
             return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});

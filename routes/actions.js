@@ -35,6 +35,12 @@ function decodeToken(req,res,callb){
  * <b>request.body.error_message</b> contains an error message specifying the 404_NotFound error.<BR>
  */
 
+
+/**
+ * @apiDefine NoContent
+ * @apiError (2xx) 204_NoConent The query gets no content.
+ */
+
 /**
  * @apiDefine  Conflict
  * @apiError 409_Conflict <b>Conflict:</b> Indicates that the request could not be processed because of conflict in the request.

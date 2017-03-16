@@ -710,23 +710,25 @@ function TokenTypeDetails(url,myToken){
             //
             // console.log("MS NAME:" + msName + " Data:" +JSON.stringify(data));
 
-            var results=data.userandapptypes;
+            if(data){
+                var results=data.userandapptypes;
 
-            for(var item in results){
-                $('#tableapptype').append('<tr id=\"'+results[item]._id+'"> \
-                                            <td style=\"display:none\">'+results[item]._id+'</td> \
-                                            <td>'+results[item].name+'</td> \
-                                            <td>'+results[item].super+'</td> \
-                                            <td> \
-                                                <button onclick=\"javascript:updateTokenType(\''+ results[item]._id + '\',\'' + results[item].name +'\',\'' + results[item].type +'\',\''+ results[item].super +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
-                                                    <i class=\"fa fa-pencil\"></i> \
-                                                </button> \
-                                                <button onclick=\"javascript:deleteTokenType(\''+ results[item]._id +'\',\'' + results[item].type+ '\',\'' + url + '\',\'' + myToken+'\');\" type=\"button\" class=\"btn btn-warning btn-circle\"> \
-                                                    <i class=\"fa fa-trash-o\"></i> \
-                                                </button> \
-                                                <a id=\"'+results[item]._id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
-                                            </td> \
-                                        </tr>');
+                for(var item in results){
+                    $('#tableapptype').append('<tr id=\"'+results[item]._id+'"> \
+                                                <td style=\"display:none\">'+results[item]._id+'</td> \
+                                                <td>'+results[item].name+'</td> \
+                                                <td>'+results[item].super+'</td> \
+                                                <td> \
+                                                    <button onclick=\"javascript:updateTokenType(\''+ results[item]._id + '\',\'' + results[item].name +'\',\'' + results[item].type +'\',\''+ results[item].super +'\');\" type=\"button\" class=\"btn btn-info btn-circle\"> \
+                                                        <i class=\"fa fa-pencil\"></i> \
+                                                    </button> \
+                                                    <button onclick=\"javascript:deleteTokenType(\''+ results[item]._id +'\',\'' + results[item].type+ '\',\'' + url + '\',\'' + myToken+'\');\" type=\"button\" class=\"btn btn-warning btn-circle\"> \
+                                                        <i class=\"fa fa-trash-o\"></i> \
+                                                    </button> \
+                                                    <a id=\"'+results[item]._id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
+                                                </td> \
+                                            </tr>');
+                }
             }
         },
         error: function(data) {
@@ -751,10 +753,10 @@ function TokenTypeDetails(url,myToken){
             //
             //
             // console.log("MS NAME:" + msName + " Data:" +JSON.stringify(data));
-
-            var results=data.userandapptypes;
-            for(var item in results){
-                $('#tableusertype').append('<tr id=\"'+results[item]._id+'"> \
+            if(data){
+                var results=data.userandapptypes;
+                for(var item in results){
+                    $('#tableusertype').append('<tr id=\"'+results[item]._id+'"> \
                                             <td style=\"display:none\">'+results[item]._id+'</td> \
                                             <td>'+results[item].name+'</td> \
                                             <td>'+results[item].super+'</td> \
@@ -768,7 +770,10 @@ function TokenTypeDetails(url,myToken){
                                                 <a id=\"'+results[item]._id+ "delete" +'" data-toggle=\"deleteTokenAlert\" class="whiteString"></a> \
                                             </td> \
                                         </tr>');
+                }
             }
+
+
         },
         error: function(data) {
             console.log(JSON.stringify(data));
@@ -1295,72 +1300,154 @@ function importTokenTypeListCall(list,url,myToken,respnsecallback){
     var originalUrl=url;
     var content;
 
-    async.forEachOf(list, function (element, key, callback) {
+    var tokeTypelist=[];
 
-        if(element.type=="user") {
-            content={"usertype":element};
-            originalUrl = "/usertypes";
-        }
-        else {
-            content={"apptype":element};
-            originalUrl = "/apptypes";
-        }
 
-        $.ajax({
-            url: url + originalUrl+ "?name=" + element.name +"&type=" + element.type ,
-            type: 'GET',
-            contentType: "application/json",
-            headers: {
-                'Authorization': 'Bearer ' + myToken
+    async.series([
+            function(clb) {   // get all application token type
+                $.ajax({
+                    url: url + "/apptypes",
+                    type: 'GET',
+                    contentType: "application/json",
+                    headers: {
+                        'Authorization': 'Bearer ' + myToken
+                    },
+                    success: function (data) {
+                        console.log(JSON.stringify(data));
+                        if(data){
+                            tokeTypelist=tokeTypelist.concat(data.userandapptypes);
+                        }
+                        clb(null,"one");
+                    },
+                    error: function (data) {
+                        clb(null,"one");
+                    }
+                });
             },
-            success: function(data) {
-                if(data._metadata.totalCount>0){
-                    callback();
-                } else {
+            function(clb) {  // get all user token type
+                $.ajax({
+                    url: url + "/usertypes",
+                    type: 'GET',
+                    contentType: "application/json",
+                    headers: {
+                        'Authorization': 'Bearer ' + myToken
+                    },
+                    success: function (data) {
+                        if(data){
+                            tokeTypelist=tokeTypelist.concat(data.userandapptypes);
+                        }
+                        clb(null,"Two");
+                    },
+                    error: function (data) {
+                        clb(null,"Two");
+                    }
+                });
+            },
+            function(clb) {  // delete token types
+                async.forEach(tokeTypelist, function (element,next) {
+
+                    if(element.type=="user") {
+                        originalUrl = "/usertypes";
+                    }
+                    else {
+                        originalUrl = "/apptypes";
+                    }
+
                     $.ajax({
-                        url: url + originalUrl,
-                        type: 'POST',
+                        url: url + originalUrl+ "/" + element._id ,
+                        type: 'DELETE',
                         contentType: "application/json",
-                        data: JSON.stringify(content),
                         headers: {
                             'Authorization': 'Bearer ' + myToken
                         },
-                        success: function (data) {
-                            callback();
+                        success: function(data) {
+                            next();
 
                         },
-                        error: function (data) {
-                            problems = (problems || "") + " " + (data.responseJSON ? data.responseJSON.error_message : data.statusText);
+                        error: function(data) {
+                           next();
+                        }
+                    });
+
+                },function(err){
+                    clb();
+                });
+            },
+            function(clb) {  // import token types
+                async.forEachOf(list, function (element, key, callback) {
+
+                    if(element.type=="user") {
+                        content={"usertype":element};
+                        originalUrl = "/usertypes";
+                    }
+                    else {
+                        content={"apptype":element};
+                        originalUrl = "/apptypes";
+                    }
+
+                    $.ajax({
+                        url: url + originalUrl+ "?name=" + element.name +"&type=" + element.type ,
+                        type: 'GET',
+                        contentType: "application/json",
+                        headers: {
+                            'Authorization': 'Bearer ' + myToken
+                        },
+                        success: function(data) {
+                            if(data){
+                                callback();
+                            } else {
+                                $.ajax({
+                                    url: url + originalUrl,
+                                    type: 'POST',
+                                    contentType: "application/json",
+                                    data: JSON.stringify(content),
+                                    headers: {
+                                        'Authorization': 'Bearer ' + myToken
+                                    },
+                                    success: function (data) {
+                                        callback();
+
+                                    },
+                                    error: function (data) {
+                                        problems = (problems || "") + " " + (data.responseJSON ? data.responseJSON.error_message : data.statusText);
+                                        callback();
+                                    }
+                                });
+                            }
+                        },
+                        error: function(data) {
+                            console.log(data);
+                            problems=(problems || "") + " "+ (data.responseJSON ? data.responseJSON.error_message : data.statusText);
                             callback();
                         }
                     });
+
+                }, function (err) {
+                    clb();
+                });
+            }
+        ],
+// optional callback
+        function(err, results) {
+            if(problems){
+                if(respnsecallback){
+                    respnsecallback(problems);
+                }else {
+                    $('#myAlertMsgModalLabel').text("Something blew up");
+                    $('#AlertMsgMessage').text(problems);
+                    $('#myAlertMsg').modal({show: true, backdrop: false});
                 }
-            },
-            error: function(data) {
-                problems=(problems || "") + " "+ (data.responseJSON ? data.responseJSON.error_message : data.statusText);
-                callback();
+            }else{
+                if(respnsecallback){
+                    respnsecallback(null);
+                }else {
+                    $('#myInfoMsgModalLabel').text("Import Results");
+                    $('#InfoMsgMessage').text("Token Types list import Done!");
+                    $('#myInfoMsg').modal({show: true, backdrop: false});
+                }
             }
         });
 
-    }, function (err) {
-        if(problems){
-            if(respnsecallback){
-               respnsecallback(problems);
-            }else {
-                $('#myAlertMsgModalLabel').text("Something blew up");
-                $('#AlertMsgMessage').text(problems);
-                $('#myAlertMsg').modal({show: true, backdrop: false});
-            }
-        }else{
-            if(respnsecallback){
-                respnsecallback(null);
-            }else {
-                $('#myInfoMsgModalLabel').text("Import Results");
-                $('#InfoMsgMessage').text("Token Types list import Done!");
-                $('#myInfoMsg').modal({show: true, backdrop: false});
-            }
-        }
-    });
 }
 
 function importTokenTypeList(url,myToken){
@@ -1389,5 +1476,6 @@ function loadTokenTypeList(url,myToken){
     $('#fileID').click();
 }
 
-// refresh microservice info
+// refresh microservice inf 
+
 //setInterval(function(){ refreshMs()}, 60000);

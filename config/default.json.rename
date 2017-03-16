@@ -27,7 +27,7 @@
     "consulServices":"/v1/agent/services",
     "consulHealth":"/v1/health/service",
     "tokenLF":{
-      "unit":"years",
+      "unit":"days",
       "value":"7"
     }
   },
@@ -57,7 +57,7 @@
     "consulServices":"/v1/agent/services",
     "consulHealth":"/v1/health/service",
     "tokenLF":{
-      "unit":"years",
+      "unit":"days",
       "value":"7"
     }
   }
