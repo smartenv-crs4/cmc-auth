@@ -29,7 +29,8 @@
     "tokenLF":{
       "unit":"days",
       "value":"7"
-    }
+    },
+    "authMsName":"authms"
   },
 
   "production":{
@@ -59,6 +60,7 @@
     "tokenLF":{
       "unit":"days",
       "value":"7"
-    }
+    },
+    "authMsName":"authms"
   }
 }

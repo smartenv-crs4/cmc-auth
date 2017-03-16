@@ -148,7 +148,6 @@ exports.ensureIsAuthorized = function(req, res, next) {
         if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
         if(!item) {
             // console.log("ensure is MS");
-
             var token = req.decode_results;
             var exampleUrl = "http://cp2020.crs4.it/";
 
