@@ -23,7 +23,7 @@ router.use(middlewares.parseFields);
  * @apiName GetAllUserTypes
  * @apiGroup UserType
  *
- * @apiDescription Accessible only by access tokens, returns a paginated list of all available user types.<BR>
+ * @apiDescription Accessible only by access tokens, returns a paginated list of all available user token types.<BR>
  * Set pagination skip and limit and other filters in the URL request, e.g. "get /authuser?skip=10&limit=50&field=value"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
@@ -36,8 +36,8 @@ router.use(middlewares.parseFields);
  * if set, the same  token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
- * @apiUse GetResource
- * @apiUse GetResourceExample
+ * @apiUse GetUserResource
+ * @apiUse GetUserResourceExample
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse NoContent

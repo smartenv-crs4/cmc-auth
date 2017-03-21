@@ -253,7 +253,7 @@ html(lang='en')
                                         // TODO OLD .col-xs-3
                                         .col-xs-5
                                             i.fa(class=item['icon']).fa-5x
-                                            if(item['name']=='authms')
+                                            if(item['name'].indexOf(authmsName)>=0)
                                                 .row
                                                     a(onclick="TokenTypeDetails('"+ myUrl + "','" + myToken + "')", data-toggle='modal' data-target='#tokenManagement').whiteString
                                                         span.fa.fa-key(aria-hidden='true')
