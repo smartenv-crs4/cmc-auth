@@ -30,7 +30,8 @@ router.get('/main', function(req, res) {
             myUrl: conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf,
             myToken: conf.getParam("MyMicroserviceToken"),
             iconsList: iconsList,
-            adminToken:adminToken
+            adminToken:adminToken,
+            authmsName:conf.getParam("authMsName") || "authms"
         });
     }
     else {

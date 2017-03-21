@@ -162,7 +162,7 @@ function decodeToken(req,res,callb){
  * @apiSuccess {String} [userandapptypes.fieldN] field N: other field defined in application type schema
  */
 
- /**
+/**
  * @apiDefine GetAppTypeResourceExample
  * @apiSuccessExample {json} Example: 200 OK, Success Response
  *     {
@@ -188,6 +188,47 @@ function decodeToken(req,res,callb){
  *                   "totalCount":100
  *                   }
  *     }
+ */
+ /**
+ * @apiDefine GetUserTypeResourceExample
+ * @apiSuccessExample {json} Example: 200 OK, Success Response
+ *     {
+ *       "userandapptypes":[
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "name": "cruiser",
+ *                          "type": "user",
+ *                          "super": false
+ *                      },
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "name": "admin",
+ *                          "type": "user",
+ *                          "super": true
+ *                     },
+ *                    ...
+ *                 ],
+ *
+ *       "_metadata":{
+ *                   "skip":10,
+ *                   "limit":50,
+ *                   "totalCount":100
+ *                   }
+ *     }
+ */
+
+
+
+/**
+ * @apiDefine GetUserTypeResource
+ * @apiSuccess {Object[]} userandapptypes a paginated array list of user token types object
+ * @apiSuccess {String} userandapptypes._id application type id
+ * @apiSuccess {String} userandapptypes.name application token type name
+ * @apiSuccess {String} userandapptypes.type must be equal to "user"
+ * @apiSuccess {String} userandapptypes.super if set true, the application token type is like an admin token
+ * @apiSuccess {String} [userandapptypes.field1] field 1: other field defined in application type schema
+ * @apiSuccess {String} [userandapptypes.field2] field 2: other field defined in application type schema
+ * @apiSuccess {String} [userandapptypes.fieldN] field N: other field defined in application type schema
  */
 
 
