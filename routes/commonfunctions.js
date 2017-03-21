@@ -225,7 +225,7 @@ exports.initMs = function(callb) {
                     if (err) console.log("ERROR in creation token for this microservice " + err);
                     if(!val){
                         console.log("TOKEN not present");
-                        var token=JSON.parse(commonFunction.generateMsToken("authms")).token;
+                        var token=JSON.parse(commonFunction.generateMsToken(authmsName)).token;
 
                         var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
                         var gwVersion=conf.getParam("apiVersion");
