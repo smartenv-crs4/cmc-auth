@@ -1235,7 +1235,7 @@ function exportUserTokenTypeList(url,myToken,callback){
             'Authorization': 'Bearer ' + myToken
         },
         success: function(datauser) {
-           callback(null,datauser);
+           callback(null,datauser||[]);
 
         },
         error: function(data) {
@@ -1254,7 +1254,7 @@ function exportApplicationTokenTypeList(url,myToken,callback){
             'Authorization': 'Bearer ' + myToken
         },
         success: function(dataapp) {
-            callback(null,dataapp);
+            callback(null,dataapp||[]);
 
 
         },
