@@ -16,22 +16,14 @@ router.use(middlewares.parsePagination);
 router.use(middlewares.parseFields);
 
 
-
-
-
-
-
-
-
-
 /**
- * @api {get} /apptypes Get all application token types
+ * @api {get} /apptypes Get all Application Token Types
  * @apiVersion 1.0.0
  * @apiName Application token type list
- * @apiGroup AppType
+ * @apiGroup Application Type
  *
- * @apiDescription Accessible only by access tokens, returns a paginated list of all available application types.<BR>
- * Set pagination skip and limit and other filters in the URL request, e.g. "get /authuser?skip=10&limit=50&field=value"
+ * @apiDescription Protected by access token, returns a paginated list of all available application types.<BR>
+ * It sets pagination skip, limit and other filters in the URL request, e.g. "get /authuser?skip=10&limit=50&field=value"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -40,7 +32,7 @@ router.use(middlewares.parseFields);
  *     }
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * if set, the same token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
  * @apiUse GetAppTypeResource
@@ -78,12 +70,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /apptypes/:id Get application type by Id
+ * @api {get} /apptypes/:id Get Application Token Type by Id
  * @apiVersion 1.0.0
  * @apiName Get Application type info
- * @apiGroup AppType
+ * @apiGroup Application Type
  *
- * @apiDescription Accessible only by access_tokens, returns the application token type dictionary.
+ * @apiDescription Protected by access token, returns the application token type dictionary.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -92,7 +84,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *     }
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id the Application token type id
  *
  * @apiSuccess {String} _id Application  token type identifier
@@ -131,12 +123,12 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {delete} /apptypes/:id delete application token type
+ * @api {delete} /apptypes/:id Delete Application Token Type
  * @apiVersion 1.0.0
  * @apiName Delete application token type
- * @apiGroup AppType
+ * @apiGroup Application Type
  *
- * @apiDescription Accessible only by access tokens, deletes Application token type and returns the deleted resource.
+ * @apiDescription Protected by access token, deletes Application token type and returns the deleted resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -145,7 +137,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *     }
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id the Application token type id
  *
  * @apiSuccess (200 - OK) {String} _id Application token type identifier
@@ -163,6 +155,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -263,12 +256,12 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {put} /apptypes/:id update application token type
+ * @api {put} /apptypes/:id Update Application Token Type
  * @apiVersion 1.0.0
  * @apiName Update application token type
- * @apiGroup AppType
+ * @apiGroup Application Type
  *
- * @apiDescription Accessible only by access tokens, updates the application token type info and returns the updated resource.
+ * @apiDescription Protected by access token, updates the application token type info and returns the updated resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -277,7 +270,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *     }
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id Application token type identifier
  * @apiParam (Body parameter) {Object} apptype  Application token type dictionary with all the fields to update.
  * @apiParam (Body parameter) {String} apptype.name Application token type name
@@ -303,6 +296,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse Conflict
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -373,30 +367,31 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /apptypes Create a new application token type
+ * @api {post} /apptypes Create a new Application Token Type
  * @apiVersion 1.0.0
  * @apiName Create new application token type
- * @apiGroup AppType
+ * @apiGroup Application Type
  *
- * @apiDescription Accessible only by access tokens, creates a new Application token type and returns the created resource.
+ * @apiDescription Protected by access token, creates a new Application token type and returns the created resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeader {String} [Content-Type] Body content type
  * @apiHeaderExample {json} Header-Example:
  *     {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
  * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} apptype the application token type dictionary with all the fields. Name is mandatory.
- * @apiParam (Body parameter) {String} apptype.name the application token type name
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (Body parameter) {Object} apptype dictionary of the application token type with all the fields. Name is mandatory.
+ * @apiParam (Body parameter) {String} apptype.name name of the application token type
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "apptype": {"name":"ExternalWebUi"}}
  *
  * @apiSuccess (201 - CREATED) {String} _id id of the created application type
- * @apiSuccess (201 - CREATED) {String} name name the of created application type
+ * @apiSuccess (201 - CREATED) {String} name name of the created application type
  * @apiSuccess (201 - CREATED) {String} type  type of the created application type. Must be equal to "app"
  *
  * @apiSuccessExample {json} Example: 201 CREATED
@@ -410,6 +405,7 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.post('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 

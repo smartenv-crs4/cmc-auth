@@ -25,7 +25,7 @@ passport.use(new LocalStrategy(User.authenticate()));
  * @apiName Login User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access tokens, SignIn the User and returns the access credentials.
+ * @apiDescription Protected by access token, signs in the User and returns the access credentials.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -33,10 +33,10 @@ passport.use(new LocalStrategy(User.authenticate()));
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {String} username the email
- * @apiParam (Body parameter) {String} password the password
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (Body parameter) {String} username User email
+ * @apiParam (Body parameter) {String} password User password
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -68,6 +68,7 @@ passport.use(new LocalStrategy(User.authenticate()));
  * @apiUse BadRequest
  * @apiUse ServerError
  * @apiUse InvalidUserAndPassword
+ * @apiSampleRequest off
  */
 router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -98,12 +99,12 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /authuser/signup SignUp a new User
+ * @api {post} /authuser/signup Sign up a new User
  * @apiVersion 1.0.0
  * @apiName SignUp User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access token, creates a new User and returns the access credentials.
+ * @apiDescription Protected by access token, creates a new User and returns the access credentials.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -111,16 +112,16 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} user the User dictionary with all the fields, only email, password and type are mandatory.
- * @apiParam (Body parameter) {String} user.email  user email valid as username to login
- * @apiParam (Body parameter) {String} user.password  user password
- * @apiParam (Body Parameter) {String} user.type user type. for example admin, cruiser...
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (Body parameter) {Object} user User dictionary with all the fields, only email, password and type are mandatory.
+ * @apiParam (Body parameter) {String} user.email  User email valid as username to login
+ * @apiParam (Body parameter) {String} user.password  User password
+ * @apiParam (Body Parameter) {String} user.type User type, i.e. admin, cruiser...
  * @apiParam (Body Parameter) {String} [user.name] user name
  * @apiParam (Body Parameter) {String} [user.surname] user surname
- * @apiParam (Body Parameter) {String} [application.avatar] user avatar image id in uploadms
- * @apiParam (Body Parameter) {String} [application.notes]  user notes
+ * @apiParam (Body Parameter) {String} [application.avatar] User avatar image id in upload service
+ * @apiParam (Body Parameter) {String} [application.notes]  User notes
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -152,6 +153,7 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse BadRequest
  * @apiUse ServerError
  * @apiUse InvalidUserAndPassword
+ * @apiSampleRequest off
  */
 router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -209,7 +211,7 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiName Get User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access tokens, returns a paginated list of all Users.<BR>
+ * @apiDescription Protected by access tokens, returns a paginated list of all Users.<BR>
  * Set pagination skip and limit and other filters in the URL request, e.g. "get /authuser?skip=10&limit=50&name=Mario"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
@@ -218,8 +220,8 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
  * @apiUse GetResource
@@ -228,6 +230,7 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -265,12 +268,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /authuser/:id Get the User by id
+ * @api {get} /authuser/:id Get User by id
  * @apiVersion 1.0.0
  * @apiName Get User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access_token, returns user dictionary.
+ * @apiDescription Protected by access token, returns user dictionary.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -278,8 +281,8 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id the User id
  *
  * @apiSuccess {String} User.id Application id identifier
@@ -324,12 +327,12 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {delete} /authuser/:id delete user
+ * @api {delete} /authuser/:id Delete User
  * @apiVersion 1.0.0
  * @apiName Delete User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access tokens, deletes the User and returns the deleted resource.
+ * @apiDescription Protected by access tokens, deletes the User and returns the deleted resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -337,8 +340,8 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id the Application id
  *
  * @apiSuccess (200 - OK) {String} UserField_1 Contains field 1 defined in User Schema (example name)
@@ -356,6 +359,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -435,12 +439,12 @@ function enable_disable(id, value, cb) {
 
 
 /**
- * @api {post} /authuser/:id/actions/enable enable user
+ * @api {post} /authuser/:id/actions/enable Enable User
  * @apiVersion 1.0.0
  * @apiName Enable User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access_token, enables the User.
+ * @apiDescription Protected by access token, enables the User.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -448,11 +452,11 @@ function enable_disable(id, value, cb) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application id
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id The Application id
  *
- * @apiSuccess (200 - OK) {String} status  the new User status
+ * @apiSuccess (200 - OK) {String} status  The new User status
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -464,6 +468,7 @@ function enable_disable(id, value, cb) {
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, res) {
         "use strict";
@@ -479,12 +484,12 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
 
 
 /**
- * @api {post} /authuser/:id/actions/disable disable user
+ * @api {post} /authuser/:id/actions/disable Disable User
  * @apiVersion 1.0.0
  * @apiName Disable User
  * @apiGroup User
  *
- * @apiDescription Accessible only by access tokens, disables the User.
+ * @apiDescription Protected by access token, disables the User.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -492,11 +497,11 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id the Application id
  *
- * @apiSuccess (200 - OK) {String} status  the new Application status
+ * @apiSuccess (200 - OK) {String} status  The new User status
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -508,6 +513,7 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req, res) {
         "use strict";
@@ -524,12 +530,12 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
 
 
 /**
- * @api {post} /authuser/:id/actions/resetpassword Reset user password
+ * @api {post} /authuser/:id/actions/resetpassword Reset User password
  * @apiVersion 1.0.0
  * @apiName ResetPassword
  * @apiGroup User
  *
- * @apiDescription Accessible only by access tokens, reset user password
+ * @apiDescription Protected by access tokens, resets user password
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -537,11 +543,11 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application id
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id The User id
  *
- * @apiSuccess (200 - OK) {String} reset_token  the reset token to set the new password
+ * @apiSuccess (200 - OK) {String} reset_token  The reset token to set the new password
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -553,6 +559,7 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function (req, res) {
     "use strict";
@@ -591,12 +598,12 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the User id
- * @apiParam (Body Parameter) {String} [oldpassword] the old password to update. If set, reset_token must be undefined
- * @apiParam (Body Parameter) {String} newpassword the new password
- * @apiParam (Body Parameter) {String} [reset_token] this token is used to update password. If set, oldpassword must be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id The User id
+ * @apiParam (Body Parameter) {String} [oldpassword] The old password to update. If set, reset_token must be undefined
+ * @apiParam (Body Parameter) {String} newpassword The new password
+ * @apiParam (Body Parameter) {String} [reset_token] Token used to update the password. If set, oldpassword must be undefined
  *
  *
  * @apiSuccess (200 - OK) {Object} apiKey  contains information about apiKey token
@@ -626,6 +633,8 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
  * @apiUse NotFound
  * @apiUse ServerError
  * @apiUse InvalidUserAndPassword
+ * @apiSampleRequest off
+ *
  */
 router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (req, res) {
     "use strict";

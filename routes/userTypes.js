@@ -18,12 +18,12 @@ router.use(middlewares.parseFields);
 
 
 /**
- * @api {get} /usertypes Get all user token types
+ * @api {get} /usertypes Get all User Token Types
  * @apiVersion 1.0.0
  * @apiName GetAllUserTypes
- * @apiGroup UserType
+ * @apiGroup User Type
  *
- * @apiDescription Accessible only by access tokens, returns a paginated list of all available user token types.<BR>
+ * @apiDescription Protected by access token, returns a paginated list of all available user token types.<BR>
  * Set pagination skip and limit and other filters in the URL request, e.g. "get /authuser?skip=10&limit=50&field=value"
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
@@ -32,12 +32,12 @@ router.use(middlewares.parseFields);
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
- * @apiUse GetUserResource
- * @apiUse GetUserResourceExample
+ * @apiUse GetUserTypeResource
+ * @apiUse GetUserTypeResourceExample
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse NoContent
@@ -71,12 +71,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /usertypes/:id Get user token type by Id
+ * @api {get} /usertypes/:id Get User Token Type by Id
  * @apiVersion 1.0.0
  * @apiName GetUserTypeById
- * @apiGroup UserType
+ * @apiGroup User Type
  *
- * @apiDescription Accessible only by access tokens, returns the user token type dictionary.
+ * @apiDescription Protected by access token, returns the user token type dictionary.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -84,12 +84,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter) {String} id the user token type id
  *
- * @apiSuccess {String} _id the user token type id
- * @apiSuccess {String} name the user type name
+ * @apiSuccess {String} _id User token type id
+ * @apiSuccess {String} name User type name
  *
  * @apiSuccessExample {json} Example: 200 OK, Success Response
  *     {
@@ -102,6 +102,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -126,12 +127,12 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {delete} /usertypes/:id delete user type
+ * @api {delete} /usertypes/:id Delete User Type
  * @apiVersion 1.0.0
  * @apiName DeleteUserType
- * @apiGroup UserType
+ * @apiGroup User Type
  *
- * @apiDescription Accessible only by access tokens, deletes user token type and returns the deleted resource.
+ * @apiDescription Protected by access token, deletes user token type and returns the deleted resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -139,9 +140,9 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the user token type id
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id User token type id
  *
  * @apiSuccess (200 - OK) {String} _id the user token type id
  * @apiSuccess (200 - OK) {String} name the user type name
@@ -158,6 +159,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -256,12 +258,12 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {put} /usertypes/:id update user type info
+ * @api {put} /usertypes/:id Update User Type info
  * @apiVersion 1.0.0
  * @apiName UpdateUserType
- * @apiGroup UserType
+ * @apiGroup User Type
  *
- * @apiDescription Accessible only by access tokens, updates the user token type info and returns the updated resource.
+ * @apiDescription Protected by access token, updates the user token type info and returns the updated resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -269,11 +271,11 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the user token type id
- * @apiParam (Body parameter) {Object} usertype the user token type dictionary with all the updatable fields
- * @apiParam (Body parameter) {String} usertype.name the user token type name
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id User token type id
+ * @apiParam (Body parameter) {Object} usertype User token type dictionary with all the updatable fields
+ * @apiParam (Body parameter) {String} usertype.name User token type name
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 PUT request
@@ -296,6 +298,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse Conflict
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
  */
 router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
@@ -367,12 +370,12 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /usertypes Create a new user token type
+ * @api {post} /usertypes Create a new User Token Type
  * @apiVersion 1.0.0
  * @apiName CreateUserType
- * @apiGroup UserType
+ * @apiGroup User Type
  *
- * @apiDescription Accessible only by access tokens, creates a new user token type and returns the created resource.
+ * @apiDescription Protected by access token, creates a new user token type and returns the created resource.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -380,10 +383,10 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
- * if set, the same  token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} body.usertype the user type dictionary with all the fields.
- * @apiParam (Body parameter) {Object} body.usertype.name the user type name
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (Body parameter) {Object} body.usertype User type dictionary with all the fields.
+ * @apiParam (Body parameter) {Object} body.usertype.name User type name
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
@@ -404,6 +407,8 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
+ * @apiSampleRequest off
+ *
  */
 router.post('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
