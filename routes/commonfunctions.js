@@ -127,6 +127,9 @@ function bundleToken(decoded,callback){
 }
 
 exports.decode=function(token,callb){
+
+    //console.log("################ " + token);
+
     if (token) {
         try {
             var decoded = jwt.decode(token, require('../app').get('jwtTokenSecret'));
