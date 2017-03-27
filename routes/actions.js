@@ -19,6 +19,8 @@ var async=require('async');
 function decodeToken(req,res,callb){
     var token = ((req.body && req.body.refresh_token) || (req.query && req.query.refresh_token))||((req.body && req.body.decode_token) || (req.query && req.query.decode_token)); // || req.headers['x-access-token'];
 
+    // console.log("???????????????????" + req.body);
+
     commonfunctions.decode(token,function(err,decoded){
         if(err){
             callb(err,decoded);
