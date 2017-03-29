@@ -86,10 +86,10 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the user token type id
+ * @apiParam (URL parameter) {String} id    User token type id
  *
- * @apiSuccess {String} _id User token type id
- * @apiSuccess {String} name User type name
+ * @apiSuccess {String} _id     User token type id
+ * @apiSuccess {String} name    User type name
  *
  * @apiSuccessExample {json} Example: 200 OK, Success Response
  *     {
@@ -142,10 +142,10 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id User token type id
+ * @apiParam (URL parameter) {String} id    User token type id
  *
- * @apiSuccess (200 - OK) {String} _id the user token type id
- * @apiSuccess (200 - OK) {String} name the user type name
+ * @apiSuccess (200 - OK) {String} _id      user token type id
+ * @apiSuccess (200 - OK) {String} name     user type name
  *
  * @apiSuccessExample {json} Example: 200 Ok
  *      HTTP/1.1 200 Ok
@@ -273,17 +273,17 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id User token type id
- * @apiParam (Body parameter) {Object} usertype User token type dictionary with all the updatable fields
- * @apiParam (Body parameter) {String} usertype.name User token type name
+ * @apiParam (URL parameter)    {String} id             User token type id
+ * @apiParam (Body parameter)   {Object} usertype User  Token type dictionary with all the updatable fields
+ * @apiParam (Body parameter)   {String} usertype.name  User token type name
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 PUT request
  *  Body:{ "usertype": {"name":"ExternalWebUi"}}
  *
- * @apiSuccess (200 - OK) {String} _id id of the updated user token type
- * @apiSuccess (200 - OK) {String} name name of the updated user token type
- * @apiSuccess (200 - OK) {String} type  type of the updated user token type. Must be equal to "user"
+ * @apiSuccess (200 - OK) {String} _id      id of the updated user token type
+ * @apiSuccess (200 - OK) {String} name     name of the updated user token type
+ * @apiSuccess (200 - OK) {String} type     type of the updated user token type. Must be equal to "user"
  *
  * @apiSuccessExample {json} Example: 200 Ok
  *      HTTP/1.1 200 OK
@@ -385,16 +385,16 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} body.usertype User type dictionary with all the fields.
- * @apiParam (Body parameter) {Object} body.usertype.name User type name
+ * @apiParam (Body parameter) {Object} body.usertype        User type dictionary with all the fields.
+ * @apiParam (Body parameter) {Object} body.usertype.name   User type name
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "usertype": {"name":"ExternalWebUi"}}
  *
- * @apiSuccess (201 - OK) {String} _id id of the created user type
- * @apiSuccess (201 - OK) {String} name name of the created user type
- * @apiSuccess (201 - OK) {String} type type of the created user type. Must be equal to "user"
+ * @apiSuccess (201 - OK) {String} _id      id of the created user type
+ * @apiSuccess (201 - OK) {String} name     name of the created user type
+ * @apiSuccess (201 - OK) {String} type     type of the created user type. Must be equal to "user"
  *
  * @apiSuccessExample {json} Example: 201 CREATED
  *      HTTP/1.1 201 CREATED

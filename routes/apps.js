@@ -41,13 +41,13 @@ passport.use(new LocalStrategy(App.authenticate()));
  * HTTP/1.1 POST request
  *  Body:{ "username": "prov@prova.it" , "password":"provami"}
  *
- * @apiSuccess (200 - OK) {Object} apiKey  contains information about apiKey token
- * @apiSuccess (200 - OK) {String} apiKey.token  application Token
- * @apiSuccess (200 - OK) {String} apiKey.expires  token expiration date
- * @apiSuccess (200 - OK) {Object} refreshToken  contains information about refreshToken used to renew token
- * @apiSuccess (200 - OK) {String} refreshToken.token  application refreshToken
- * @apiSuccess (200 - OK) {String} refreshToken.expires  refreshToken expiration date
- * @apiSuccess (200 - OK) {String} userId  application id
+ * @apiSuccess (200 - OK) {Object} apiKey               information about apiKey token
+ * @apiSuccess (200 - OK) {String} apiKey.token         application Token
+ * @apiSuccess (200 - OK) {String} apiKey.expires       token expiration date
+ * @apiSuccess (200 - OK) {Object} refreshToken         information about refreshToken used to renew token
+ * @apiSuccess (200 - OK) {String} refreshToken.token   application refreshToken
+ * @apiSuccess (200 - OK) {String} refreshToken.expires refreshToken expiration date
+ * @apiSuccess (200 - OK) {String} userId               application id
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -110,27 +110,27 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} app  The application dictionary with all the fields. Only email, password and type are mandatory.
- * @apiParam (Body parameter) {String} app.email  Application email, valid as username to login
+ * @apiParam (Body parameter) {Object} app          The application dictionary with all the fields. Only email, password and type are mandatory.
+ * @apiParam (Body parameter) {String} app.email    Application email, valid as username to login
  * @apiParam (Body parameter) {String} app.password Application password
- * @apiParam (Body parameter) {String} app.type Application type. for example external, webUi...
- * @apiParam (Body parameter) {String} [app.name] Application name for example cruiseKiosk,PortWebUI....
+ * @apiParam (Body parameter) {String} app.type     Application type. for example external, webUi...
+ * @apiParam (Body parameter) {String} [app.name]   Application name for example cruiseKiosk,PortWebUI....
  * @apiParam (Body parameter) {String} [app.avatar] Application avatar image  identifier in uploadms
- * @apiParam (Body parameter) {String} [app.notes] Application notes
+ * @apiParam (Body parameter) {String} [app.notes]  Application notes
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "email": "prova@prova.it" , "password":"provami", "type":"ext", "name":"nome"}
  *
- * @apiSuccess (201 - CREATED) {Object} apiKey  contains information about apiKey token
- * @apiSuccess (201 - CREATED) {String} apiKey.token  application Token
- * @apiSuccess (201 - CREATED) {String} apiKey.expires  token expiration date
- * @apiSuccess (201 - CREATED) {Object} refreshToken  contains information about refreshToken used to renew token
- * @apiSuccess (201 - CREATED) {String} refreshToken.token  application refreshToken
- * @apiSuccess (201 - CREATED) {String} refreshToken.expires  refreshToken expiration date
- * @apiSuccess (201 - CREATED) {String} userId  application id
+ * @apiSuccess (201 - CREATED) {Object} apiKey                  information about apiKey token
+ * @apiSuccess (201 - CREATED) {String} apiKey.token            application Token
+ * @apiSuccess (201 - CREATED) {String} apiKey.expires          token expiration date
+ * @apiSuccess (201 - CREATED) {Object} refreshToken            information about refreshToken used to renew token
+ * @apiSuccess (201 - CREATED) {String} refreshToken.token      application refreshToken
+ * @apiSuccess (201 - CREATED) {String} refreshToken.expires    refreshToken expiration date
+ * @apiSuccess (201 - CREATED) {String} userId                  application id
  *
  * @apiSuccessExample {json} Example: 201 CREATED
  *      HTTP/1.1 201 CREATED
@@ -209,7 +209,7 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
@@ -270,12 +270,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
- * @apiSuccess {String} Application.id Application identifier
- * @apiSuccess {String} Application.field1 field 1 defined in schema
- * @apiSuccess {String} Application.field2 field 2 defined in schema
- * @apiSuccess {String} Application.fieldN field N defined in schema
+ * @apiSuccess {String} Application.id      Application identifier
+ * @apiSuccess {String} Application.field1  field 1 defined in schema
+ * @apiSuccess {String} Application.field2  field 2 defined in schema
+ * @apiSuccess {String} Application.fieldN  field N defined in schema
  *
  * @apiSuccessExample {json} Example: 200 OK, Success Response
  *     {
@@ -329,7 +329,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
  * @apiSuccess (200 - OK) {String} [ApplicationField_1]  field 1 defined in Application Schema (e.g. name)
  * @apiSuccess (200 - OK) {String} [ApplicationField_2]  field 2 defined in Application Schema (e.g. notes)
@@ -433,9 +433,9 @@ function enable_disable(id, value, cb) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
- * @apiSuccess (200 - OK) {String} status contains the new Application status
+ * @apiSuccess (200 - OK) {String} status  the new Application status
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -479,7 +479,7 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
  * @apiSuccess (200 - OK) {String} status  the new Application status
  *
@@ -529,9 +529,9 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
- * @apiSuccess (200 - OK) {String} reset_token the grant token to set the new password
+ * @apiSuccess (200 - OK) {String} reset_token  the grant token to set the new password
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -583,19 +583,19 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The Application id
- * @apiParam (Body parameter) {String} [oldpassword] The old password to update. If set, reset_token must be undefined
- * @apiParam (Body parameter) {String} newpassword The new password
- * @apiParam (Body parameter) {String} [reset_token] Token used to update the password. If set, oldpassword must be undefined
+ * @apiParam (URL parameter)    {String} id             The Application id
+ * @apiParam (Body parameter)   {String} [oldpassword]  The old password to update. If set, reset_token must be undefined
+ * @apiParam (Body parameter)   {String} newpassword    The new password
+ * @apiParam (Body parameter)   {String} [reset_token]  Token used to update the password. If set, oldpassword must be undefined
 
  *
- * @apiSuccess (200 - OK) {Object} apiKey  contains information about apiKey token
- * @apiSuccess (200 - OK) {String} apiKey.token  application Token
- * @apiSuccess (200 - OK) {String} apiKey.expires  token expiration date
- * @apiSuccess (200 - OK) {Object} refreshToken  contains information about refreshToken used to renew token
- * @apiSuccess (200 - OK) {String} refreshToken.token  application refreshToken
- * @apiSuccess (200 - OK) {String} refreshToken.expires  refreshToken expiration date
- * @apiSuccess (200 - OK) {String} userId  application id
+ * @apiSuccess (200 - OK) {Object} apiKey               information about apiKey token
+ * @apiSuccess (200 - OK) {String} apiKey.token         application Token
+ * @apiSuccess (200 - OK) {String} apiKey.expires       token expiration date
+ * @apiSuccess (200 - OK) {Object} refreshToken         information about refreshToken used to renew token
+ * @apiSuccess (200 - OK) {String} refreshToken.token   application refreshToken
+ * @apiSuccess (200 - OK) {String} refreshToken.expires refreshToken expiration date
+ * @apiSuccess (200 - OK) {String} userId               application id
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK

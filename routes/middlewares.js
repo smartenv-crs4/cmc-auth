@@ -8,10 +8,29 @@ var User = require('../models/apps').User;
  * @apiName Configuration
  * @apiGroup Configuration
  *
- * @apiDescription This section lists the configuration parameters of the microservice
+ * @apiDescription This section lists the configuration parameters of the microservice. You can set these parameters in default.json in
+ * config directory (under project root), or by command line thanks to the propertiesmanager package.
  *
- * @apiParam {Number} dbPort mongoDb Port number
- * @apiParam {String} dbHost mongoDb Host name
+ * default.json properties can be overridden and extended by command line parameters.
+ *
+ * To extend it, you must type in command line --ParamName=ParamValues as in the example below:
+ *
+ * Override "property_1" properties from default.json :
+ *
+ * $ npm start -- --property_1="Override_TestOne".
+ *
+ * The first "--" after npm start command must be used to tell npm that the next parameters must be passed to node bin/www, so if you run your
+ * application with node bin/www the first "--" shall not be used, as in:
+ *
+ * $node bin/www --properties_One="Override_TestOne".
+ *
+ * To override parameters in a tree data structure as a JSON, you have to access the nested fields by using the dotted (".") syntax.
+ *
+ * For further examples see propertiesmanager npm package.
+ *
+ *
+ * @apiParam {Number} dbPort mongoDb port number
+ * @apiParam {String} dbHost mongoDb host name
  * @apiParam {String} dbName mongoDb database name
  * @apiParam {Number} limit  default limit param used to paginate GET responses
  * @apiParam {Number} skip   default skip param used to paginate GET responses
@@ -20,11 +39,11 @@ var User = require('../models/apps').User;
  * @apiParam {String} AdminDefaultUser.email Administrator default user email
  * @apiParam {String} AdminDefaultUser.password Administrator default user password
  * @apiParam {String="admin"} AdminDefaultUser.type Administrator default user type *
- * @apiParam {String="http", "https"} authProtocol=http protocol used in authms
- * @apiParam {String} authHost authms hostname or IP
- * @apiParam {String} authPort authms port
- * @apiParam {String} apiGwAuthBaseUrl API gateway base URL (mandatory if an API gateway is used)
- * @apiParam {String} apiVersion API version *
+ * @apiParam {String="http", "https"} authProtocol=http protocol used to call authorization microservice resource
+ * @apiParam {String} authHost authms microservice IP or host name
+ * @apiParam {String} authPort port used to call a resource from authorization microservice
+ * @apiParam {String} apiGwAuthBaseUrl API gateway base URL. Mandatory only if API calls pass through an API gateway
+ * @apiParam {String} apiVersion authorization microservice API version
  * @apiParam {String="http", "https"} consulProtocol=http protocol used to call consul service. Configure it if you use a consul register/service discovery in your architecture
  * @apiParam {String} consulHost  consul hostname or IP. Configure it if you use a consul register/service discovery in your architecture
  * @apiParam {String} consulPort consul port. Configure it if you use a consul register/service discovery in your architecture
