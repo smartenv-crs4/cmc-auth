@@ -31,7 +31,7 @@ router.use(middlewares.parseFields);
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * if set, the same token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
@@ -70,7 +70,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /apptypes/:id Get Application Token Type by Id
+ * @api {get} /apptypes/:id Get Application Token Type by id
  * @apiVersion 1.0.0
  * @apiName Get Application type info
  * @apiGroup Application Type
@@ -83,9 +83,9 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application token type id
+ * @apiParam (URL parameter) {String} id    The Application token type id
  *
  * @apiSuccess {String} _id Application  token type identifier
  * @apiSuccess {String} name Application token type name
@@ -136,12 +136,12 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application token type id
+ * @apiParam (URL parameter) {String} id    The Application token type id
  *
- * @apiSuccess (200 - OK) {String} _id Application token type identifier
- * @apiSuccess (200 - OK) {String} name Application token type name
+ * @apiSuccess (200 - OK) {String} _id      Application token type identifier
+ * @apiSuccess (200 - OK) {String} name     Application token type name
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -269,19 +269,19 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id Application token type identifier
- * @apiParam (Body parameter) {Object} apptype  Application token type dictionary with all the fields to update.
+ * @apiParam (URL parameter) {String} id            Application token type identifier
+ * @apiParam (Body parameter) {Object} apptype      Application token type dictionary with all the fields to update.
  * @apiParam (Body parameter) {String} apptype.name Application token type name
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 PUT request
  *  Body:{ "apptype": {"name":"ExternalWebUi"}}
  *
- * @apiSuccess (200 - OK) {String} _id id of the updated application token type
- * @apiSuccess (200 - OK) {String} name name of the updated application token type
- * @apiSuccess (200 - OK) {String} type  type of the updated application token type. Must be equal to "app"
+ * @apiSuccess (200 - OK) {String} _id      id of the updated application token type
+ * @apiSuccess (200 - OK) {String} name     name of the updated application token type
+ * @apiSuccess (200 - OK) {String} type     type of the updated application token type. Must be equal to "app"
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -381,18 +381,18 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
  *     }
  *
- * @apiParam {String} [access_token] access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} apptype dictionary of the application token type with all the fields. Name is mandatory.
- * @apiParam (Body parameter) {String} apptype.name name of the application token type
+ * @apiParam (Body parameter) {Object} apptype      Dictionary of the application token type with all the fields. Name is mandatory.
+ * @apiParam (Body parameter) {String} apptype.name Name of the application token type
  *
  * @apiParamExample {json} Request-Example:
  * HTTP/1.1 POST request
  *  Body:{ "apptype": {"name":"ExternalWebUi"}}
  *
- * @apiSuccess (201 - CREATED) {String} _id id of the created application type
- * @apiSuccess (201 - CREATED) {String} name name of the created application type
- * @apiSuccess (201 - CREATED) {String} type  type of the created application type. Must be equal to "app"
+ * @apiSuccess (201 - CREATED) {String} _id     id of the created application type
+ * @apiSuccess (201 - CREATED) {String} name    name of the created application type
+ * @apiSuccess (201 - CREATED) {String} type    type of the created application type. Must be equal to "app"
  *
  * @apiSuccessExample {json} Example: 201 CREATED
  *      HTTP/1.1 201 CREATED

@@ -42,13 +42,13 @@ passport.use(new LocalStrategy(User.authenticate()));
  * HTTP/1.1 POST request
  *  Body:{ "username": "prov@prova.it" , "password":"provami"}
  *
- * @apiSuccess (200 - OK) {Object} apiKey  information about apiKey token
- * @apiSuccess (200 - OK) {String} apiKey.token  user Token
- * @apiSuccess (200 - OK) {String} apiKey.expires  token expiration date
- * @apiSuccess (200 - OK) {Object} refreshToken  information about refreshToken used to renew token
- * @apiSuccess (200 - OK) {String} refreshToken.token  user refreshToken
- * @apiSuccess (200 - OK) {String} refreshToken.expires  refreshToken expiration date
- * @apiSuccess (200 - OK) {String} userId  user id
+ * @apiSuccess (200 - OK) {Object} apiKey               information about apiKey token
+ * @apiSuccess (200 - OK) {String} apiKey.token         user Token
+ * @apiSuccess (200 - OK) {String} apiKey.expires       token expiration date
+ * @apiSuccess (200 - OK) {Object} refreshToken         information about refreshToken used to renew token
+ * @apiSuccess (200 - OK) {String} refreshToken.token   user refreshToken
+ * @apiSuccess (200 - OK) {String} refreshToken.expires refreshToken expiration date
+ * @apiSuccess (200 - OK) {String} userId               user id
  *
  * @apiSuccessExample {json} Example: 201 CREATED
  *      HTTP/1.1 201 CREATED
@@ -114,12 +114,12 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (Body parameter) {Object} user User dictionary with all the fields, only email, password and type are mandatory.
- * @apiParam (Body parameter) {String} user.email  User email valid as username to login
- * @apiParam (Body parameter) {String} user.password  User password
- * @apiParam (Body Parameter) {String} user.type User type, i.e. admin, cruiser...
- * @apiParam (Body Parameter) {String} [user.name] user name
- * @apiParam (Body Parameter) {String} [user.surname] user surname
+ * @apiParam (Body parameter) {Object} user                 User dictionary with all the fields, only email, password and type are mandatory.
+ * @apiParam (Body parameter) {String} user.email           User email valid as username to login
+ * @apiParam (Body parameter) {String} user.password        User password
+ * @apiParam (Body Parameter) {String} user.type            User type, i.e. admin, cruiser...
+ * @apiParam (Body Parameter) {String} [user.name]          User name
+ * @apiParam (Body Parameter) {String} [user.surname]       User surname
  * @apiParam (Body Parameter) {String} [application.avatar] User avatar image id in upload service
  * @apiParam (Body Parameter) {String} [application.notes]  User notes
  *
@@ -127,13 +127,13 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * HTTP/1.1 POST request
  *  Body:{ "email": "prova@prova.it" , "password":"provami", "type":"ext", "name":"nome"}
  *
- * @apiSuccess (201 - CREATED) {Object} apiKey  contains information about apiKey token
- * @apiSuccess (201 - CREATED) {String} apiKey.token  user Token
- * @apiSuccess (201 - CREATED) {String} apiKey.expires  token expiration date
- * @apiSuccess (201 - CREATED) {Object} refreshToken  contains information about refreshToken used to renew token
- * @apiSuccess (201 - CREATED) {String} refreshToken.token  user refreshToken
- * @apiSuccess (201 - CREATED) {String} refreshToken.expires  refreshToken expiration date
- * @apiSuccess (201 - CREATED) {String} userId  user id
+ * @apiSuccess (201 - CREATED) {Object} apiKey                  information about apiKey token
+ * @apiSuccess (201 - CREATED) {String} apiKey.token            user Token
+ * @apiSuccess (201 - CREATED) {String} apiKey.expires          token expiration date
+ * @apiSuccess (201 - CREATED) {Object} refreshToken            information about refreshToken used to renew token
+ * @apiSuccess (201 - CREATED) {String} refreshToken.token      user refreshToken
+ * @apiSuccess (201 - CREATED) {String} refreshToken.expires    refreshToken expiration date
+ * @apiSuccess (201 - CREATED) {String} userId                  user id
  *
  * @apiSuccessExample {json} Example: 201 CREATED
  *      HTTP/1.1 201 CREATED
@@ -283,12 +283,12 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the User id
+ * @apiParam (URL parameter) {String} id    The User id
  *
- * @apiSuccess {String} User.id Application id identifier
- * @apiSuccess {String} User.field1 field 1 defined in schema
- * @apiSuccess {String} User.field2 field 2 defined in schema
- * @apiSuccess {String} User.fieldN field N defined in schema
+ * @apiSuccess {String} User.id         Application id identifier
+ * @apiSuccess {String} User.field1     field 1 defined in schema
+ * @apiSuccess {String} User.field2     field 2 defined in schema
+ * @apiSuccess {String} User.fieldN     field N defined in schema
  *
  * @apiSuccessExample {json} Example: 200 OK, Success Response
  *     {
@@ -342,11 +342,11 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
- * @apiSuccess (200 - OK) {String} UserField_1 Contains field 1 defined in User Schema (example name)
- * @apiSuccess (200 - OK) {String} UserField_2 Contains field 2 defined in User Schema (example notes)
- * @apiSuccess (200 - OK) {String} UserField_N Contains field N defined in User Schema (example type)
+ * @apiSuccess (200 - OK) {String} UserField_1      field 1 defined in User Schema
+ * @apiSuccess (200 - OK) {String} UserField_2      field 2 defined in User Schema
+ * @apiSuccess (200 - OK) {String} UserField_N      field N defined in User Schema
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 - OK
@@ -454,9 +454,9 @@ function enable_disable(id, value, cb) {
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
- * @apiSuccess (200 - OK) {String} status  The new User status
+ * @apiSuccess (200 - OK) {String} status   The new User status
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -499,9 +499,9 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id the Application id
+ * @apiParam (URL parameter) {String} id    The Application id
  *
- * @apiSuccess (200 - OK) {String} status  The new User status
+ * @apiSuccess (200 - OK) {String} status   The new User status
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
@@ -545,7 +545,7 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The User id
+ * @apiParam (URL parameter) {String} id        The User id
  *
  * @apiSuccess (200 - OK) {String} reset_token  The reset token to set the new password
  *
@@ -600,19 +600,19 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
  *
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
- * @apiParam (URL parameter) {String} id The User id
- * @apiParam (Body Parameter) {String} [oldpassword] The old password to update. If set, reset_token must be undefined
- * @apiParam (Body Parameter) {String} newpassword The new password
- * @apiParam (Body Parameter) {String} [reset_token] Token used to update the password. If set, oldpassword must be undefined
+ * @apiParam (URL parameter)    {String} id             The User id
+ * @apiParam (Body Parameter)   {String} [oldpassword]  The old password to update. If set, reset_token must be undefined
+ * @apiParam (Body Parameter)   {String} newpassword    The new password
+ * @apiParam (Body Parameter)   {String} [reset_token]  Token used to update the password. If set, oldpassword must be undefined
  *
  *
- * @apiSuccess (200 - OK) {Object} apiKey  contains information about apiKey token
- * @apiSuccess (200 - OK) {String} apiKey.token  User Token
- * @apiSuccess (200 - OK) {String} apiKey.expires  token expiration date
- * @apiSuccess (200 - OK) {Object} refreshToken  contains information about refreshToken used to renew token
- * @apiSuccess (200 - OK) {String} refreshToken.token  user refreshToken
- * @apiSuccess (200 - OK) {String} refreshToken.expires  refreshToken expiration date
- * @apiSuccess (200 - OK) {String} userId  user id
+ * @apiSuccess (200 - OK) {Object} apiKey               information about apiKey token
+ * @apiSuccess (200 - OK) {String} apiKey.token         User Token
+ * @apiSuccess (200 - OK) {String} apiKey.expires       token expiration date
+ * @apiSuccess (200 - OK) {Object} refreshToken         information about refreshToken used to renew token
+ * @apiSuccess (200 - OK) {String} refreshToken.token   user refreshToken
+ * @apiSuccess (200 - OK) {String} refreshToken.expires refreshToken expiration date
+ * @apiSuccess (200 - OK) {String} userId               user id
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK

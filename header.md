@@ -1,4 +1,4 @@
-For more info about the project, please visit the **Cagliari Port 2020 official website** (http://cp2020.crs4.it)
+For more info about the project, please visit the [Cagliari Port 2020 official website](http://cp2020.crs4.it)
 
 Security & Authentication
 -------------------------
