@@ -66,7 +66,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
             if (!_.isEmpty(results.userandapptypes))
                 return res.status(200).send(results);
             else
-                return res.status(204).send(results);
+                return res.status(404).send(results);
         }
         else {
             return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});

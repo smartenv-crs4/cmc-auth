@@ -272,9 +272,9 @@ describe('appType-Api API', function () {
                     else {
                         var results = JSON.parse(body);
                         response.statusCode.should.be.equal(404);
-                        results.should.have.property('error');
-                        results.should.have.property('error_message');
-                        results.error_message.should.be.equal("Resource not found");
+                        results.should.have.property('_metadata');
+                        results.should.have.property('userandapptypes');
+                        results._metadata.totalCount.should.be.equal(0);
                     }
                     done();
                 });
