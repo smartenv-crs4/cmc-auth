@@ -1,5 +1,3 @@
-
-
 var config = require('./config/default.json');
 var async=require('async');
 var argv = require('minimist')(process.argv.slice(2));

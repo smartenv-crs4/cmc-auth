@@ -1,10 +1,10 @@
-For more info about the project, please visit the [CagliariPortt2020 official website](http://cp2020.crs4.it)
+For more info about the project, please visit the [Cagliari Port 2020 official website](http://cp2020.crs4.it)
 
 Security & Authentication
 -------------------------
 All API endpoints use **HTTPS** protocol.
 
-All API endpoints **MUST require authentication**.
+All API endpoints **require authentication**.
 
 
 
@@ -12,7 +12,7 @@ Thus, you MUST obtain an API token and use it in HTTP header, as in:
 
     Authentication: Bearer <API_TOKEN>
 
-or appending a URL parameter as in:
+or appending an URL parameter as in:
 
     /authapp?access_token=<API_TOKEN>
 
@@ -21,7 +21,7 @@ or appending a URL parameter as in:
 Pagination
 -------------------------
 
-All endpoints providing a listing functionality, like `/authuser`, returns paginated responses.
+All endpoints providing a listing functionality, such as `/authuser`, return paginated responses.
 Pagination information is always provided using the following format:
 
     ...
@@ -33,7 +33,7 @@ Pagination information is always provided using the following format:
 
 
 
-Access_Token to try API
+Access Tokens to give APIs a try:
 -----------------------
 
 <style type="text/css">
@@ -49,12 +49,16 @@ Access_Token to try API
   </tr>
   <tr>
     <td class="tg-baqh">User Token Type</td>
-    <td class="tg-baqh">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.<br>eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YmRhNWMxMzk1YTNkMjdhYmVjMzQ5YiIsImVtY<br>WlsIjoiYWRtaW5AYWRtaW4uY29tIiwidHlwZSI6ImFkbWluIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNDkwMDE3MDcyNDY4fQ.<br>NS0B-MnuMensDhLBe13I3dxzKWvqQeKQ5Z49cqmIeXs</td>
+    <td class="tg-baqh">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YmRhNWMxMzk1YTNkMjdhYmVjMzQ5YiIsImVtY<br>WlsIjoiYWRtaW5AYWRtaW4uY29tIiwidHlwZSI6ImFkbWluIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNDkwMDE3MDcyNDY4fQ.<br>NS0B-MnuMensDhLBe13I3dxzKWvqQeKQ5Z49cqmIeXs</td>
   </tr>
   <tr>
     <td class="tg-baqh">Application Token Type</td>
-    <td class="tg-baqh">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.<br>eyJtb2RlIjoiZGV2ZWxvcGVyIiwiaXNzIjoiNThjNmQyNGMxMWFmMTA4MWY2OTYwZTE3I<br>iwiZW1haWwiOiJwaXBwbzZAcGlwcG8uaXQiLCJ0eXBlIjoiYWRtaW5BcHAiLCJlbmFibGVkIjp0cnVlLCJleHAiOjE0OTAwMjk3NzMwNzh9.<br>jXivXxjnOlbFVBiLpdS1em2__EvS08Ms4pf5jtVz9Mo</td>
+    <td class="tg-baqh">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoiZGV2ZWxvcGVyIiwiaXNzIjoiNThjNmQyNGMxMWFmMTA4MWY2OTYwZTE3I<br>iwiZW1haWwiOiJwaXBwbzZAcGlwcG8uaXQiLCJ0eXBlIjoiYWRtaW5BcHAiLCJlbmFibGVkIjp0cnVlLCJleHAiOjE0OTAwMjk3NzMwNzh9.<br>jXivXxjnOlbFVBiLpdS1em2__EvS08Ms4pf5jtVz9Mo</td>
   </tr>
+  <tr>
+      <td class="tg-baqh">Microservice Token Type</td>
+      <td class="tg-baqh">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVz<br>ZWQgZm8gbXMiLCJ0eXBlIjoiYXV0aG1zLWRlbW8iLCJlbmFibGVkIjp0cnVlLCJleHAiOjE4MDU4OTI3NTk5MzZ9.<br>NroDuvBN7G3kYRMcL5oivPZ854c5j6DdH_v4rHCOIx4</td>
+    </tr>
 </table>
 
 
