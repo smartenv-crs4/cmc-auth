@@ -752,7 +752,6 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req,
             res.status(200).send({superuser: list});
         });
     });
-
 });
 
 
