@@ -11,6 +11,7 @@ var jwt = require('jwt-simple');
 var conf = require('../routes/configSettingManagment');
 var LocalStrategy = require('passport-local').Strategy;
 var middlewares = require('./middlewares');
+var async=require("async");
 
 router.use(middlewares.parsePagination);
 router.use(middlewares.parseFields);
@@ -659,29 +660,69 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
         if (!usr) return res.status(404).send({error: "NotFound", error_message: "User not Found"});
 
 
-        if (oldpassword) {
-            usr.authenticate(oldpassword, function (erro, auth) {
-                if (erro) return res.status(500).send({error: "INTERNAL_ERROR", error_message: erro});
 
-                if (!auth) return res.status(401).send({error: "Forbidden", error_message: "oldpassword is not valid"});
-            });
-        } else {
-            var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
-            console.log("Dcoded:" + decoded)
-            if (!((usr.hash == decoded.hash) && (usr.salt == decoded.salt)))
-                return res.status(401).send({error: "Forbidden", error_message: "reset_token is not valid"});
-        }
 
-        usr.setPassword(newpassword, function (err, obj) {
-            if (err) return res.status(500).send({error: "internal_error", error_message: err});
-            usr.save(function (err, obj) {
-                    "use strict";
-                    if (err) return res.status(500).send({error: "internal_error", error_message: err});
-                    return res.status(200).send(commonfunctions.generateToken(usr, "user"));
+        // if (oldpassword) {
+        //     usr.authenticate(oldpassword, function (erro, auth) {
+        //         if (erro) return res.status(500).send({error: "INTERNAL_ERROR", error_message: erro});
+        //
+        //         if (!auth) return res.status(401).send({error: "Forbidden", error_message: "oldpassword is not valid"});
+        //     });
+        // } else {
+        //     var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
+        //     console.log("Dcoded:" + decoded)
+        //     if (!((usr.hash == decoded.hash) && (usr.salt == decoded.salt)))
+        //         return res.status(401).send({error: "Forbidden", error_message: "reset_token is not valid"});
+        // }
+
+
+
+        async.series([
+                function(callback) {
+                    if (oldpassword) {
+                        usr.authenticate(oldpassword, function (erro, auth) {
+                            if (erro){
+                                callback({status:500, error: "INTERNAL_ERROR", error_message: erro},null);
+                            }else{
+                                if (!auth) {
+                                    return callback({
+                                        status: 401,
+                                        error: "Forbidden",
+                                        error_message: "oldpassword is not valid"
+                                    }, null);
+                                }else{
+                                    callback(null, 'one');
+                                }
+                            }
+
+                        });
+                    } else {
+                        var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
+                        console.log("Dcoded:" + decoded)
+                        if (!((usr.hash == decoded.hash) && (usr.salt == decoded.salt)))
+                            callback({status:401,error: "Forbidden", error_message: "reset_token is not valid"});
+                        else
+                            callback(null, 'one');
+                    }
                 }
-            )
-        });
+            ],
+            // optional callback
+            function(clbErr, results) {
+                if(clbErr){
+                    return res.status(clbErr.status).send({error: clbErr.error, error_message: clbErr.error_message});
+                }else{
+                    usr.setPassword(newpassword, function (err, obj) {
+                        if (err) return res.status(500).send({error: "internal_error", error_message: err});
+                        usr.save(function (err, obj) {
+                                "use strict";
+                                if (err) return res.status(500).send({error: "internal_error", error_message: err});
+                                return res.status(200).send(commonfunctions.generateToken(usr, "user"));
+                            }
+                        )
+                    });
+                }
 
+            });
     });
 });
 
