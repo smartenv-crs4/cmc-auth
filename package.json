@@ -23,7 +23,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
-    "propertiesmanager": "^1.0.9",
+    "propertiesmanager": "^2.0.1",
     "request": "^2.72.0",
     "serve-favicon": "~2.1.3",
     "underscore": "^1.7.0"

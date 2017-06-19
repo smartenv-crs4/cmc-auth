@@ -6,13 +6,8 @@ var jwtMiddle = require('./jwtauth');
 var commonfunctions=require('./commonfunctions');
 var request=require("request");
 var _ = require('underscore')._;
-
-
-
-
 var conf=require('../routes/configSettingManagment');
 var iconsList=conf.getParam("iconsList");
-
 
 router.get('/main', function(req, res) {
     var action=req.signedCookies.action || null;
@@ -39,17 +34,13 @@ router.get('/main', function(req, res) {
     }
 });
 
-
-
-/* GET home page. */
+/* GET configuration page. */
 router.get('/configure', function(req, res) {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.render('start', {read:"No"});
 });
 
-
-
-/* GET home page. */
+/* GET login page. */
 router.get('/login', function(req, res) {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
@@ -93,9 +84,7 @@ router.get('/login', function(req, res) {
 //     }
 // });
 
-
-
-/* GET home page. */
+/* POST configuration page. */
 router.post('/configure', function(req, res) {
 
     var ms = {
@@ -136,16 +125,12 @@ router.post('/configure', function(req, res) {
     });
 });
 
-
-
-/* GET home page. */
+/* POST logout page. */
 router.post('/logout', function(req, res) {
     res.clearCookie("action");
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.render('start', {read:"No"});
 });
-
-
 
 // /* GET home page. */
 // router.post('/logout', function(req, res) {
@@ -157,25 +142,20 @@ router.post('/logout', function(req, res) {
 //     });
 // });
 
-
-
 /* GET home page. */
 router.get('/', function(req, res) {
  res.render('index', { title: 'Caport2020 Auth API Microservice dev' });
 });
 
-
-
-/* GET home page. */
+/* GET environment info page. */
 router.get('/env', function(req, res) {
- var env;
- if (process.env['NODE_ENV'] === 'dev')
-      env='dev';
- else
-      env='production';
+    var env;
+    if (process.env['NODE_ENV'] === 'dev')
+        env='dev';
+    else
+        env='production';
 
- res.status(200).send({env:env});
+    res.status(200).send({env:env});
 });
-
 
 module.exports = router;
