@@ -241,7 +241,7 @@ function decodeToken(req,res,callb){
 
 
 /**
- * @api {get} /actions/decodeToken Decode Token - GET
+ * @api {get} /tokenactions/decodeToken Decode Token - GET
  * @apiVersion 1.0.0
  * @apiName GetDecodeToken
  * @apiGroup Token
@@ -306,7 +306,7 @@ router.get('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /actions/checkiftokenisauth Get authorisation by role
+ * @api {get} /tokenactions/checkiftokenisauth Get authorisation by role
  * @apiVersion 1.0.0
  * @apiName GetAuthByRole
  * @apiGroup Token
@@ -414,7 +414,7 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
 
 
 /**
- * @api {post} /actions/decodeToken Decode Token - POST
+ * @api {post} /tokenactions/decodeToken Decode Token - POST
  * @apiVersion 1.0.0
  * @apiName PostDecodeToken
  * @apiGroup Token
@@ -479,7 +479,7 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {post} /actions/checkiftokenisauth Check if Token is authorised
+ * @api {post} /tokenactions/checkiftokenisauth Check if Token is authorised
  * @apiVersion 1.0.0
  * @apiName CheckIfTokenIsAuth
  * @apiGroup Token
@@ -591,7 +591,7 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
 
 
 /**
- * @api {post} /actions/refreshToken Refresh Token
+ * @api {post} /tokenactions/refreshToken Refresh Token
  * @apiVersion 1.0.0
  * @apiName RefreshToken
  * @apiGroup Token
@@ -669,7 +669,7 @@ router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
 
 /**
- * @api {get} /actions/gettokentypelist Get Token Type list
+ * @api {get} /tokenactions/gettokentypelist Get Token Type list
  * @apiVersion 1.0.0
  * @apiName GetTokenTypeList
  * @apiGroup Token
@@ -714,7 +714,7 @@ router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function (req, res
 
 
 /**
- * @api {get} /actions/getsupeusertokenlist Get superuser Token list
+ * @api {get} /tokenactions/getsupeusertokenlist Get superuser Token list
  * @apiVersion 1.0.0
  * @apiName GetSuperUserTokenList
  * @apiGroup Token
@@ -760,7 +760,7 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req,
 
 
 /**
- * @api {get} /actions/getsuperapptokenlist Get admin Application Token list
+ * @api {get} /tokenactions/getsuperapptokenlist Get admin Application Token list
  * @apiVersion 1.0.0
  * @apiName GetAdminApplicationTokenList
  * @apiGroup Token
