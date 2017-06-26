@@ -110,7 +110,6 @@ html(lang='en')
                                     h4.modal-title.center Token Types Management
                                 .modal-body.center
 
-                                    //TODO STSRT
                                     .row
                                         .col-lg-12
                                             .row
@@ -210,7 +209,7 @@ html(lang='en')
 
 
 
-                                    // TODO END
+
 
                                 .modal-footer
                                     button.btn.btn-info(data-dismiss='modal')
@@ -250,7 +249,7 @@ html(lang='en')
                             .panel(class=item['color'])
                                 .panel-heading
                                     .row
-                                        // TODO OLD .col-xs-3
+
                                         .col-xs-5
                                             i.fa(class=item['icon']).fa-5x
                                             if(item['name'].indexOf(authmsName)>=0)
@@ -285,7 +284,7 @@ html(lang='en')
                                                             li#importarchitecture
                                                                 a(href="javascript:loadEnviromnmentSetting('" + myUrl + "','" + myToken + "');") Import Architecture
 
-                                        // TODO OLD .col-xs-9.text-right
+
                                         .col-xs-7.text-right
                                             a.whiteString( data-toggle="confirmation", href="javascript:deleteMicroservice('"+ myUrl + "','" + myToken + "','" + item['_id'] +"');")
                                                 i.fa.fa-times
