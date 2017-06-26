@@ -80,12 +80,9 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
     if (!req.body.username) return res.status(400).send({error: 'BadRequest', error_message: "No username provided"});
 
     if (!req.body.password) return res.status(400).send({error: 'BadRequest', error_message: "No password provided"});
-//    console.log(req);
-
-    //console.log("body:"+util.inspect(req.body));
     passport.authenticate('local', function (err, user, info) {
 
-        //console.log(info);
+
         if (err || !user) {
             return res.status(403).send({
                 error: 'authentication error',
@@ -176,29 +173,9 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
     if (user.access_token)
         delete user['access_token'];
 
-
     //user['validated'] = true;
     if (!(conf.getParam("userType").indexOf(user['type']) >= 0))//||  user['type'] == 'admin'
         return res.status(400).send({error: 'BadRequest', error_message: "No valid User Type provided"});
-
-
-    // try {
-    //     User.register(user, password, function (err, newuser) {
-    //         // console.log("Creatig USER" + err);
-    //         if (err) return res.status(500).send({
-    //             error: "signup_error",
-    //             error_message: 'Unable to register user (err:' + err + ')'
-    //         });
-    //
-    //         return res.status(201).send(commonfunctions.generateToken(newuser, "user"));
-    //     });
-    // }catch (ex){
-    //     //console.log("ECCCEPTIO "+ ex);
-    //     return res.status(500).send({
-    //         error: "signup_error",
-    //         error_message: 'Unable to register user (err:' + ex + ')'
-    //     });
-    // }
 
     commonfunctions.createUser(user, password, function (err, scode, respo) {
         return res.status(scode).send(respo);
@@ -235,10 +212,6 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    //TODO: returns ALL users, must be changed to return only authorized users
-    //given an authenticated user (by token)
-    //console.log(req);
-
     var fields = req.dbQueryFields;
     if (!fields)
         fields = '-hash -salt -__v';
@@ -249,7 +222,6 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
             query[key] = req.query[key];
     }
 
-    console.log("QUERY:" + util.inspect(query));
 
     User.findAll(query, fields, req.dbPagination, function (err, results) {
 
@@ -380,14 +352,6 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
 });
 
 
-//
-//router.post('/refreshToken', function(req,res) {
-//        "use strict";
-//    console.log("REFRESHTOKEN USER");
-//        res.status(200).send(generateToken(req.token));
-//});
-
-
 //checked
 function checked_unchecked(id, value, cb) {
 
@@ -403,7 +367,6 @@ function checked_unchecked(id, value, cb) {
 
 function enable_disable(id, value, cb) {
 
-    console.log("enbleDisableUser -->" + id);
     User.findByIdAndUpdate(id, {enabled: value}, function (err, updated) {
         if (err) cb(err, null);
         else {
@@ -412,32 +375,6 @@ function enable_disable(id, value, cb) {
 
     });
 }
-//TODO only webui microservices can call this endopints
-//router.post(':id/action/check/',jwtMiddle.ensureIsAuthorized, function(req,res){
-//        "use strict";
-//
-//        var id=req.params.id;
-//
-//        checked_unchecked(id,true,function(err,val){
-//            if(err)  res.status(207).send({error: "update_error",error_message: err });
-//            else res.status(201).send("ok");
-//
-//        });
-//    }
-//);
-//router.post(':id/action/uncheck/',jwtMiddle.ensureIsAuthorized, function(req,res){
-//        "use strict";
-//
-//        var id=req.params.id;
-//
-//        checked_unchecked(id,false,function(err,val){
-//            if(err)  res.status(207).send({error: "update_error",error_message: err });
-//            else res.status(201).send("ok");
-//
-//        });
-//    }
-//);
-
 
 /**
  * @api {post} /authuser/:id/actions/enable Enable User
@@ -519,7 +456,6 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
 router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req, res) {
         "use strict";
 
-        console.log("DISABLEUSER");
         var id = req.params.id;
 
         enable_disable(id, false, function (err, val) {
@@ -660,23 +596,6 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
         if (!usr) return res.status(404).send({error: "NotFound", error_message: "User not Found"});
 
 
-
-
-        // if (oldpassword) {
-        //     usr.authenticate(oldpassword, function (erro, auth) {
-        //         if (erro) return res.status(500).send({error: "INTERNAL_ERROR", error_message: erro});
-        //
-        //         if (!auth) return res.status(401).send({error: "Forbidden", error_message: "oldpassword is not valid"});
-        //     });
-        // } else {
-        //     var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
-        //     console.log("Dcoded:" + decoded)
-        //     if (!((usr.hash == decoded.hash) && (usr.salt == decoded.salt)))
-        //         return res.status(401).send({error: "Forbidden", error_message: "reset_token is not valid"});
-        // }
-
-
-
         async.series([
                 function(callback) {
                     if (oldpassword) {
@@ -698,7 +617,6 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
                         });
                     } else {
                         var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
-                        console.log("Dcoded:" + decoded)
                         if (!((usr.hash == decoded.hash) && (usr.salt == decoded.salt)))
                             callback({status:401,error: "Forbidden", error_message: "reset_token is not valid"});
                         else

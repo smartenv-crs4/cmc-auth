@@ -87,6 +87,7 @@ router.post('/signin', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 error_message: 'You are not correctly authenticated, ' + info.message
             });
         }
+
         //if (app.type != "admin" && !app.validated) {return res.status(403).send( { error: 'app not validated', error_message:'The app is not yet validated by the admins or by mail' }); }
 
         return res.status(200).send(commonfunctions.generateToken(app, "developer"));
@@ -176,7 +177,6 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
     if (!(conf.getParam("appType").indexOf(app['type']) >= 0))//||  user['type'] == 'admin'
         return res.status(400).send({error: 'BadRequest', error_message: "No valid App Type provided"});
 
-    //console.log("############### SIGN UP");
     try {
         App.register(app, password, function (err, newpp) {
             if (err) return res.status(500).send({
@@ -213,18 +213,14 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * If set, the same token sent in Authorization header should be undefined
  *
  * @apiUse Metadata
- * @apiUse GetResource
- * @apiUse GetResourceExample
+ * @apiUse GetAppResource
+ * @apiUse GetAppResourceExample
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
 router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    //TODO: returns ALL users, must be changed to return only authorized users
-    //given an authenticated user (by token)
-
-    //console.log(req);
 
     var fields = req.dbQueryFields;
     if (!fields)
@@ -377,8 +373,6 @@ function checked_unchecked(id, value, cb) {
 
 function enable_disable(id, value, cb) {
 
-    console.log("enbleDisableApp-->" + id);
-
     App.findByIdAndUpdate(id, {enabled: value}, function (err, updated) {
         if (err) cb(err, null);
         else {
@@ -389,7 +383,7 @@ function enable_disable(id, value, cb) {
 }
 
 
-//TODO only webui microservices can call this endopints
+
 //router.post(':id/action/check/',jwtMiddle.ensureIsMicroservice, function(req,res){
 //        "use strict";
 //
@@ -499,8 +493,6 @@ router.post('/:id/actions/enable', jwtMiddle.ensureIsAuthorized, function (req, 
  */
 router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req, res) {
         "use strict";
-
-        console.log("Disable");
 
         var id = req.params.id;
 
@@ -646,7 +638,6 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
             });
         } else {
             var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
-            console.log("Dcoded:" + decoded)
             if (!((apl.hash == decoded.hash) && (apl.salt == decoded.salt)))
                 return res.status(401).send({error: "Forbidden", error_message: "reset_token is not valid"});
         }

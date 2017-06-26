@@ -7,29 +7,19 @@ var Users = require('../models/users').User;
 var conf = require('../config').conf;
 
 var request = require('request');
-
 var app = require('../app');
 var util = require('util');
-
 var Port = 3055;
 var APIURL = 'http://localhost:' + Port + "/authuser";
-
-
 var server;
-//var token = conf.MyMicroserviceToken;
 var type = conf.userType;
-
 var adminUser;
-
 var clientUser;
 var clientToken;
 
 describe('Users API', function () {
 
     before(function (done) {
-        //this.timeout(4000);
-        //
-        //console.log("BEFORE");
         db.connect("users-api",function (err) {
             if (err) console.log("######   ERRORE BEFORE : " + err +"  ######");
 
@@ -43,7 +33,6 @@ describe('Users API', function () {
     });
 
     after(function (done) {
-        //console.log("AFTER");
         Users.remove({}, function (err,elm) {
             if (err) console.log("######   ERRORE After 1: " + err +"  ######");
             db.disconnect(function (err,res) {
@@ -56,11 +45,7 @@ describe('Users API', function () {
 
 
     beforeEach(function (done) {
-
         var range = _.range(100);
-
-        //Add cars
-       // console.log("BEFORE EACH");
         async.each(range, function (e, cb) {
 
             Users.create({
@@ -68,7 +53,6 @@ describe('Users API', function () {
                 type: type[_.random(0, type.length - 1)]
             }, function (err, newuser) {
                 if (err) console.log("######   ERRORE BEFOREEACH: " + err +"  ######");
-                //console.log(e);
                 if(e==1) clientUser=newuser._id;
                 cb();
             });
@@ -80,7 +64,6 @@ describe('Users API', function () {
 
 
     afterEach(function (done) {
-        //console.log("AFTER EACH");
         Users.remove({}, function (err, elm) {
             if (err) console.log("######   ERRORE AfterEach: " + err +"  ######");
             done();
@@ -98,7 +81,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify(user);
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -130,7 +112,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify(user);
-           // console.log("BODY " + userBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -158,12 +139,9 @@ describe('Users API', function () {
 
         it('should not login a Authuser no password sended', function (done) {
             var user = {
-                //"type": "nonvalido", //client | admin
-                "username": "mario@caport.com",
-                //"password": "miciomicio"
+                "username": "mario@caport.com"
             };
             var userBody = JSON.stringify(user);
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -188,12 +166,10 @@ describe('Users API', function () {
 
         it('should not login a Authuser invalid username sended', function (done) {
             var user = {
-                //"type": "nonvalido", //client | admin
                 "username": "mario@caportcom",
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify(user);
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -225,7 +201,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -278,7 +253,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -330,7 +304,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -362,7 +335,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -412,7 +384,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -466,12 +437,10 @@ describe('Users API', function () {
 
         it('should not create a new Authuser no User type sended', function (done) {
             var user = {
-                //"type": conf.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -499,11 +468,9 @@ describe('Users API', function () {
         it('should not create a new Authuser no Password type sended', function (done) {
             var user = {
                 "type": conf.userType[1], //client | admin
-                "email": "mario@caport.com",
-                //"password": "miciomicio"
+                "email": "mario@caport.com"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -529,8 +496,6 @@ describe('Users API', function () {
 
         it('must return ONE user and _metadata, all fields', function (done) {
 
-           // console.log("SEND TEST");
-
             request.get({
                 url: APIURL + '?skip=0&limit=1',
                 headers: {'Authorization': "Bearer " + conf.MyMicroserviceToken}
@@ -538,7 +503,6 @@ describe('Users API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("ERR MSG:" + body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
 
@@ -632,7 +596,6 @@ describe('Users API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("EREWREWREWRWEREW " +body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
                     results.should.have.property('_metadata');
@@ -657,7 +620,6 @@ describe('Users API', function () {
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
                     var results = JSON.parse(body);
-                    //console.log("ERRMSG" + results.error_message)
                     response.statusCode.should.be.equal(400);
                     results.should.have.property('error');
                     results.should.have.property('error_message');
@@ -672,14 +634,12 @@ describe('Users API', function () {
         this.timeout(10000);
 
         it('should not create a new Authuser no valid User type sended', function (done) {
-            //console.log("test 1 start");
             var user = {
                 "type": "nonvalido", //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-          //  console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -743,14 +703,13 @@ describe('Users API', function () {
 
         try {
             it('must return  error 401 for Unauthorized token', function (done) {
-               // console.log("test 2 start");
+
                 var user = {
                     "type": conf.userType[1], //client | admin
                     "email": "mario@caport.com",
                     "password": "miciomicio"
                 };
                 var userBody = JSON.stringify({user:user});
-               // console.log("BODY " + userBody);
                 var url = APIURL + '/signup';
                 var results;
 
@@ -761,13 +720,11 @@ describe('Users API', function () {
                 }, function (error, response) {
                     if (error) console.log("######   ERRORE 401 1: " + error + "  ######");
                     else {
-                       // console.log("ERROR:" + response.body);
                         response.statusCode.should.be.equal(201);
                         results = JSON.parse(response.body);
                         results.should.have.property('apiKey');
                         results.should.have.property('refreshToken');
                     }
-                   // console.log("ENDONE");
 
                     request.get({
                         url: APIURL + '?skip=0&limit=2',
@@ -776,23 +733,19 @@ describe('Users API', function () {
 
                         if (error) console.log("######   ERRORE: 401 2 " + error + "  ######");
                         else {
-                           // console.log("BODYBODY" + body);
                             results = JSON.parse(body);
                             response.statusCode.should.be.equal(401);
                             results.should.have.property('error');
                             results.should.have.property('error_message');
                             results.error_message.should.be.equal("The access token is not a valid microservice Token");
                         }
-                      //  console.log("ENDTWO");
-                       // console.log("test 2 end");
                         done();
                     });
                 });
 
             });
         }catch (err){
-           // console.log("TIENI " + err);
-
+           console.log("Catch " + err );
         }
     });
 
@@ -876,7 +829,6 @@ describe('Users API', function () {
             request.get({url:url,headers:{'Authorization' : "Bearer "+ conf.MyMicroserviceToken}},function(error, response, body){
                 if(error) console.log("######   ERRORE: 401 2 " + error + "  ######");
                 else{
-                    //console.log("ERRORO"+body);
                     response.statusCode.should.be.equal(404);
                 }
                 done();
@@ -1005,7 +957,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -1049,7 +1000,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -1174,7 +1124,6 @@ describe('Users API', function () {
                 "password": "miciomicio"
             };
             var userBody = JSON.stringify({user:user});
-            //console.log("BODY " + userBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,

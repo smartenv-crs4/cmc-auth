@@ -9,17 +9,9 @@ var appsUsersType=require('../models/userAndAppTypes').UserAndAppTypes;
 var async=require('async');
 
 
-///* GET home page. */
-//router.get('/', function(req, res) {
-//  res.render('index', { title: 'Caport2020 Auth API Microservice dev' });
-//});
-
-
 
 function decodeToken(req,res,callb){
     var token = ((req.body && req.body.refresh_token) || (req.query && req.query.refresh_token))||((req.body && req.body.decode_token) || (req.query && req.query.decode_token)); // || req.headers['x-access-token'];
-
-    // console.log("???????????????????" + req.body);
 
     commonfunctions.decode(token,function(err,decoded){
         if(err){
@@ -153,6 +145,89 @@ function decodeToken(req,res,callb){
 
 
 /**
+ * @apiDefine GetAppResource
+ * @apiSuccess {Object[]} apps a paginated array list of third party applications objects
+ * @apiSuccess {String} apps.id Application id identifier
+ * @apiSuccess {String} apps.field1 field 1 defined in schema
+ * @apiSuccess {String} apps.field2 field 2 defined in schema
+ * @apiSuccess {String} apps.fieldN field N defined in schema
+ */
+
+/**
+ * @apiDefine GetAppResourceExample
+ * @apiSuccessExample {json} Example: 200 OK, Success Response
+ *     {
+ *       "apps":[
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "email": "prova@prova.it",
+ *                          "name": "prova",
+ *                          "notes": "Notes About prova"
+ *                      },
+ *                      {
+ *                       "id": "543fdd60579e1281sdaf6da92",
+ *                          "email": "prova1@prova.it",
+ *                          "name": "prova1", *
+ *                          "notes": "Notes About prova1"
+ *
+ *                     },
+ *                    ...
+ *                 ],
+ *
+ *       "_metadata":{
+ *                   "skip":10,
+ *                   "limit":50,
+ *                   "totalCount":100
+ *                   }
+ *     }
+ */
+
+
+/**
+ * @apiDefine GetAuthResource
+ * @apiSuccess {Object[]} authendpoints a paginated array list of role objects
+ * @apiSuccess {String} authendpoints.id Role id identifier
+ * @apiSuccess {String} authendpoints.URL Role URL to whom the rule applies
+ * @apiSuccess {String} authendpoints.method Http method to whom the rule applies
+ * @apiSuccess {String} authendpoints.name Name of the Microservice to whom the rule applies
+ * @apiSuccess {String} authendpoints.authToken List of the authorised token types to whom the rule applies
+ */
+
+/**
+ * @apiDefine GetAuthResourceExample
+ * @apiSuccessExample {json} Example: 200 OK, Success Response
+ *     {
+ *       "apps":[
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "URL": "/users/signup/",
+ *                          "method": "post",
+ *                          "authToken":"["userms","appms"]"
+ *                          "name": "webuims"
+ *
+ *                      },
+ *                      {
+ *                          "_id": "543fdd60579e1281b8f6da92",
+ *                          "URL": "/users/signIn/",
+ *                          "method": "post",
+ *                          "authToken":"["userms","appms"]"
+ *                          "name": "webuims"
+ *                     },
+ *                    ...
+ *                 ],
+ *
+ *       "_metadata":{
+ *                   "skip":10,
+ *                   "limit":50,
+ *                   "totalCount":100
+ *                   }
+ *     }
+ */
+
+
+
+
+/**
  * @apiDefine GetAppTypeResource
  * @apiSuccess {Object[]}   userandapptypes             a paginated array list of application types objects
  * @apiSuccess {String}     userandapptypes._id         application type id
@@ -191,6 +266,9 @@ function decodeToken(req,res,callb){
  *                   }
  *     }
  */
+
+
+
  /**
  * @apiDefine GetUserTypeResourceExample
  * @apiSuccessExample {json} Example: 200 OK, Success Response
@@ -234,10 +312,8 @@ function decodeToken(req,res,callb){
  */
 
 
-
-
-
 // End Macro
+
 
 
 /**
@@ -466,7 +542,6 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
  * @apiSampleRequest off
  */
 router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
-    //console.log("Decode Token" + JSON.stringify(decode_results));
     decodeToken(req, res, function (err, decoded) {
         if (err) {
             decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
@@ -546,7 +621,6 @@ router.post('/decodeToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiSampleRequest off
  */
 router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, res) {
-    //console.log("Decode Token" + JSON.stringify(decode_results));
     var URI = req.body.URI;
     var method = req.body.method;
 
@@ -642,7 +716,7 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
 router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
     "use strict";
 
-    console.log("REFRESHTOKEN");
+
 
     decodeToken(req, res, function (err, decoded) {
         if (err) {
@@ -650,11 +724,8 @@ router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
             res.status(207).send({error: "refreshToken_error", error_message: decoded.error_message});
         }
         else if (decoded.token.mode == "user") { // è un token utente
-            console.log("Redirect to MS");
-            //res.redirect('/authuser/refreshToken');
             res.status(200).send(commonfunctions.generateToken(decoded.token, "user"));
         } else if (decoded.token.mode == "developer") {// è un token developer
-            console.log("Redirect to APP");
             res.status(200).send(commonfunctions.generateToken(decoded.token, "developer"));
         } else {
             return res.status(401).send({

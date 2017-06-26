@@ -50,7 +50,7 @@ AuthEndPointSchema.pre('save', function (next) {
 //     var msType=conf.getParam("msType");
 //     var tokensType= userType.concat(appType).concat(msType);
 //
-//     // //TODO REMOve
+//
 //     // console.log("!!!!!!!!!!!!!!!!!! AUYHTOKENTYPE:" + tokensType);
 //     // AuthEndPointSchema.path('authToken', [{type: String, enum: tokensType, index: true, required:true}]);
 //     // //AuthEndPointSchema.path('authToken', [{type: String, enum: tokensType, index: true, required:true}]);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var debug = require('debug')('caport2020User-Microservice');
+var debug = require('debug')('CMC-Auth-Microservice');
 // var app = require('../app');
 var db = require("../models/db");
 

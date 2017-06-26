@@ -19,7 +19,6 @@ var APIURL = 'http://localhost:' + Port;
 
 
 var server;
-//var token = conf.MyMicroserviceToken;
 var type = conf.userType;
 var appType=conf.appType;
 
@@ -28,9 +27,6 @@ var appType=conf.appType;
 describe('AuthMS API', function () {
 
     before(function (done) {
-        //this.timeout(4000);
-        //
-        //console.log("BEFORE");
         db.connect("AuthMs-api",function (err) {
             if (err) console.log("######   ERRORE BEFORE : " + err +"  ######");
 
@@ -44,7 +40,6 @@ describe('AuthMS API', function () {
     });
 
     after(function (done) {
-        //console.log("AFTER");
         Apps.remove({}, function (err,elm) {
             if (err) console.log("######   ERRORE After: " + err +"  ######");
             Users.remove({}, function (err,elm) {
@@ -66,7 +61,6 @@ describe('AuthMS API', function () {
 
 
     afterEach(function (done) {
-        //console.log("AFTER EACH");
         Apps.remove({}, function (err, elm) {
             if (err) console.log("######   ERRORE AfterEach: " + err +"  ######");
             Users.remove({}, function (err, elm) {
@@ -87,7 +81,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -96,9 +89,6 @@ describe('AuthMS API', function () {
             }, function (error, response,body) {
                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                 else {
-
-                    //console.log("@@@@@@@@@@@@@@@@@ BOFY" + body);
-
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');
@@ -141,7 +131,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -193,7 +182,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -218,7 +206,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -243,7 +230,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -268,7 +254,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -294,7 +279,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -319,7 +303,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body)
                             response.statusCode.should.be.equal(207);
                             var results = JSON.parse(response.body);
                             results.should.have.property('error');
@@ -343,7 +326,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -368,7 +350,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -394,7 +375,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -419,7 +399,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                           // console.log("BOSY " + body)
                             response.statusCode.should.be.equal(207);
                             var results = JSON.parse(response.body);
                             results.should.have.property('error');
@@ -471,7 +450,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -488,7 +466,6 @@ describe('AuthMS API', function () {
 
                     appBody=JSON.stringify({decode_token:results.apiKey.token+"AA"});
 
-                    //console.log("XXXXXXXXXXXXXXX BEFORE");
                     url= APIURL + "/tokenactions/decodeToken";
                     request.post({
                         url: url,
@@ -497,8 +474,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body)
-                            //console.log("XXXXXXXXXXXXXXX AFTR");
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -557,9 +532,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
-
-            //console.log("XXXXXXXXXXXXXXX BEFORE 522");
 
             var url = APIURL + '/authuser/signup';
             request.post({
@@ -616,7 +588,6 @@ describe('AuthMS API', function () {
 
                                     var expiredToken=JSON.parse(generateToken(results.token,results.token.mode));
 
-                                    //console.log("EXPTOKEN: " + util.inspect(expiredToken));
                                     appBody=JSON.stringify({decode_token:expiredToken.apiKey.token});
                                     url= APIURL + "/tokenactions/decodeToken";
                                     request.post({
@@ -656,7 +627,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -694,9 +664,6 @@ describe('AuthMS API', function () {
                             Users.findByIdAndRemove(results.userId,function(error,usr){
                                 if (error) console.log("######   ERRORE 694 should create a new Application: " + error +"  ######");
 
-
-
-                                //console.log("EXPTOKEN: " + util.inspect(expiredToken));
                                 appBody=JSON.stringify({decode_token:results.apiKey.token});
                                 url= APIURL + "/tokenactions/decodeToken";
                                 request.post({
@@ -734,7 +701,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({user:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authuser/signup';
             request.post({
                 url: url,
@@ -772,9 +738,6 @@ describe('AuthMS API', function () {
                             Users.findByIdAndUpdate(results.userId,{enabled:false},function(error,usr){
                                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
 
-
-
-                                //console.log("EXPTOKEN: " + util.inspect(expiredToken));
                                 appBody=JSON.stringify({decode_token:results.apiKey.token});
                                 url= APIURL + "/tokenactions/decodeToken";
                                 request.post({
@@ -815,7 +778,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -866,7 +828,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -918,7 +879,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -943,7 +903,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body)
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -968,7 +927,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -993,7 +951,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -1019,7 +976,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -1044,7 +1000,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body)
                             response.statusCode.should.be.equal(207);
                             var results = JSON.parse(response.body);
                             results.should.have.property('error');
@@ -1068,7 +1023,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -1093,7 +1047,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body)
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -1119,7 +1072,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -1144,7 +1096,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body);
                             response.statusCode.should.be.equal(207);
                             var results = JSON.parse(response.body);
                             results.should.have.property('error');
@@ -1196,7 +1147,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -1211,7 +1161,6 @@ describe('AuthMS API', function () {
                     results.should.have.property('refreshToken');
                     var userId=results.userId;
 
-                    //console.log("XXXXXXXXXXXXXXX BEFORE");
                     appBody=JSON.stringify({decode_token:results.apiKey.token+"AA"});
 
                     url= APIURL + "/tokenactions/decodeToken";
@@ -1222,8 +1171,6 @@ describe('AuthMS API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                         else {
-                            //console.log("BOSY " + body)
-                            //console.log("XXXXXXXXXXXXXXX AFTER");
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(response.body);
                             results.should.have.property('valid');
@@ -1248,10 +1195,7 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
-
-            //console.log("XXXXXXXXXXXXXXX BEFORE 1243");
 
             request.post({
                 url: url,
@@ -1306,7 +1250,6 @@ describe('AuthMS API', function () {
 
                                     var expiredToken=JSON.parse(generateToken(results.token,results.token.mode));
 
-                                    //console.log("EXPTOKEN: " + util.inspect(expiredToken));
                                     appBody=JSON.stringify({decode_token:expiredToken.apiKey.token});
                                     url= APIURL + "/tokenactions/decodeToken";
                                     request.post({
@@ -1346,7 +1289,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -1385,9 +1327,6 @@ describe('AuthMS API', function () {
                             Apps.findByIdAndRemove(results.userId,function(error,usr){
                                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
 
-
-
-                                //console.log("EXPTOKEN: " + util.inspect(expiredToken));
                                 appBody=JSON.stringify({decode_token:results.apiKey.token});
                                 url= APIURL + "/tokenactions/decodeToken";
                                 request.post({
@@ -1425,7 +1364,6 @@ describe('AuthMS API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/authapp/signup';
             request.post({
                 url: url,
@@ -1463,9 +1401,6 @@ describe('AuthMS API', function () {
                             Apps.findByIdAndUpdate(results.userId,{enabled:false},function(error,usr){
                                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
 
-
-
-                                //console.log("EXPTOKEN: " + util.inspect(expiredToken));
                                 appBody=JSON.stringify({decode_token:results.apiKey.token});
                                 url= APIURL + "/tokenactions/decodeToken";
                                 request.post({

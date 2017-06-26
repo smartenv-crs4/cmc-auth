@@ -34,10 +34,6 @@ var olduserType;
 describe('appType-Api API', function () {
 
     before(function (done) {
-        //this.timeout(4000);
-        //
-        //console.log("BEFORE");
-
         oldAppType=conf.appType;
         olduserType=conf.userType;
 
@@ -61,7 +57,6 @@ describe('appType-Api API', function () {
     });
 
     after(function (done) {
-        //console.log("AFTER");
         UserAndAppTypes.remove({}, function (err,elm) {
             if (err) console.log("######   ERRORE After 1: " + err +"  ######");
             db.disconnect(function (err,res) {
@@ -81,8 +76,6 @@ describe('appType-Api API', function () {
 
         var range = _.range(100);
 
-        //Add cars
-       // console.log("BEFORE EACH");
         async.each(range, function (e, cb) {
 
             UserAndAppTypes.create({
@@ -90,7 +83,6 @@ describe('appType-Api API', function () {
                 type: "app"
             }, function (err, newuser) {
                 if (err) console.log("######   ERRORE BEFOREEACH: " + err +"  ######");
-                //console.log(e);
                  if(e==1) userTypeID=newuser._id;
                 cb();
             });
@@ -108,7 +100,6 @@ describe('appType-Api API', function () {
 
 
     afterEach(function (done) {
-        //console.log("AFTER EACH");
         UserAndAppTypes.remove({}, function (err, elm) {
             if (err) console.log("######   ERRORE AfterEach: " + err +"  ######");
             Apps.remove({}, function (err, elm) {
@@ -129,8 +120,6 @@ describe('appType-Api API', function () {
 
         it('must return ONE app type and _metadata, all fields', function (done) {
 
-            // console.log("SEND TEST");
-
             request.get({
                 url: APIURL + '?skip=0&limit=1',
                 headers: {'Authorization': "Bearer " + conf.MyMicroserviceToken}
@@ -138,7 +127,6 @@ describe('appType-Api API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("ERR MSG:" + body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
 
@@ -226,7 +214,6 @@ describe('appType-Api API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("EREWREWREWRWEREW " +body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
                     results.should.have.property('_metadata');
@@ -249,7 +236,6 @@ describe('appType-Api API', function () {
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
                     var results = JSON.parse(body);
-                    //console.log("ERRMSG" + results.error_message)
                     response.statusCode.should.be.equal(400);
                     results.should.have.property('error');
                     results.should.have.property('error_message');
@@ -471,8 +457,6 @@ describe('appType-Api API', function () {
         this.timeout(4000);
 
         it('must return error 409 in delete  due some auth token rules include this app type ', function(done){
-
-            //console.log("MS TYPE " + conf.msType[0] + " app type: " + conf.appType[0] );
 
             authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[conf.appType[0]]},function(err,valAuth){
                 if (err) console.log("######   ERRORE1: " + err + "  ######");

@@ -24,7 +24,6 @@ router.use(middlewares.parseFields);
 // ****************************************************************************************************
 
 router.post('/authendpoint/actions/export/:name', jwtMiddle.ensureIsAuthorized, function (req, res) {
-//router.get('/authendpoint/actions/export/:name', function (req, res) {
 
     if (req.query.name)
         return res.status(400).send({error: 'BadRequest', error_message: "name is a Url param"});
@@ -45,7 +44,6 @@ router.post('/authendpoint/actions/export/:name', jwtMiddle.ensureIsAuthorized, 
 
 
 router.post('/authendpoint/actions/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
-//router.get('/authendpoint/actions/export', function (req, res) {
 
     exportAuth({},function(err,exported){
         if(!err)
@@ -123,12 +121,10 @@ function importAuth(roles,msName,exportedClb){
                         if(autToken.length>0){
                             AuthEP.findOneAndRemove({URI: URI, method:method}, function (err, item) {
                                 if (err) return callbacktoken({error: "InternalError", error_message: "Internal Error " + err});
-                                //if (item) return callbacktoken();
+
                                 try {
 
                                     AuthEP.create({URI:URI,method:method,name:key,authToken:autToken},function(err,Nitem){
-                                        // console.log("Creatig USER" + err);
-                                        console.log(Nitem);
                                         if(!err) return callbacktoken();
                                         else return callbacktoken(err);
                                     });
@@ -166,7 +162,6 @@ function importAuth(roles,msName,exportedClb){
 router.post('/actions/microservicelist/export', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     Microservice.findAll({},null,{},function(err,data){
-        console.log(err + " " + JSON.stringify(data.microservices));
         if(err)
             return res.status(500).send({error:"Internal Error", error_message:err});
         else
@@ -213,9 +208,7 @@ router.post('/actions/microservicelist/import', jwtMiddle.ensureIsAuthorized, fu
 
 router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized], function (req, res) {
 
-    var url = conf.getParam("consulProtocol") + "://" + conf.getParam("consulHost") + ":" + conf.getParam("consulPort") + conf.getParam("consulServices");
-
-    //console.log("Consule URL:" + url );
+    var url = conf.getParam("consulUrl") + conf.getParam("consulServices");
 
     request.get({
         url: url,
@@ -235,24 +228,12 @@ router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAutho
 
                 var data = JSON.parse(body);
 
-//              console.log("DATA:"+util.inspect(data));
                 for (item in data) {
-                    //                  console.log("ITEM:" + item + " data[item]:"+ util.inspect(data[item]) + " ###data[item].Sr##:"+ util.inspect(data[item].Service));
                     if (respToWebUI.hasOwnProperty([data[item].Service])) {
                         respToWebUI[data[item].Service].instances = respToWebUI[data[item].Service].instances + 1;
                         respToWebUI[data[item].Service].locations.push(data[item].Address + ":" + data[item].Port);
                     }
-                    // else{
-                    //     nginx=data[item].Service.indexOf("nginx-");
-                    //     if(nginx>=0){
-                    //         msnamenginx=data[item].Service.slice(- data[item].Service.indexOf("-") );
-                    //         if(respToWebUI.hasOwnProperty(msnamenginx)){
-                    //             respToWebUI[msnamenginx].nginx=data[item].Address;
-                    //         }
-                    //     }
-                    // }
                 }
-                //   console.log("DATA RespToWebUI:"+util.inspect(respToWebUI));
                 res.status(200).send(respToWebUI);
             });
         }
@@ -270,7 +251,7 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
     var msName = (req.params.name).toString();
 
     if (!msName) return res.status(400).send({error: "BadRequest", error_message: "no ms name provided"})
-    var url = conf.getParam("consulProtocol") + "://" + conf.getParam("consulHost") + ":" + conf.getParam("consulPort") + conf.getParam("consulHealth") + "/";
+    var url = conf.getParam("consulUrl") + conf.getParam("consulHealth") + "/";
 
     async.parallel([
             function (callback) {
@@ -285,12 +266,9 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
                         var running = "no check controls set";
                         var color = "gold";
 
-                        //console.log("Body: " + body);
                         for (item in data) {
-                            //console.log("Item:" + JSON.stringify(data[item]));
                             ip = data[item].Service.Address + "  |-->  " + data[item].Service.Port;
                             for (check in data[item].Checks) {
-                                //console.log("ServNmae:::" + JSON.stringify(data[item].Checks[check]));
                                 if (data[item].Checks[check].ServiceName == msName)
                                     if (data[item].Checks[check].Status == "passing") {
                                         running = "running";
@@ -304,7 +282,6 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
 
                             respToWebUI.push({ip: ip, running: running, color: color});
                         }
-                        // console.log("DATA RespToWebUI:"+util.inspect(respToWebUI));
                         callback(null, 'one');
 
                     }
@@ -321,7 +298,6 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
 
 
                         for (item in data) {
-                            //  console.log("Item:" + JSON.stringify(data[item]));
                             nginxIp.push({ip: data[item].Service.Address + "  |-->  " + data[item].Service.Port});
                         }
                         callback(null, 'two');
@@ -400,10 +376,8 @@ router.post('/renewtoken', jwtMiddle.ensureIsAuthorized, function (req, res) {
     var tokenV = JSON.parse(commonfunctions.generateMsToken(serviceType)).token;
     Microservice.findOneAndUpdate({name: serviceType}, {token: tokenV}, {new: true}, function (error, ute) {
         if (error || (!ute)) {
-            //console.log("ERROR:" + (error || "No Microservice Type Found"));
             res.status(404).send({error: "NotFound", error_message: error || "No Microservice Type Found"});
         } else {
-            //console.log("Info:Microservice Type Found");
             res.status(201).send({token: tokenV});
         }
     });
@@ -647,8 +621,6 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
         error_message: 'request body missing'
     });
     var microservice = req.body.microservice;
-    //var name = req.param('name').toString();
-    // console.log("method:----->>>" + util.inspect(microservice));
 
     if (!microservice) return res.status(400).send({error: 'BadRequest', error_message: "No microservice provided"});
     if (!microservice.name) return res.status(400).send({
@@ -680,7 +652,6 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
         try {
 
             AuthEP.create(microservice, function (err, newitem) {
-                // console.log("Creatig USER" + err);
                 if (err) {
 
                     return res.status(500).send({
@@ -729,17 +700,14 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  *
  *
  * @apiUse Metadata
- * @apiUse GetResource
- * @apiUse GetResourceExample
+ * @apiUse GetAuthResource
+ * @apiUse GetAuthResourceExample
  * @apiUse Unauthorized
  * @apiUse NotFound
  * @apiUse BadRequest
  * @apiUse ServerError
  */
 router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
-
-    //given an authenticated user (by token)
-    //console.log(req);
 
     var fields = req.dbQueryFields;
     var query = {};
@@ -797,8 +765,8 @@ router.get('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
  * @apiParam (Query parameter)  {String="GET","POST","PUT","DELETE"}    [method]    Filter by method
  *
  * @apiUse Metadata
- * @apiUse GetResource
- * @apiUse GetResourceExample
+ * @apiUse GetAuthResource
+ * @apiUse GetAuthResourceExample
  * @apiUse Unauthorized
  * @apiUse NotFound
  * @apiUse BadRequest

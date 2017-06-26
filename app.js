@@ -22,20 +22,6 @@ var appType=require('./routes/appTypes');
 var app = express();
 var plugins=require('apiextender');
 
-
-// var conf = null;
-//
-// if (app.get('env') === 'dev') {
-//     conf = config.dev;
-// }
-// else{
-//     conf = config.production;
-// }
-//require('./models/db')
-//connect to DB
-///...
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -59,12 +45,6 @@ app.use('/doc', express.static('doc',{root:'doc'}));
 app.use('/node_modules', express.static('node_modules',{root:'node_modules'}));
 
 
-//app.use(logger('[:mydate] :method :url :status :res[content-length] - :remote-addr - :response-time ms'));
-
-
-// passport-local-mongoose initialization
-//passport.use(new LocalStrategy(User.authenticate()));
-
 plugins.extend(app);
 
 app.use('/',routes);
@@ -73,12 +53,12 @@ app.use('/main',routes);
 app.use(jwtMiddle.decodeToken);
 
 
-app.use('/authuser',auth); // authorization routes
-app.use('/authapp',apps); // authorization routes
-app.use('/tokenactions',actions); // authorization routes
-app.use('/authms', msReg);
-app.use('/usertypes', userType);
-app.use('/apptypes', appType);
+app.use('/authuser',auth); // user routes
+app.use('/authapp',apps); // application routes
+app.use('/tokenactions',actions); // token actions routes
+app.use('/authms', msReg);  // auth ms routes
+app.use('/usertypes', userType); // user token types routes
+app.use('/apptypes', appType); // application token types routes
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

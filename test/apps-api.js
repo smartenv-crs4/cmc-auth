@@ -28,9 +28,6 @@ var clientApplication;
 describe('Apps API', function () {
 
     before(function (done) {
-        //this.timeout(4000);
-        //
-        //console.log("BEFORE");
 
         db.connect("apps-api",function (err) {
             if (err) console.log("######   ERRORE BEFORE : " + err +"  ######");
@@ -46,7 +43,6 @@ describe('Apps API', function () {
     });
 
     after(function (done) {
-        //console.log("AFTER");
         Apps.remove({}, function (err,elm) {
             if (err) console.log("######   ERRORE After 1: " + err +"  ######");
             db.disconnect(function (err,res) {
@@ -62,11 +58,6 @@ describe('Apps API', function () {
 
         var range = _.range(100);
 
-
-        
-
-        //Add cars
-       // console.log("BEFORE EACH");
         async.each(range, function (e, cb) {
 
             Apps.create({
@@ -74,7 +65,6 @@ describe('Apps API', function () {
                 type: type[_.random(0, type.length - 1)]
             }, function (err, newuser) {
                 if (err) console.log("######   ERRORE BEFOREEACH: " + err +"  ######");
-                //console.log(e);
                 if(e==1) clientApplication=newuser._id;
                 cb();
             });
@@ -86,7 +76,6 @@ describe('Apps API', function () {
 
 
     afterEach(function (done) {
-        //console.log("AFTER EACH");
         Apps.remove({}, function (err, elm) {
             if (err) console.log("######   ERRORE AfterEach: " + err +"  ######");
             done();
@@ -104,7 +93,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify(user);
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -137,7 +125,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify(user);
-           // console.log("BODY " + appBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -170,7 +157,6 @@ describe('Apps API', function () {
                 //"password": "miciomicio"
             };
             var appBody = JSON.stringify(user);
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -200,7 +186,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify(user);
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signin';
             request.post({
                 url: url,
@@ -239,8 +224,6 @@ describe('Apps API', function () {
             }, function (error, response,body) {
                 if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                 else {
-
-                    //console.log("BODYYYYYYERRRR" + body);
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');
@@ -260,7 +243,6 @@ describe('Apps API', function () {
                     }, function (error, response,body) {
                         if (error) console.log("######  ERRORE should  login a Application: " + error +"  ######");
                         else {
-                            //console.log("BODYYYYYYERRRR" + body);
                             response.statusCode.should.be.equal(200);
                             var results = JSON.parse(response.body);
                             results.should.have.property('apiKey');
@@ -286,7 +268,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -338,7 +319,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -370,7 +350,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -420,7 +399,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -479,7 +457,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -511,7 +488,6 @@ describe('Apps API', function () {
                 //"password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -537,8 +513,6 @@ describe('Apps API', function () {
 
         it('must return ONE user and _metadata, all fields', function (done) {
 
-           // console.log("SEND TEST");
-
             request.get({
                 url: APIURL + '?skip=0&limit=1',
                 headers: {'Authorization': "Bearer " + conf.MyMicroserviceToken}
@@ -546,7 +520,6 @@ describe('Apps API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("ERR MSG:" + body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
 
@@ -640,7 +613,6 @@ describe('Apps API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("EREWREWREWRWEREW " +body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
                     results.should.have.property('_metadata');
@@ -665,7 +637,6 @@ describe('Apps API', function () {
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
                     var results = JSON.parse(body);
-                    //console.log("ERRMSG" + results.error_message)
                     response.statusCode.should.be.equal(400);
                     results.should.have.property('error');
                     results.should.have.property('error_message');
@@ -680,14 +651,12 @@ describe('Apps API', function () {
         this.timeout(10000);
 
         it('should not create a new Application no valid User type sended', function (done) {
-            //console.log("test 1 start");
             var user = {
                 "type": "nonvalido", //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-          //  console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -750,14 +719,12 @@ describe('Apps API', function () {
 
         try {
             it('must return  error 401 for Unauthorized token', function (done) {
-               // console.log("test 2 start");
                 var user = {
                     "type": type[1], //client | admin
                     "email": "mario@caport.com",
                     "password": "miciomicio"
                 };
                 var appBody = JSON.stringify({app:user});
-               // console.log("BODY " + appBody);
                 var url = APIURL + '/signup';
                 var results;
 
@@ -768,15 +735,11 @@ describe('Apps API', function () {
                 }, function (error, response,body) {
                     if (error) console.log("######   ERRORE 401 1: " + error + "  ######");
                     else {
-                       // console.log("ERROR:" + response.body);
                         response.statusCode.should.be.equal(201);
                         results = JSON.parse(response.body);
                         results.should.have.property('apiKey');
                         results.should.have.property('refreshToken');
                     }
-                   // console.log("ENDONE");
-
-                    //console.log("BODYBODY" + body);
 
                     request.get({
                         url: APIURL + '?skip=0&limit=2',
@@ -792,15 +755,13 @@ describe('Apps API', function () {
                             results.should.have.property('error_message');
                             results.error_message.should.be.equal("The access token is not a valid microservice Token");
                         }
-                      //  console.log("ENDTWO");
-                       // console.log("test 2 end");
                         done();
                     });
                 });
 
             });
         }catch (err){
-           // console.log("TIENI " + err);
+             console.log("catch " + err);
 
         }
     });
@@ -1014,7 +975,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -1058,7 +1018,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -1067,8 +1026,6 @@ describe('Apps API', function () {
             }, function (error, response,body) {
                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                 else {
-
-                    //console.log("+++++++++++++ RRR " + body + " ++++++++++");
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');
@@ -1185,7 +1142,6 @@ describe('Apps API', function () {
                 "password": "miciomicio"
             };
             var appBody = JSON.stringify({app:user});
-            //console.log("BODY " + appBody);
             var url = APIURL + '/signup';
             request.post({
                 url: url,
@@ -1194,7 +1150,6 @@ describe('Apps API', function () {
             }, function (error, response,body) {
                 if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
                 else {
-                    //console.log("+++++++++++++ RRR " + body + " ++++++++++");
                     response.statusCode.should.be.equal(201);
                     var results = JSON.parse(response.body);
                     results.should.have.property('apiKey');
