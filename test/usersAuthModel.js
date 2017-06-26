@@ -180,13 +180,11 @@ describe('MS Auth Model', function(){
                     type: "INVALID"
                 },function(err,val){
                     should.exist(err);
-                    var errstring="err:"+ err
-                    //console.log("errString: " + errstring);
+                    var errstring="err:"+ err;
                     errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for user field `type`[valid].");
                     done();
                 });
             }catch(ex) {
-                //console.log("ex:" + ex);
                 done();
             }
         });

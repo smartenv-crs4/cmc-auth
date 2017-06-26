@@ -949,7 +949,7 @@ function exportEnvironmentConfig(url,myToken){
 
                 var blob = new Blob([JSON.stringify(exportJson)], {type: "text/plain;charset=utf-8"});
                 var d = new Date();
-                var filename = "Port2020Architecture" + d.toJSON() + ".json";
+                var filename = "CMCArchitectureSetting" + d.toJSON() + ".json";
                 saveAs(blob, filename);
             });
         });

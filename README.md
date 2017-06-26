@@ -1,4 +1,4 @@
-#CaPort2020 User Microservice Development
+#CMC Auth Microservice Development
 private use only
 
 ##Installing

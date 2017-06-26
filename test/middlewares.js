@@ -1,7 +1,6 @@
 var should = require('should');
 var middlewares = require("../routes/middlewares");
 
-
 describe('Middleware', function(){
 
   describe('parseFields', function(){

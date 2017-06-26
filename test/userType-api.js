@@ -16,13 +16,8 @@ var util = require('util');
 
 var Port = 3055;
 var APIURL = 'http://localhost:' + Port + "/usertypes";
-
-
 var server;
-//var token = conf.MyMicroserviceToken;
-
 var userTypeID;
-
 var oldUserType;
 var oldAppType;
 
@@ -32,9 +27,6 @@ var oldAppType;
 describe('UserAndAppTypes API', function () {
 
     before(function (done) {
-        //this.timeout(4000);
-        //
-        //console.log("BEFORE");
         oldUserType=conf.userType;
         oldAppType=conf.appType;
 
@@ -59,7 +51,6 @@ describe('UserAndAppTypes API', function () {
     
 
     after(function (done) {
-        //console.log("AFTER");
         UserAndAppTypes.remove({}, function (err,elm) {
             if (err) console.log("######   ERRORE After 1: " + err +"  ######");
             db.disconnect(function (err,res) {
@@ -79,8 +70,6 @@ describe('UserAndAppTypes API', function () {
 
         var range = _.range(100);
 
-        //Add cars
-       // console.log("BEFORE EACH");
         async.each(range, function (e, cb) {
 
             UserAndAppTypes.create({
@@ -88,7 +77,6 @@ describe('UserAndAppTypes API', function () {
                 type: "user"
             }, function (err, newuser) {
                 if (err) console.log("######   ERRORE BEFOREEACH: " + err +"  ######");
-                //console.log(e);
                  if(e==1) userTypeID=newuser._id;
                 cb();
             });
@@ -106,7 +94,6 @@ describe('UserAndAppTypes API', function () {
 
 
     afterEach(function (done) {
-        //console.log("AFTER EACH");
         UserAndAppTypes.remove({}, function (err, elm) {
             if (err) console.log("######   ERRORE AfterEach: " + err +"  ######");
             Users.remove({}, function (err, elm) {
@@ -127,8 +114,6 @@ describe('UserAndAppTypes API', function () {
 
         it('must return ONE user type and _metadata, all fields', function (done) {
 
-            // console.log("SEND TEST");
-
             request.get({
                 url: APIURL + '?skip=0&limit=1',
                 headers: {'Authorization': "Bearer " + conf.MyMicroserviceToken}
@@ -136,7 +121,6 @@ describe('UserAndAppTypes API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("ERR MSG:" + body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
 
@@ -224,7 +208,6 @@ describe('UserAndAppTypes API', function () {
 
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
-                    //console.log("EREWREWREWRWEREW " +body);
                     response.statusCode.should.be.equal(200);
                     var results = JSON.parse(body);
                     results.should.have.property('_metadata');
@@ -247,7 +230,6 @@ describe('UserAndAppTypes API', function () {
                 if (error) console.log("######   ERRORE: " + error +"  ######");
                 else {
                     var results = JSON.parse(body);
-                    //console.log("ERRMSG" + results.error_message)
                     response.statusCode.should.be.equal(400);
                     results.should.have.property('error');
                     results.should.have.property('error_message');

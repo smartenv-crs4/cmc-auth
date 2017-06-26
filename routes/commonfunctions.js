@@ -3,14 +3,8 @@
 var moment = require('moment');
 var jwt = require('jwt-simple');
 var async=require('async');
-
-
 var commonFunction=require('./commonfunctions');
-
 var conf=require('../routes/configSettingManagment');
-
-
-
 var util=require('util');
 var App = require('../models/apps').Apps;
 var User = require('../models/users').User;
@@ -21,22 +15,16 @@ var _=require('underscore');
 var tokenLife=conf.getParam("tokenLife");
 
 
-
-
-
 exports.createUser = function(user, password, callb) {
 
     try {
-
         User.register(user, password, function (err, newuser) {
-            // console.log("Creatig USER" + err);
             if (err) return callb("ERROR",500,{error:"signup_error",error_message : 'Unable to register user (err:' + err + ')'});
             callb(null,201,commonFunction.generateToken(newuser, "user"));
         });
 
 
     }catch (ex){
-        //console.log("ECCCEPTIO "+ ex);
         return callb("ERROR",500,{error:"signup_error",error_message : 'Unable to register user (err:' + ex + ')'});
     }
     
@@ -91,11 +79,6 @@ exports.generateToken= function (resource,mode){
         exp: expiresRt
     }, secret);
 
-    // var encodedToken = JSON.stringify({
-    //     apiKey : { token:token, expires: expires},
-    //     refreshToken : {token:refreshToken, expires: expiresRt},
-    //     userId : resource._id
-    // });
 
     var encodedToken = {
         apiKey : { token:token, expires: expires},
@@ -103,7 +86,6 @@ exports.generateToken= function (resource,mode){
         userId : resource._id
     };
 
-    //console.log("############### " + token);
 
     return encodedToken;
 };
@@ -128,7 +110,6 @@ function bundleToken(decoded,callback){
 
 exports.decode=function(token,callb){
 
-    //console.log("################ " + token);
 
     if (token) {
         try {
@@ -140,7 +121,7 @@ exports.decode=function(token,callb){
             });
         }
 
-        //   console.log(decoded.iss);
+
         if (decoded.exp <= Date.now()) {
             return callb(401,{
                 valid:false,
@@ -152,7 +133,6 @@ exports.decode=function(token,callb){
 
         if(decoded.mode=="user"){ // è un token utente
             User.findById(decoded.iss,"enabled",function(err,element){
-                console.log("USERA--> err:" + err + " element:" + element);
                 if(err){
                     return callb(500,{
                         valid:false,
@@ -212,37 +192,25 @@ exports.decode=function(token,callb){
 
 
 exports.initMs = function(callb) {
-    //console.log("In Get My token #" + conf.MyMicroserviceToken +"#");
+
 
     var authmsName= conf.getParam("authMsName") || "authms";
 
     async.series([
             function(callback){  // init Ms Token
 
-                // if(conf.getParam("MyMicroserviceToken")==""){
-                //     console.log("TOKEN NOT SETTED");
-                //
-                // }else  callback(null, 'one');
+
                 ms.findOne({name:authmsName},function(err,val){
-                    console.log("Find My TOKEN");
                     if (err) console.log("ERROR in creation token for this microservice " + err);
                     if(!val){
-                        console.log("TOKEN not present");
                         var token=JSON.parse(commonFunction.generateMsToken(authmsName)).token;
-
-                        var gwBaseUrl=conf.getParam("apiGwAuthBaseUrl");
-                        var gwVersion=conf.getParam("apiVersion");
-                        var gwConf=_.isEmpty(gwBaseUrl) ? "" : gwBaseUrl;
-                        gwConf=_.isEmpty(gwVersion) ? gwConf : gwConf + "/" + gwVersion;
-                        ms.create({name:authmsName,icon:"fa-unlock-alt", color:"panel-info",baseUrl:conf.getParam("authProtocol") + "://" + conf.getParam("authHost") + ":" + conf.getParam("authPort") + gwConf, token:token},function(err,val){
+                        ms.create({name:authmsName,icon:"fa-unlock-alt", color:"panel-info",baseUrl:conf.getParam("authUrl"), token:token},function(err,val){
                             if (err) console.log("ERROR in token creation for this microservice " + err);
-                            console.log("TOKEN created");
                             conf.setParam("MyMicroserviceToken",val.token);
                             callback(null, 'one');
                         })
                     }else{
                         conf.setParam("MyMicroserviceToken",val.token);
-                        console.log("TOKEN SETTED " + util.inspect(conf.getConf()));
                         callback(null, 'one');
                     }
                 });
@@ -279,12 +247,10 @@ exports.updateMicroservice=function(clbk){
     ms.find(null,null,{sort:{_id:1}},function(err,values){
         if(!err && values){
             conf.setParam("microserviceList",values);
-            console.log("############ VAçUES --> " +util.inspect(values));
             var msNameList=[];
             for (var msName in values){
                 msNameList.push(values[msName].name);
             }
-            //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("msType",msNameList);
             clbk();
         }else clbk();
@@ -300,7 +266,6 @@ exports.updateUsers=function(clbk){
             for (var users in values){
                 tokenNameList.push(values[users].name);
             }
-            //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("userType",tokenNameList);
             clbk();
         }else clbk();
@@ -315,7 +280,6 @@ exports.updateApp=function(clbk){
             for (var apps in values){
                 tokenNameList.push(values[apps].name);
             }
-            //console.log("!!!!!!!!!!! MS TYPE " + msNameList);
             conf.setParam("appType",tokenNameList);
             clbk();
 
@@ -323,10 +287,3 @@ exports.updateApp=function(clbk){
     });
 };
 
-
-
-//exports.initMs = function() {
-//
-//                conf.MyMicroserviceToken="yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoibXMiLCJpc3MiOiJub3QgdXNlZCBmbyBtcyIsImVtYWlsIjoibm90IHVzZWQgZm8gbXMiLCJ0eXBlIjoiQXV0aE1zIiwiZW5hYmxlZCI6dHJ1ZSwiZXhwIjoxNzgwODM0NTQxMzQxfQ.gJkSUCAkqzIb52s2ITohj7vXx-EXpicObSaJ1uSgdog";
-//                return(conf);
-//};

@@ -10,7 +10,7 @@ var _=require('underscore');
 
 var options = {
     server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
-	//,
+
     /*
 	user: 'admin',
     pass: 'node'
@@ -22,34 +22,22 @@ exports.connect = function connect(testName,callback) {
     mongoose.connect(dbUrl, options, function (err, res) {
 
         if (err) {
-            //console.log('Unable to connect to database ' + dbUrl);
             callback(err);
 
         }
-
         else {
-            //console.log('Connected to database ' + dbUrl);
             //if not exixts crate default Admin user
-
             async.series([
                     function(clb){  //create admn default user
                         var Users=require('../models/users').User;
                         Users.findOne({type:conf.AdminDefaultUser.type},function(err,val){
-                            //console.log("############################### Admin User Creation ###############################");
-                            //console.log("Find default Admin User");
                             if (err) console.log("ERROR in creation admin default User " + err);
                             if(!val){
-                                //console.log("not default ADMIN, now I create it");
                                 var user=JSON.parse(JSON.stringify(conf.AdminDefaultUser));
                                 var psw=conf.AdminDefaultUser.password;
                                 delete user['password'];
-                                //console.log("XXXXXXX PSW " + psw);
-                                //console.log("XXXXXXX User " + util.inspect(user));
                                 commonFunctions.createUser(user,psw,function(err, stausCode, json){
                                     if(err) console.log("ERROR in creation Default admin user " + json.error_message);
-                                    //console.log("############################### Admin User Creation END ###############################");
-
-
                                         tokenTypes.find({name:conf.AdminDefaultUser.type, type:"user"},function(err,userT){
                                             if (err) console.log("ERROR in creation admin default User " + err);
                                             if(_.isEmpty(userT)){
@@ -61,13 +49,8 @@ exports.connect = function connect(testName,callback) {
                                                 clb(null,"one");
                                             }
                                         });
-
-
-
                                 });
-
                             }else{
-                                //console.log("############################### Admin User Creation END ###############################");
                                 clb(null,"one");
                             }
                         });
