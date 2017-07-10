@@ -32,7 +32,7 @@
     "should": "^4.0.4"
   },
   "apidoc": {
-    "name": "CMC(CRS4 Microservice Core) Authentication API",
+    "name": "CMC (CRS4 Microservice Core) Authentication API",
     "title": "CMCAuthAPI",
     "url": "http://smartapi.crs4.it/api/auth/v1",
     "header": {
