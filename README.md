@@ -40,3 +40,9 @@ For API reference, see the service auto-generated online documentation at <code>
 ####For *production* mode, run:
 
     npm start
+    
+The backoffice where you can manage microservice authorisations can be found at
+<code>http://service_base_url/configure</code><br><br>
+Just log in using admin credentials:
+* username -> admin@admin.com
+* password -> admin
