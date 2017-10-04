@@ -663,7 +663,7 @@ router.post('/authendpoint', jwtMiddle.ensureIsAuthorized, function (req, res) {
     microservice.URI=microservice.URI.endsWith("/") ? microservice.URI : microservice.URI+"/";
     microservice.method=microservice.method.toUpperCase();
 
-    AuthEP.findOne({URI: microservice.URI, method: microservice.method}, function (err, item) {
+    AuthEP.findOne({name:microservice.name,URI: microservice.URI, method: microservice.method}, function (err, item) {
         if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
         if (item) return res.status(409).send({
             error: "Duplicate",
