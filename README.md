@@ -1,37 +1,48 @@
-#CMC Auth Microservice Development
-private use only
+# CMC Auth Microservice
+CMC Auth is the authentication and authorisation microservice of the CMC (Crs4 Microservice Core) framework.
+It takes care of managing all tokens that enable authentication and authorisation among microservices, to consuming users
+and to third party applications. <br>
+For API reference, see the service auto-generated online documentation at <code>http://service_base_url/doc</code>.
 
-##Installing
+## Usage
 
-###1) Install Mocha (for testing):
+### Install
+
+#### 1) Install Mocha (for testing):
 
     sudo npm install -g mocha
 
-###2) Install apiDoc (for API docs):
+#### 2) Install apiDoc (for API documentation):
 
     sudo npm install -g apidoc
 
-###3) Install all dependencies
+#### 3) Install all dependencies
     
     npm install
 
 
-##Running Tests
+### Run test suite
 
     npm test
     
 
-##Generating API documentation
+### Generate API documentation
 
     apidoc -i ./routes -o apidoc
+    
 
+### Run the application
 
-##Running Application
-
-In *development* mode, run:
+#### For *development* mode, run:
 
     NODE_ENV=dev npm start
 
-In production mode, run:
+#### For *production* mode, run:
 
     npm start
+    
+The backoffice where you can manage microservice authorisations can be found at
+<code>http://service_base_url/configure</code><br><br>
+Just log in using admin credentials:
+* username -> admin@admin.com
+* password -> admin
