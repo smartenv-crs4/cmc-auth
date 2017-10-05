@@ -50,7 +50,7 @@
       "unit":"days",
       "value":"7"
     },
-    "authMsName":"authms",
+    "authMsName":"cmc-auth",
     "exampleUrl":"Your_Project_API_URL"
   }
 }
