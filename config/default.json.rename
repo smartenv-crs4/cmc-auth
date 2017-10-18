@@ -2,7 +2,7 @@
   "dev":{
     "dbHost":"your_db_host",
     "dbPort":"27017",
-    "dbName":"your_db_name",
+    "dbName":"CMCAUTHDEV",
     "limit":50,
     "skip":0,
     "logfile":"/var/log/CMC-Auth-Microservice.log",
@@ -20,18 +20,18 @@
     "consulUrl":"your_consul_service_url",
     "consulServices":"/v1/agent/services",
     "consulHealth":"/v1/health/service",
-    "tokenLF":{
-      "unit":"days",
+    "tokenLife":{
+      "unit":"years",
       "value":"7"
     },
-    "authMsName":"authms",
+    "authMsName":"cmc-auth",
     "exampleUrl":"Your_Project_API_URL"
   },
 
   "production":{
     "dbHost":"your_db_host",
     "dbPort":"27017",
-    "dbName":"your_db_name",
+    "dbName":"CMCAUTH",
     "limit":50,
     "skip":0,
     "logfile":"/var/log/CMC-Auth-Microservice.log",
@@ -46,8 +46,8 @@
     "consulUrl":"your_consul_service_url",
     "consulServices":"/v1/agent/services",
     "consulHealth":"/v1/health/service",
-    "tokenLF":{
-      "unit":"days",
+    "tokenLife":{
+      "unit":"years",
       "value":"7"
     },
     "authMsName":"cmc-auth",
