@@ -65,9 +65,9 @@ var User = require('../models/apps').User;
  * @apiParam {String} consulUrl URL used to call consul service. Configure it if you use a consul register/service discovery in your architecture
  * @apiParam {String} consulServices=/v1/agent/services consul service endpoint. Configure it if you use a consul register/service discovery in your architecture
  * @apiParam {String} consulHealth=/v1/health/service consul service health endpoint. Configure it if you use a consul register/service discovery in your architecture
- * @apiParam {String} tokenLF token life setting dictionary
- * @apiParam {String="years", "quarters", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds"} tokenLF.unit=days Unit is the key of what time you want to add from current time for token life,
- * @apiParam {String} tokenLF.value=7 the amount of unit you want to add
+ * @apiParam {String} tokenLife token life setting dictionary
+ * @apiParam {String="years", "quarters", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds"} tokenLife.unit=days Unit is the key of what time you want to add from current time for token life,
+ * @apiParam {String} tokenLife.value=7 the amount of unit you want to add
  *
  * @apiSampleRequest off
  */
