@@ -80,7 +80,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
             if (!_.isEmpty(usertypeslist.userandapptypes))
                 return res.status(200).send(usertypeslist);
             else
-                return res.status(404).send(usertypeslist);
+                return res.status(204).send(null);
         }
         else {
             return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});
@@ -136,7 +136,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
         });
 
         if (!content)
-            return res.status(404).send({error: "NotFoud", error_message: "no users type with this Id"});
+            return res.status(204).send({error: "NotFoud", error_message: "no users type with this Id"});
         else {
             delete content['type'];
             return res.status(200).send(content);
@@ -193,6 +193,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
         });
 
         if (content) {
+            content = JSON.parse(JSON.stringify(content));
             Users.find({type: content.name}, function (err, values) {
                 if (err) {
                     tokenTypes.create(content, function (err, data) {
@@ -210,7 +211,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                     });
                 } else {
                     if (!_.isEmpty(values)) {
-                        content = JSON.parse(JSON.stringify(content));
+
                         tokenTypes.create(content, function (err, data) {
                             if (err) {
                                 return res.status(500).send({
@@ -231,21 +232,18 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                                     if (err) {
                                         return res.status(500).send({
                                             error: "delete_error",
-                                            error_message: 'token type ' + content.name + ' is deleted but some users of this type could be exist'
+                                            error_message: 'token type ' + content.name + ' is deleted but some rules with this token type could exist'
                                         });
                                     } else {
                                         return res.status(409).send({
                                             error: "Warning",
-                                            error_message: 'token type ' + content.name + ' is not deleted due some users of this type could be exist'
+                                            error_message: 'token type ' + content.name + ' is not deleted due to some rules with this token type could exist'
                                         });
                                     }
                                 });
                             } else {
                                 if (!_.isEmpty(values)) {
-
-                                    content = JSON.parse(JSON.stringify(content));
-
-                                    tokenTypes.create({name: content.name, type: "app"}, function (err, data) {
+                                    tokenTypes.create(content, function (err, data) {
 
                                         if (err) {
                                             return res.status(500).send({
@@ -270,7 +268,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 }
             });
         } else {
-            return res.status(404).send({error: "NotFoud", error_message: "no users type with this Id"});
+            return res.status(204).send({error: "NotFoud", error_message: "no users type with this Id"});
         }
     });
 
@@ -382,7 +380,7 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 });
             });
         } else {
-            return res.status(404).send({error: "NotFoud", error_message: "no user type with this Id"});
+            return res.status(204).send({error: "NotFoud", error_message: "no user type with this Id"});
         }
     });
 

@@ -80,7 +80,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
             if (!_.isEmpty(results.userandapptypes))
                 return res.status(200).send(results);
             else
-                return res.status(404).send(results);
+                return res.status(204).send(null);
         }
         else {
             return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});
@@ -133,7 +133,7 @@ router.get('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
         });
 
         if (!content)
-            return res.status(404).send({error: "NotFoud", error_message: "no app type with this Id"});
+            return res.status(204).send({error: "NotFoud", error_message: "no app type with this Id"});
         else {
             delete content['type'];
             return res.status(200).send(content);
@@ -189,6 +189,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
             error_message: 'Unable to delete app token type (err:' + err + ')'
         });
         if (content) {
+            content = JSON.parse(JSON.stringify(content));
             Apps.find({type: content.name}, function (err, values) {
                 if (err) {
                     tokenTypes.create(content, function (err, data) {
@@ -207,9 +208,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 } else {
                     if (!_.isEmpty(values)) {
 
-                        content = JSON.parse(JSON.stringify(content));
-
-                        tokenTypes.create({name: content.name, type: "app"}, function (err, data) {
+                        tokenTypes.create(content, function (err, data) {
 
                             if (err) {
                                 return res.status(500).send({
@@ -242,9 +241,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                             } else {
                                 if (!_.isEmpty(values)) {
 
-                                    content = JSON.parse(JSON.stringify(content));
-
-                                    tokenTypes.create({name: content.name, type: "app"}, function (err, data) {
+                                    tokenTypes.create(content, function (err, data) {
 
                                         if (err) {
                                             return res.status(500).send({
@@ -269,7 +266,7 @@ router.delete('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 }
             });
         } else {
-            return res.status(404).send({error: "NotFoud", error_message: "no aplication type with this Id"});
+            return res.status(204).send({error: "NotFoud", error_message: "no aplication type with this Id"});
         }
     });
 
@@ -380,7 +377,7 @@ router.put('/:id', jwtMiddle.ensureIsAuthorized, function (req, res) {
                 });
             });
         } else {
-            return res.status(404).send({error: "NotFoud", error_message: "no aplication type with this Id"});
+            return res.status(204).send({error: "NotFoud", error_message: "no aplication type with this Id"});
         }
     });
 

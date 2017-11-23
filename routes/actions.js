@@ -479,10 +479,18 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
     if (!URI) res.status(400).send({error: "BabRequest", error_message: "No URI param provided"});
     if (!method) res.status(400).send({error: "BabRequest", error_message: "No method param provided"});
 
-    decodeToken(req, res, function (err, decoded) { // err == null token is valid else err== status_code to return
+   checkAutRoles(req,URI,method,function(statusCode,bodyResponse){
+       res.status(statusCode).send(bodyResponse);
+   });
+
+});
+
+function checkAutRoles(req,URI,method,callbackResponse){
+    decodeToken(req, null, function (err, decoded) { // err == null token is valid else err== status_code to return
         if (err) { // if err token is not valid
             decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
-            res.status(err).send(decoded);
+            callbackResponse(err,decoded);
+            //res.status(err).send(decoded);
         } else { // token is valid
 
             URI=URI.endsWith("/") ? URI : URI+"/";
@@ -490,26 +498,25 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
             var typeT=req.decode_results.type;
 
             authEnpoints.findOne({URI: URI, method: method, name:typeT}, function (err, item) {
-                if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
-                if (!item) return res.status(401).send({
+                if (err) return callbackResponse(500,{error: "InternalError", error_message: "Internal Error " + err}); //res.status(500).send(
+                if (!item) return callbackResponse(401,{   //res.status(401).send({
                     error: "BadRequest",
                     error_message: "No auth roles defined for: " + method + " " + URI
                 });
 
                 if (item.authToken.indexOf(decoded.token.type) >= 0)
-                    res.status(200).send(decoded);
+                    callbackResponse(200,decoded); //res.status(200).send(decoded);
                 else {
                     decoded.valid = false;
                     decoded.error_message = "Only " + item.authToken + " token types can access this resource";
-                    res.status(200).send(decoded);
+                    callbackResponse(200,decoded); //res.status(200).send(decoded);
                 }
 
             });
         }
     });
 
-});
-
+}
 
 
 /**
@@ -650,37 +657,8 @@ router.post('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, 
     if (!URI) res.status(400).send({error: "BabRequest", error_message: "No URI param provided"});
     if (!method) res.status(400).send({error: "BabRequest", error_message: "No method param provided"});
 
-    decodeToken(req, res, function (err, decoded) { // err == null token is valid else err== status_code to return
-        if (err) { // if err token is not valid
-            decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
-            res.status(err).send(decoded);
-        } else { // token is valid
-            URI=URI.endsWith("/") ? URI : URI+"/";
-            method=method.toUpperCase();
-            var typeT=req.decode_results.type;
-
-            authEnpoints.findOne({URI: URI, method: method, name:typeT}, function (err, item) {
-                if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
-                if (!item) return res.status(401).send({
-                    error: "BadRequest",
-                    error_message: "No auth roles defined for: " + method + " " + URI
-                });
-                // if(!item){
-                //     decoded.valid=false;
-                //     decoded.error_message="No auth roles defined for: " + method + " " + URI;
-                //     res.status(201).send(decoded);
-                // }
-
-                if (item.authToken.indexOf(decoded.token.type) >= 0)
-                    res.status(200).send(decoded);
-                else {
-                    decoded.valid = false;
-                    decoded.error_message = "Only " + item.authToken + " token types can access this resource";
-                    res.status(200).send(decoded);
-                }
-            });
-
-        }
+    checkAutRoles(req,URI,method,function(statusCode,bodyResponse){
+        res.status(statusCode).send(bodyResponse);
     });
 
 });

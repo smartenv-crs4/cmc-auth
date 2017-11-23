@@ -267,11 +267,7 @@ describe('UserAndAppTypes API', function () {
 
                     if (error) console.log("######   ERRORE: " + error +"  ######");
                     else {
-                        var results = JSON.parse(body);
-                        response.statusCode.should.be.equal(404);
-                        results.should.have.property('_metadata');
-                        results.should.have.property('userandapptypes');
-                        results._metadata.totalCount.should.be.equal(0);
+                        response.statusCode.should.be.equal(204);
                     }
                     done();
                 });
@@ -329,7 +325,7 @@ describe('UserAndAppTypes API', function () {
                 request.get({url:url,headers:{'Authorization' : "Bearer "+ conf.MyMicroserviceToken}},function(error, response, body){
                     if(error) console.log("######   ERRORE: " + error + "  ######");
                     else{
-                        response.statusCode.should.be.equal(404);
+                        response.statusCode.should.be.equal(204);
                     }
                     done();
                 });
@@ -409,7 +405,7 @@ describe('UserAndAppTypes API', function () {
                         },function(error, response, body){
                             if(error) console.log("######   ERRORE: " + error + "  ######");
                             else{
-                                response.statusCode.should.be.equal(404);
+                                response.statusCode.should.be.equal(204);
                                 UserAndAppTypes.findOne({_id:ute._id}, function(err, usr){
                                     should(usr).be.equal(null);
                                     done();

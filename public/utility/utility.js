@@ -950,15 +950,12 @@ function showError(msg){
 function exportEnvironmentConfig(url,myToken){
 
     exportMicroserviceList(false,url,myToken,function(err,response){
-        console.log("ERRML:"+ err);
         if(err) showError("Incomplete export due " + err + " in Microservice list generation");
         var microservice=response||[];
         exportAuthendpoint(false,true,url,myToken,function(err,response){
-            console.log("AUTH:"+ err);
             if(err) showError("Incomplete export due " + err + " in resource access list roles generation");
             var roles=response||{};
             exportTokenTypeList(false,url,myToken,function(err,response){
-                console.log("TOKENTYPE:"+ err);
                 if(err) showError("Incomplete export due " + err + " in Token type list generation");
                 var tokenTypes=response||[];
                 var exportJson={
@@ -986,7 +983,6 @@ function ImportEnvironmentConfig(url,myToken){
     var problems=null;
     reader.onload = function(e) {
         var contents = JSON.parse(e.target.result);
-        console.log(contents);
         importMicroservicesListCall({ microservicelist: contents.microservice },url,myToken,function(err){
             if(err) problems="----------------------------IMPORT MICROSERVICE LIST---------------------------\n\r" + err;
             importAuthendpointCall({authendpoint:contents.roles},url,url+"/authms/authendpoint/actions/import",myToken,function(err){
@@ -1333,7 +1329,7 @@ function importTokenTypeListCall(list,url,myToken,respnsecallback){
                         'Authorization': 'Bearer ' + myToken
                     },
                     success: function (data) {
-                        console.log(JSON.stringify(data));
+                        // console.log(JSON.stringify(data));
                         if(data){
                             tokeTypelist=tokeTypelist.concat(data.userandapptypes);
                         }
@@ -1394,7 +1390,7 @@ function importTokenTypeListCall(list,url,myToken,respnsecallback){
                 });
             },
             function(clb) {  // import token types
-                async.forEachOf(list, function (element, key, callback) {
+                async.forEachOfSeries(list, function (element, key, callback) {
 
                     if(element.type=="user") {
                         content={"usertype":element};
@@ -1436,7 +1432,7 @@ function importTokenTypeListCall(list,url,myToken,respnsecallback){
                             }
                         },
                         error: function(data) {
-                            console.log(data);
+                            // console.log(data);
                             problems=(problems || "") + " "+ (data.responseJSON ? data.responseJSON.error_message : data.statusText);
                             callback();
                         }
