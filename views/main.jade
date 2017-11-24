@@ -569,13 +569,13 @@ html(lang='en')
                 .modal-dialog
                     .modal-content
                         .modal-header(style="background-color:#f0ad4e")
-                            button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                            button.close(type='button', data-dismiss='modal', aria-hidden='true',onclick="refreshPage();")
                                 span.fa.fa-times(aria-hidden='true')
                             h4#myAlertMsgModalLabel.modal-title.center TESTO
                         .modal-body.center
                             p#AlertMsgMessage.wrap MESSAGGIO
                         .modal-footer
-                            button.btn.btn-warning(data-dismiss='modal')
+                            button.btn.btn-warning(data-dismiss='modal', onclick="refreshPage();")
                                 span.fa.fa-times(aria-hidden='true')
                                 | &nbsp;Close
             #myInfoMsg.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myAlertMsgModalLabel', aria-hidden='true')

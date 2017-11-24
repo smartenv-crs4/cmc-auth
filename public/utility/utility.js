@@ -25,6 +25,9 @@ var reloadPage=false;
 
 
 
+function refreshPage(){
+    location.reload();
+}
 function getadminProfile(myToken){
     $('#admintoken').text(myToken);
 }
@@ -1271,8 +1274,6 @@ function exportApplicationTokenTypeList(url,myToken,callback){
         },
         success: function(dataapp) {
             callback(null,dataapp||[]);
-
-
         },
         error: function(data) {
             var msg = data.responseJSON ? data.responseJSON.error_message : data.statusText;
