@@ -522,23 +522,32 @@ router.post('/:id/actions/disable', jwtMiddle.ensureIsAuthorized, function (req,
  * @apiSampleRequest off
  */
 router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function (req, res) {
-    "use strict";
 
     var secret = require('../app').get('jwtTokenSecret');
     var id = req.params.id;
 
-    User.findById(id, function (err, usr) {
-        if (err) return res.status(500).send({error: "internal_error", error_message: err});
+    try{
+        User.findById(id,'+hash +salt', function (err, usr) {
+            if (err) return res.status(500).send({error: "internal_error", error_message: err});
 
-        if (!usr) return res.status(404).send({error: "NotFound", error_message: "User not Found"});
+            if (!usr) return res.status(404).send({error: "NotFound", error_message: "User not Found"});
 
-        var token = jwt.encode({
-            id: id,
-            hash: usr.hash,
-            salt: usr.salt
-        }, secret);
-        return res.status(200).send({reset_token: token});
-    });
+            if(usr.hash && usr.salt) {
+
+                var token = jwt.encode({
+                    id: id,
+                    hash: usr.hash,
+                    salt: usr.salt
+                }, secret);
+                return res.status(200).send({reset_token: token});
+            }else{
+                return res.status(500).send({error: "internal_error", error_message: "Can not compare user credential with reset_token due to no User hash and salt"});
+            }
+        });
+    }catch (ex){
+        return res.status(500).send({error: "internal_error", error_message: "Can not compare user credential with reset_token due to  db error " + ex});
+    }
+
 
 });
 
