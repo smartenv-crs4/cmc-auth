@@ -35,6 +35,7 @@ var conf = require('../routes/configSettingManagment');
 var LocalStrategy = require('passport-local').Strategy;
 var middlewares = require('./middlewares');
 var async=require("async");
+var passwordHash = require('password-hash');
 
 router.use(middlewares.parsePagination);
 router.use(middlewares.parseFields);
@@ -534,11 +535,16 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
 
             if(usr.hash && usr.salt) {
 
-                var token = jwt.encode({
+                var content={
                     id: id,
-                    hash: usr.hash,
-                    salt: usr.salt
-                }, secret);
+                    privateKey:{
+                      h:passwordHash.generate(usr.hash),
+                      s:passwordHash.generate(usr.salt)
+                    },
+                    etag_g:new Date()
+                };
+
+                var token = jwt.encode(content, secret);
                 return res.status(200).send({reset_token: token});
             }else{
                 return res.status(500).send({error: "internal_error", error_message: "Can not compare user credential with reset_token due to no User hash and salt"});
@@ -547,7 +553,6 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
     }catch (ex){
         return res.status(500).send({error: "internal_error", error_message: "Can not compare user credential with reset_token due to  db error " + ex});
     }
-
 
 });
 
@@ -622,7 +627,7 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
     if (!newpassword) return res.status(400).send({error: 'BadREquest', error_message: "No newpassword provided"});
 
 
-    User.findById(id, function (err, usr) {
+    User.findById(id,"+hash +salt", function (err, usr) {
         if (err) return res.status(500).send({error: "internal_error", error_message: err});
 
         if (!usr) return res.status(404).send({error: "NotFound", error_message: "User not Found"});
@@ -649,8 +654,8 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
                         });
                     } else {
                         var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
-                        if (!((usr.hash == decoded.hash) && (usr.salt == decoded.salt)))
-                            callback({status:401,error: "Forbidden", error_message: "reset_token is not valid"});
+                        if (!((usr._id==decoded.id) && (passwordHash.verify(usr.hash, decoded.privateKey.h)) && (passwordHash.verify(usr.salt, decoded.privateKey.s))))
+                            callback({status:401,error: "Forbidden", error_message: "reset_token is valid, but does not belong to the user who are trying to reset password"});
                         else
                             callback(null, 'one');
                     }

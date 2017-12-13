@@ -34,6 +34,8 @@ var commonfunctions=require('./commonfunctions');
 var jwt = require('jwt-simple');
 var middlewares=require('./middlewares');
 var conf=require('../routes/configSettingManagment');
+var async=require("async");
+var passwordHash = require('password-hash');
 
 router.use(middlewares.parsePagination);
 router.use(middlewares.parseFields);
@@ -566,21 +568,39 @@ router.post('/:id/actions/resetpassword', jwtMiddle.ensureIsAuthorized, function
     var secret = require('../app').get('jwtTokenSecret');
     var id = req.params.id;
 
-    App.findById(id, function (err, usr) {
-        if (err) return res.status(500).send({error: "internal_error", error_message: err});
 
-        if (!usr) return res.status(404).send({error: "NotFound", error_message: "App not Found"});
+    try {
+        App.findById(id, '+hash +salt', function (err, apl) {
+            if (err) return res.status(500).send({error: "internal_error", error_message: err});
 
-        var token = jwt.encode({
-            id: id,
-            hash: usr.hash,
-            salt: usr.salt
-        }, secret);
-        return res.status(200).send({reset_token: token});
-    });
+            if (!apl) return res.status(404).send({error: "NotFound", error_message: "App not Found"});
+
+
+            if (apl.hash && apl.salt) {
+
+                var content = {
+                    id: id,
+                    privateKey: {
+                        h: passwordHash.generate(apl.hash),
+                        s: passwordHash.generate(apl.salt)
+                    },
+                    etag_g: new Date()
+                };
+
+                var token = jwt.encode(content, secret);
+                return res.status(200).send({reset_token: token});
+            } else {
+                return res.status(500).send({
+                    error: "internal_error",
+                    error_message: "Can not compare App credential with reset_token due to no App hash and salt"
+                });
+            }
+        });
+    }catch (ex){
+        return res.status(500).send({error: "internal_error", error_message: "Can not compare App credential with reset_token due to db error " + ex});
+    }
 
 });
-
 
 /**
  * @api {post} /authapp/:id/actions/setpassword Set new Application password
@@ -648,35 +668,68 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
     }
     if (!newpassword) return res.status(400).send({error: 'BadREquest', error_message: "No newpassword provided"});
 
-    App.findById(id, function (err, apl) {
+    App.findById(id,"+hash +salt", function (err, apl) {
         if (err) return res.status(500).send({error: "internal_error", error_message: err});
 
         if (!apl) return res.status(404).send({error: "NotFound", error_message: "APP not Found"});
 
-        if (oldpassword) {
-            apl.authenticate(oldpassword, function (erro, auth) {
-                if (erro) return res.status(500).send({error: "INTERNAL_ERROR", error_message: erro});
 
-                if (!auth) return res.status(401).send({error: "Forbidden", error_message: "oldpassword is not valid"});
-            });
-        } else {
-            var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
-            if (!((apl.hash == decoded.hash) && (apl.salt == decoded.salt)))
-                return res.status(401).send({error: "Forbidden", error_message: "reset_token is not valid"});
-        }
 
-        apl.setPassword(newpassword, function (err, obj) {
-            if (err) return res.status(500).send({error: "internal_error", error_message: err});
-            apl.save(function (err, obj) {
-                    "use strict";
-                    if (err) return res.status(500).send({error: "internal_error", error_message: err});
-                    return res.status(200).send(commonfunctions.generateToken(apl, "developer"));
+
+        async.series([
+                function(callback) {
+                    if (oldpassword) {
+                        apl.authenticate(oldpassword, function (erro, auth) {
+                            if (erro){
+                                callback({status:500, error: "INTERNAL_ERROR", error_message: erro},null);
+                            }else{
+                                if (!auth) {
+                                    return callback({
+                                        status: 401,
+                                        error: "Forbidden",
+                                        error_message: "oldpassword is not valid"
+                                    }, null);
+                                }else{
+                                    callback(null, 'one');
+                                }
+                            }
+
+                        });
+                    } else {
+                        var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
+                        if (!((apl._id==decoded.id) && (passwordHash.verify(apl.hash, decoded.privateKey.h)) && (passwordHash.verify(apl.salt, decoded.privateKey.s))))
+                            callback({status:401,error: "Forbidden", error_message: "reset_token is valid, but does not belong to the Application who are trying to reset password"});
+                        else
+                            callback(null, 'one');
+                    }
                 }
-            )
-        });
+            ],
+            // optional callback
+            function(clbErr, results) {
+                if(clbErr){
+                    return res.status(clbErr.status).send({error: clbErr.error, error_message: clbErr.error_message});
+                }else{
+                    apl.setPassword(newpassword, function (err, obj) {
+                        if (err) return res.status(500).send({error: "internal_error", error_message: err});
+                        apl.save(function (err, obj) {
+                                "use strict";
+                                if (err) return res.status(500).send({error: "internal_error", error_message: err});
+                                return res.status(200).send(commonfunctions.generateToken(apl, "developer"));
+                            }
+                        )
+                    });
+                }
+
+            }
+        );
+
     });
 
 });
+
+
+
+
 
 
 module.exports = router;

@@ -1144,6 +1144,159 @@ describe('Apps API', function () {
 
 
 
+    describe('POST /authuser', function () {
+        this.timeout(5000);
+        it('should not reset a password of a Application by reset_token of other Application', function (done) {
+            var user = {
+                "type": type[1], //client | admin
+                "email": "mario@caport.com",
+                "password": "miciomicio"
+            };
+            var userBody = JSON.stringify({app:user});
+            var url = APIURL + '/signup';
+            request.post({
+                url: url,
+                body: userBody,
+                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+            }, function (error, response) {
+                if (error) console.log("######   ERRORE should create a new Authuser: " + error +"  ######");
+                else {
+                    response.statusCode.should.be.equal(201);
+                    var results = JSON.parse(response.body);
+                    results.should.have.property('apiKey');
+                    results.should.have.property('refreshToken');
+
+                    // make a reset
+                    var url = APIURL+'/'+results.userId+"/actions/resetpassword";
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(200);
+                            var results = JSON.parse(response.body);
+                            results.should.have.property('reset_token');
+                            var reset_token=results.reset_token;
+
+                            var user = {
+                                "username": "mario@caport.com",
+                                "password": "miciomicio"
+                            };
+                            userBody = JSON.stringify(user);
+                            url=APIURL+"/signin";
+                            request.post({ // should be possible login with old password after reset
+                                url: url,
+                                body: userBody,
+                                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                            }, function (error, response) {
+                                if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
+                                else {
+                                    response.statusCode.should.be.equal(200);
+                                    var results = JSON.parse(response.body);
+                                    results.should.have.property('apiKey');
+                                    results.should.have.property('refreshToken');
+
+
+                                    //create user on which reset password with user1 reset_token
+                                    var userFake = {
+                                        "type": type[1], //client | admin
+                                        "email": "fake@caport.com",
+                                        "password": "miciomicio"
+                                    };
+                                    var userBody = JSON.stringify({app:userFake});
+                                    var url = APIURL + '/signup';
+                                    request.post({
+                                        url: url,
+                                        body: userBody,
+                                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                                    }, function (error, response) {
+                                        if (error) console.log("######   ERRORE should create a new Authuser: " + error + "  ######");
+                                        else {
+                                            response.statusCode.should.be.equal(201);
+                                            var resultsFake = JSON.parse(response.body);
+                                            resultsFake.should.have.property('apiKey');
+                                            resultsFake.should.have.property('refreshToken');
+
+
+                                            var newpasw = {
+                                                "newpassword": "maciomacio",
+                                                "reset_token": reset_token
+                                            };
+
+                                            // user
+                                            pswBody = JSON.stringify(newpasw);
+                                            url=url = APIURL+'/'+resultsFake.userId+"/actions/setpassword";
+                                            request.post({ // set new password with reset Token
+                                                url: url,
+                                                body: pswBody,
+                                                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                                            }, function (error, response) {
+                                                if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
+                                                else {
+                                                    response.statusCode.should.be.equal(401);
+                                                    var results = JSON.parse(response.body);
+                                                    results.should.have.property('error');
+                                                    results.should.have.property('error_message');
+                                                    results.error_message.should.be.equal('reset_token is valid, but does not belong to the Application who are trying to reset password');
+
+
+                                                    user = {
+                                                        "username": "mario@caport.com",
+                                                        "password": "miciomicio"
+                                                    };
+                                                    userBody = JSON.stringify(user);
+                                                    url=APIURL+"/signin";
+                                                    request.post({ // should be possible login user 1 with old password after reset
+                                                        url: url,
+                                                        body: userBody,
+                                                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                                                    }, function (error, response) {
+                                                        if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
+                                                        else {
+                                                            response.statusCode.should.be.equal(200);
+                                                            var results = JSON.parse(response.body);
+                                                            results.should.have.property('apiKey');
+                                                            results.should.have.property('refreshToken');
+
+                                                            user = {
+                                                                "username": "fake@caport.com",
+                                                                "password": "miciomicio"
+                                                            };
+                                                            userBody = JSON.stringify(user);
+
+                                                            url=APIURL+"/signin";
+                                                            request.post({ // shoul be possible login with userFake
+                                                                url: url,
+                                                                body: userBody,
+                                                                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                                                            }, function (error, response) {
+                                                                if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
+                                                                else {
+                                                                    response.statusCode.should.be.equal(200);
+                                                                    var results = JSON.parse(response.body);
+                                                                    results.should.have.property('apiKey');
+                                                                    results.should.have.property('refreshToken');
+                                                                }
+                                                                done();
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+
 
 
     describe('POST /authapp', function () {
