@@ -698,7 +698,7 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
                     } else {
                         var decoded = jwt.decode(reset_token, require('../app').get('jwtTokenSecret'));
                         if (!((apl._id==decoded.id) && (passwordHash.verify(apl.hash, decoded.privateKey.h)) && (passwordHash.verify(apl.salt, decoded.privateKey.s))))
-                            callback({status:401,error: "Forbidden", error_message: "reset_token is valid, but does not belong to the Application who are trying to reset password"});
+                            callback({status:401,error: "Forbidden", error_message: "You are not autorised to reset password"});
                         else
                             callback(null, 'one');
                     }

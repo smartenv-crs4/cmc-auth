@@ -1228,7 +1228,7 @@ describe('Users API', function () {
                                                     var results = JSON.parse(response.body);
                                                     results.should.have.property('error');
                                                     results.should.have.property('error_message');
-                                                    results.error_message.should.be.equal('reset_token is valid, but does not belong to the user who are trying to reset password');
+                                                    results.error_message.should.be.equal('You are not authorised to reset password');
 
 
                                                     user = {
