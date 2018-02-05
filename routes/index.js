@@ -80,19 +80,23 @@ router.post('/configure', function(req, res) {
         body: userBody,
         headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.getParam("MyMicroserviceToken")}
     }, function (error, response,body) {
-        respb=JSON.parse(body);
-        if (respb.error_message){
-            res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-            res.render('login', {
-                next: conf.getParam("authUrl"),
-                at: conf.getParam("MyMicroserviceToken"),
-                error_message:respb.error_message
-            });
-        }
-        else {
-            res.cookie("action","log",{ signed: true });
-            res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-            res.render('start', {read:"Yes", adminToken:respb.apiKey.token});
+        try {
+            respb = JSON.parse(body);
+            if (respb.error_message) {
+                res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+                res.render('login', {
+                    next: conf.getParam("authUrl"),
+                    at: conf.getParam("MyMicroserviceToken"),
+                    error_message: respb.error_message
+                });
+            }
+            else {
+                res.cookie("action", "log", {signed: true});
+                res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+                res.render('start', {read: "Yes", adminToken: respb.apiKey.token});
+            }
+        }catch (ex){
+            return res.status(500).send(ex);
         }
     });
 });
@@ -129,5 +133,10 @@ router.get('/env', function(req, res) {
 
     res.status(200).send({env:env});
 });
+
+
+
+
+
 
 module.exports = router;

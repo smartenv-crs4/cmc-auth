@@ -234,28 +234,32 @@ router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAutho
         url: url,
         headers: {'content-type': 'application/json'}
     }, function (error, response, body) {
-        if (error) return res.status(500).send({error: "InernalError", error_message: error})
-        else {
+        try {
+            if (error) return res.status(500).send({error: "InernalError", error_message: error})
+            else {
 
-            var respToWebUI = {};
+                var respToWebUI = {};
 
-            Microservice.find({}, "name -_id", function (err, respArray) {
-                if (err) return res.status(500).send({error: "InernalError", error_message: err})
+                Microservice.find({}, "name -_id", function (err, respArray) {
+                    if (err) return res.status(500).send({error: "InernalError", error_message: err})
 
-                for (var msname in respArray) {
-                    respToWebUI[respArray[msname]["name"]] = {instances: 0, locations: []};
-                }
-
-                var data = JSON.parse(body);
-
-                for (item in data) {
-                    if (respToWebUI.hasOwnProperty([data[item].Service])) {
-                        respToWebUI[data[item].Service].instances = respToWebUI[data[item].Service].instances + 1;
-                        respToWebUI[data[item].Service].locations.push(data[item].Address + ":" + data[item].Port);
+                    for (var msname in respArray) {
+                        respToWebUI[respArray[msname]["name"]] = {instances: 0, locations: []};
                     }
-                }
-                res.status(200).send(respToWebUI);
-            });
+
+                    var data = JSON.parse(body);
+
+                    for (item in data) {
+                        if (respToWebUI.hasOwnProperty([data[item].Service])) {
+                            respToWebUI[data[item].Service].instances = respToWebUI[data[item].Service].instances + 1;
+                            respToWebUI[data[item].Service].locations.push(data[item].Address + ":" + data[item].Port);
+                        }
+                    }
+                    res.status(200).send(respToWebUI);
+                });
+            }
+        }catch (ex){
+            return res.status(500).send(ex);
         }
     });
 
@@ -279,31 +283,35 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
                     url: url + msName,
                     headers: {'content-type': 'application/json'}
                 }, function (error, response, body) {
-                    if (error) callback(error, "");
-                    else {
-                        var data = JSON.parse(body);
-                        var ip;
-                        var running = "no check controls set";
-                        var color = "gold";
+                    try {
+                        if (error) callback(error, "");
+                        else {
+                            var data = JSON.parse(body);
+                            var ip;
+                            var running = "no check controls set";
+                            var color = "gold";
 
-                        for (item in data) {
-                            ip = data[item].Service.Address + "  |-->  " + data[item].Service.Port;
-                            for (check in data[item].Checks) {
-                                if (data[item].Checks[check].ServiceName == msName)
-                                    if (data[item].Checks[check].Status == "passing") {
-                                        running = "running";
-                                        color = "lightgreen";
-                                    }
-                                    else {
-                                        running = "unreachable";
-                                        color = "red";
-                                    }
+                            for (item in data) {
+                                ip = data[item].Service.Address + "  |-->  " + data[item].Service.Port;
+                                for (check in data[item].Checks) {
+                                    if (data[item].Checks[check].ServiceName == msName)
+                                        if (data[item].Checks[check].Status == "passing") {
+                                            running = "running";
+                                            color = "lightgreen";
+                                        }
+                                        else {
+                                            running = "unreachable";
+                                            color = "red";
+                                        }
+                                }
+
+                                respToWebUI.push({ip: ip, running: running, color: color});
                             }
+                            callback(null, 'one');
 
-                            respToWebUI.push({ip: ip, running: running, color: color});
                         }
-                        callback(null, 'one');
-
+                    }catch (ex){
+                        callback(ex,"");
                     }
                 });
             },
@@ -312,15 +320,19 @@ router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAut
                     url: url + "nginx-" + msName,
                     headers: {'content-type': 'application/json'}
                 }, function (error, response, body) {
-                    if (error) callback(error, "");
-                    else {
-                        var data = JSON.parse(body);
+                    try {
+                        if (error) callback(error, "");
+                        else {
+                            var data = JSON.parse(body);
 
 
-                        for (item in data) {
-                            nginxIp.push({ip: data[item].Service.Address + "  |-->  " + data[item].Service.Port});
+                            for (item in data) {
+                                nginxIp.push({ip: data[item].Service.Address + "  |-->  " + data[item].Service.Port});
+                            }
+                            callback(null, 'two');
                         }
-                        callback(null, 'two');
+                    }catch (ex){
+                        callback(ex,"");
                     }
                 });
             },
