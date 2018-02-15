@@ -35,11 +35,7 @@ exports.findAll = function findAll(schema, entityName, conditions, fields, optio
 
     var opt = options ? options : {skip: conf.skip, limit: conf.limit};
 
-
-
     schema.find(conditions, fields, opt, function (err, result) {
-
-
 
         if (!err) {
             schema.count(conditions, function (err, count) {
@@ -57,29 +53,18 @@ exports.findAll = function findAll(schema, entityName, conditions, fields, optio
 
                         }
                     };
-
-                   
-
                     results[entities] = result;
-
                     callback(null, results);
-
                 }
                 else {
                     callback(err, null);
                 }
-
-
             });
         }
         else {
             callback(err, null);
         }
-
-
     });
-
-
 };
 
 //It wraps the find() + populate() method to include metadata

@@ -730,6 +730,93 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
 
 
 
+/**
+ * @api {post} /authapp/actions/ids/find Get all Applications in a array list
+ * @apiVersion 1.0.0
+ * @apiName Get Appliclations in array list
+ * @apiGroup Application
+ *
+ * @apiDescription Protected by access tokens, returns a paginated list of all Applications in array list.<BR>
+ *
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (Body Parameter)   {Array} ids  An array of Application _id
+ * @apiParam (Body Parameter)   {Array} fields An array string of fields to extract
+ *
+ *
+ * @apiParamExample {json} Request-Example:
+ * HTTP/1.1 POST request
+ *  Body:{ "ids": ['App1_Id','App2_Is'] , "fields":["name","surname","Type"]}
+
+
+ * @apiUse GetAppResource
+ * @apiUse GetAppResourceExample
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ * @apiSampleRequest off
+ */
+
+router.post('/actions/ids/find', jwtMiddle.ensureIsAuthorized, function (req, res) {
+
+try {
+    if (!req.body) return res.status(400).send({error: "BadRequest", error_message: "body missing"});
+    if (!req.body.ids) return res.status(400).send({
+        error: "BadRequest",
+        error_message: "mandatory 'ids' body param not found"
+    });
+
+    if (req.body.fields && !(Array.isArray(req.body.fields)) ) return res.status(400).send({
+        error: "BadRequest",
+        error_message: "field param must be an array"
+    });
+
+
+
+    var fields = req.body.fields;
+
+    if (!fields)
+        fields = '-hash -salt -__v';
+    else
+        fields = fields.join(" ");
+
+    var ids = req.body.ids;
+
+    if (!(Array.isArray(ids)) ) return res.status(400).send({
+        error: "BadRequest",
+        error_message: "ids param must be an array"
+    });
+
+    var query = {_id: {$in: ids}};
+
+
+
+    App.findAll(query, fields, null, function (err, results) {
+
+        if (!err) {
+
+            if (!_.isEmpty(results.apps))
+                return res.status(200).send(results);
+            else
+                return res.status(204).send({users: "NoContent"});
+        }
+        else {
+            return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});
+        }
+    });
+}catch (ex){
+    return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + ex});
+}
+
+});
+
+
 
 
 module.exports = router;

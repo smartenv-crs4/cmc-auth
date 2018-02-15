@@ -1403,4 +1403,248 @@ describe('Apps API', function () {
         });
     });
 
+
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get users by ids. all fields', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ids})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(200);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('_metadata');
+                            resp.should.have.property('apps');
+                            resp.apps.length.should.be.equal(3);
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get users by ids. type fields', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ids,fields:["type"]})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(200);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('_metadata');
+                            resp.should.have.property('apps');
+                            resp.apps.length.should.be.equal(3);
+                            resp.apps[0].should.not.have.property("email");
+                            resp.apps[0].should.not.have.property("enabled");
+                            resp.apps[0].should.have.property("type");
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get users by ids. type,email fields', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ids,fields:["type","email"]})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(200);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('_metadata');
+                            resp.should.have.property('apps');
+                            resp.apps.length.should.be.equal(3);
+                            resp.apps[0].should.have.property("email");
+                            resp.apps[0].should.not.have.property("enabled");
+                            resp.apps[0].should.have.property("type");
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get an error due invalid fields', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ids,fields:"type,email"})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(400);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('error');
+                            resp.should.have.property('error_message');
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get an error due invalid fields', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ids,fields:{"type":"type","email":"email"}})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(400);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('error');
+                            resp.should.have.property('error_message');
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get an error due invalid ids', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ute[0]._id})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(400);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('error');
+                            resp.should.have.property('error_message');
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get an error no ids', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        body:JSON.stringify({ids:ute[0]._id})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(400);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('error');
+                            resp.should.have.property('error_message');
+                            resp.error_message.should.be.equal("ids param must be an array");
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    describe('post /authuser/actions/ids/find', function(){
+
+        it('must get an error no ids', function(done){
+
+            Apps.find({},null,{limit:3},function(error,ute){
+                if(error) console.log("######   ERRORE: " + error + "  ######");
+                else{
+                    var url = APIURL+'/actions/ids/find';
+                    var ids=[ute[0]._id,ute[1]._id,ute[2]._id];
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
+                        //body:JSON.stringify({ids:ute[0]._id})
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(400);
+                            var resp=JSON.parse(body);
+                            resp.should.have.property('error');
+                            resp.should.have.property('error_message');
+                            resp.error_message.should.be.equal("mandatory 'ids' body param not found");
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
  });

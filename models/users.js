@@ -23,8 +23,8 @@
 var mongoose = require('mongoose');
 var findAllFn = require('./metadata').findAll;
 var _=require('underscore');
-var Schema = mongoose.Schema,
-    ObjectId = Schema.ObjectId;
+var Schema = mongoose.Schema;
+
 
 
 
