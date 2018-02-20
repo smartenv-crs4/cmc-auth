@@ -253,6 +253,7 @@ router.get('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
     var query = {};
 
+
     for (var v in req.query)
         if (App.schema.path(v))
             query[v] = req.query[v];
@@ -795,16 +796,10 @@ try {
 
     var query = {_id: {$in: ids}};
 
-
-
     App.findAll(query, fields, null, function (err, results) {
 
         if (!err) {
-
-            if (!_.isEmpty(results.apps))
                 return res.status(200).send(results);
-            else
-                return res.status(204).send({users: "NoContent"});
         }
         else {
             return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});
