@@ -752,11 +752,7 @@ router.post('/actions/ids/find', jwtMiddle.ensureIsAuthorized, function (req, re
 
         User.findAll(query, fields, null,function (err, results) {
             if (!err) {
-
-                if (!_.isEmpty(results.users))
                     return res.status(200).send(results);
-                else
-                    return res.status(204).send({users:"NoContent"});
             }
             else {
                 return res.status(500).send({error: 'internal_error', error_message: 'something blew up, ERROR:' + err});
