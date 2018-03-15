@@ -796,7 +796,7 @@ try {
 
     var query = {_id: {$in: ids}};
 
-    App.findAll(query, fields, null, function (err, results) {
+    App.findAll(query, fields, {skip:-1, limit:-1}, function (err, results) {
 
         if (!err) {
                 return res.status(200).send(results);

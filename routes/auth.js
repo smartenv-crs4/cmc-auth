@@ -750,7 +750,7 @@ router.post('/actions/ids/find', jwtMiddle.ensureIsAuthorized, function (req, re
 
         // var query = {_id: {$in: ["57f25faadbf597310fd4a451","5a798d066ba1840ade8cddda"]}};
 
-        User.findAll(query, fields, null,function (err, results) {
+        User.findAll(query, fields,{skip:-1, limit:-1},function (err, results) {
             if (!err) {
                     return res.status(200).send(results);
             }
