@@ -266,7 +266,7 @@ router.get('/actions/instances', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAutho
 });
 
 
-router.get('/actions/healt/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized], function (req, res) {
+router.get('/actions/health/:name', [jwtMiddle.decodeToken, jwtMiddle.ensureIsAuthorized], function (req, res) {
 
     var respToWebUI = [];
     var nginxIp = [];

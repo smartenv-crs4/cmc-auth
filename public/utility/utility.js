@@ -429,7 +429,7 @@ function msDetails(url,myToken,msName){
     $("#msdetails").html( "&nbsp; " + msName + " microservice Details");
     
     $.ajax({
-        url: url+"/authms/actions/healt/"+msName,
+        url: url+"/authms/actions/health/"+msName,
         type: 'GET',
         headers: {
             'Authorization': 'Bearer ' + myToken
