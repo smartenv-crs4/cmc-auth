@@ -445,7 +445,7 @@ function msDetails(url,myToken,msName){
 
             if(data.baseUrl){
                 $('#msinstancelistpanel').before('<div class=\"list-group msinstancelist\">  \
-                                                   <a href=\"#\" class="list-group-item\"> \
+                                                   <a class="list-group-item\"> \
                                                            <i class=\"fa fa-retweet fa-fw\"></i>' + data.baseUrl + '  \
                                                      <span class=\"pull-right text-muted small\">  \
                                                        <em>baseUrl Gateway</em>  \
@@ -457,7 +457,7 @@ function msDetails(url,myToken,msName){
             for(var item in data.nginx){
 
                     $('#msinstancelistpanel').before('<div class=\"list-group msinstancelist\">  \
-                                                   <a href=\"#\" class="list-group-item\"> \
+                                                   <a class="list-group-item\"> \
                                                            <i class=\"fa fa-sitemap fa-fw\"></i>' + data.nginx[item].ip + '  \
                                                      <span class=\"pull-right text-muted small\">  \
                                                        <em>Load Balance (nginx)</em>  \
@@ -470,7 +470,7 @@ function msDetails(url,myToken,msName){
             for(var item in data.service){
 
                 $('#msinstancelistpanel').before('<div class=\"list-group msinstancelist\">  \
-                                                   <a href=\"#\" class="list-group-item\"> \
+                                                   <a class="list-group-item\"> \
                                                            <i class=\"fa fa-tasks fa-fw\"></i>' + data.service[item].ip + '  \
                                                      <span style=\"color:'+ data.service[item].color  + '\" class=\"pull-right text-muted small\">  \
                                                        <em>'+ data.service[item].running + '</em>  \
