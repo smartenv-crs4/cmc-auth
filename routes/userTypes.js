@@ -436,7 +436,7 @@ router.post('/', jwtMiddle.ensureIsAuthorized, function (req, res) {
     var cont = req.body.usertype || null;
 
     if (!cont) {
-        return res.status(400).send({error: 'BadRequest', error_message: "No usertype provided"});
+        return res.status(400).send({error: 'BadRequest', error_message: "Query field “usertype” is mandatory in the request"});
     }
     cont.type = "user";
 

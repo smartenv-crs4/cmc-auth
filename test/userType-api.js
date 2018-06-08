@@ -699,7 +699,7 @@ describe('UserAndAppTypes API', function () {
                         else {
                             response.statusCode.should.be.equal(400);
                             var results = JSON.parse(body);
-                            results.error_message.should.be.equal('No usertype provided');
+                            results.error_message.should.be.equal('Query field “usertype” is mandatory in the request');
                             done();
                         }
                     });

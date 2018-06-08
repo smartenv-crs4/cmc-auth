@@ -386,6 +386,65 @@ router.delete('/:id',jwtMiddle.ensureIsAuthorized, function (req, res) {
 });
 
 
+
+
+/**
+ * @api {post} /authuser/:id/actions/setapptype/:type Set or update Application type
+ * @apiVersion 1.0.0
+ * @apiName set or update Application type
+ * @apiGroup Application
+ *
+ * @apiDescription Protected by access token, set or update Application type.
+ *
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id    The Application id
+ * @apiParam (URL parameter) {String} type  The Application type to set
+ *
+ * @apiSuccess (200 - OK) {String} User.id   The Application id
+ * @apiSuccess (200 - OK) {String} User.tye   The new Application type
+ *
+ * @apiSuccessExample {json} Example: 200 OK
+ *      HTTP/1.1 200 OK
+ *      {
+ *        "id":"02550564065",
+ *        "type":"admin"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse NotFound
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ * @apiSampleRequest off
+ */
+router.post('/:id/actions/setapptype/:type', jwtMiddle.ensureIsAuthorized, function (req, res) {
+        "use strict";
+
+        var id = req.params.id;
+        var userType=req.params.type;
+
+        //user['validated'] = true;
+        if (!(conf.getParam("appType").indexOf(userType) >= 0))//||  user['type'] == 'admin'
+            return res.status(400).send({error: 'BadRequest', error_message: "No valid Application Type provided"});
+        else{
+            App.findByIdAndUpdate(id,{type:userType},function (err,doc) {
+                if(err)
+                    return res.status(500).send({error: 'InternelError', error_message: err});
+                else{
+                    return res.status(200).send({id:id, type:userType});
+                }
+            });
+        }
+    }
+);
+
+
 function checked_unchecked(id, value, cb) {
 
     App.findByIdAndUpdate(id, {enabled: value}, function (err, updated) {

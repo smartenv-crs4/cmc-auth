@@ -210,7 +210,7 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
 /**
  * @api {get} /authuser Get all Users
  * @apiVersion 1.0.0
- * @apiName Get User
+ * @apiName Get Users
  * @apiGroup User
  *
  * @apiDescription Protected by access tokens, returns a paginated list of all Users.<BR>
@@ -399,6 +399,66 @@ function enable_disable(id, value, cb) {
 
     });
 }
+
+
+/**
+ * @api {post} /authuser/:id/actions/setusertype/:type Set or update User type
+ * @apiVersion 1.0.0
+ * @apiName set or update User type
+ * @apiGroup User
+ *
+ * @apiDescription Protected by access token, set or update User type.
+ *
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter) {String} id    The User id
+ * @apiParam (URL parameter) {String} type  The User type to set
+ *
+ * @apiSuccess (200 - OK) {String} User.id   The User id
+ * @apiSuccess (200 - OK) {String} User.tye   The new User type
+ *
+ * @apiSuccessExample {json} Example: 200 OK
+ *      HTTP/1.1 200 OK
+ *      {
+ *        "id":"02550564065",
+ *        "type":"admin"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse NotFound
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ * @apiSampleRequest off
+ */
+router.post('/:id/actions/setusertype/:type', jwtMiddle.ensureIsAuthorized, function (req, res) {
+        "use strict";
+
+        var id = req.params.id;
+        var userType=req.params.type;
+
+        //user['validated'] = true;
+        if (!(conf.getParam("userType").indexOf(userType) >= 0))//||  user['type'] == 'admin'
+            return res.status(400).send({error: 'BadRequest', error_message: "No valid User Type provided"});
+        else{
+            User.findByIdAndUpdate(id,{type:userType},function (err,doc) {
+               if(err)
+                   return res.status(500).send({error: 'InternelError', error_message: err});
+               else{
+                   return res.status(200).send({id:id, type:userType});
+               }
+            });
+        }
+    }
+);
+
+
+
 
 /**
  * @api {post} /authuser/:id/actions/enable Enable User
