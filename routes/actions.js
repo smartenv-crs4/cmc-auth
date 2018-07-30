@@ -508,7 +508,7 @@ function checkAutRoles(req,URI,method,callbackResponse){
                     callbackResponse(200,decoded); //res.status(200).send(decoded);
                 else {
                     decoded.valid = false;
-                    decoded.error_message = "Only " + item.authToken + " token types can access this resource";
+                    decoded.error_message = "Only " + item.authToken + " token types can access this resource : '" + method + " " + URI + "'";
                     callbackResponse(200,decoded); //res.status(200).send(decoded);
                 }
 
