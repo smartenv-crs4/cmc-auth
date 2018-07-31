@@ -28,6 +28,7 @@ var request=require("request");
 var _ = require('underscore')._;
 var conf=require('../routes/configSettingManagment');
 var iconsList=conf.getParam("iconsList");
+var commonfunctions=require('./commonfunctions');
 
 router.get('/main', function(req, res) {
     var action=req.signedCookies.action || null;
@@ -66,6 +67,22 @@ router.get('/login', function(req, res) {
 });
 
 
+function renderLoginError(res,error_message){
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.render('login', {
+        next: conf.getParam("authUrl"),
+        at: conf.getParam("MyMicroserviceToken"),
+        error_message: error_message
+    });
+}
+
+
+function renderConfigurePage(res,access_token){
+    res.cookie("action", "log", {signed: true});
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.render('start', {read: "Yes", adminToken: access_token});
+}
+
 /* POST configuration page. */
 router.post('/configure', function(req, res) {
 
@@ -83,20 +100,43 @@ router.post('/configure', function(req, res) {
         try {
             respb = JSON.parse(body);
             if (respb.error_message) {
-                res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-                res.render('login', {
-                    next: conf.getParam("authUrl"),
-                    at: conf.getParam("MyMicroserviceToken"),
-                    error_message: respb.error_message
-                });
+               return renderLoginError(res,respb.error_message);
             }
             else {
-                res.cookie("action", "log", {signed: true});
-                res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-                res.render('start', {read: "Yes", adminToken: respb.apiKey.token});
+                commonfunctions.decode(respb.apiKey.token,function(err,decoded){
+                    if(err){
+                        return renderLoginError(res,err);
+                    }else{
+
+                        if(decoded.valid){
+                            let adminUser=conf.getParam("WhoUsersCanLoginToConfigure");
+
+                            if(adminUser.indexOf("all")>=0){
+                                //get all admin tokentypes
+                                commonfunctions.getAdminTokenTypes(function(err,data){
+                                    if(err) return renderLoginError(res,err.error_message);
+                                    if(data.superuser.indexOf(decoded.token.type)>=0){
+                                        return renderConfigurePage(res,respb.apiKey.token)
+                                    }else{
+                                        return renderLoginError(res,"Not Authorised: You are not authorised to access to configure");
+                                    }
+                                });
+                            }else{
+                                if(adminUser.indexOf(decoded.token.type)>=0){
+                                    return renderConfigurePage(res,respb.apiKey.token)
+                                }else{
+                                    return renderLoginError(res,"Not Authorised: You are not authorised to access to configure");
+                                }
+                            }
+
+                        }else {
+                            return renderLoginError(res,"Internal Error due to Not Valid access_token after Login");
+                        }
+                    }
+                });
             }
         }catch (ex){
-            return res.status(500).send(ex);
+            return renderLoginError(res,ex);
         }
     });
 });

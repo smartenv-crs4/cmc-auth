@@ -24,6 +24,7 @@
       "unit":"years",
       "value":"7"
     },
+    "WhoUsersCanLoginToConfigure":["admin"],
     "openResourceTag":"Open",
     "authMsName":"cmc-auth",
     "exampleUrl":"Your_Project_API_URL"
@@ -51,6 +52,7 @@
       "unit":"years",
       "value":"7"
     },
+    "WhoUsersCanLoginToConfigure":["admin"],
     "openResourceTag":"Open",
     "authMsName":"cmc-auth",
     "exampleUrl":"Your_Project_API_URL"

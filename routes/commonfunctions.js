@@ -35,6 +35,7 @@ var _=require('underscore');
 var tokenLife=conf.getParam("tokenLife");
 
 
+
 exports.createUser = function(user, password, callb) {
 
     try {
@@ -307,3 +308,17 @@ exports.updateApp=function(clbk){
     });
 };
 
+
+exports.getAdminTokenTypes=function(clbk){
+    var list = [];
+
+    tokenTypes.find({super: true, type: "user"}, function (err, values) {
+        if (err) return clbk(500,{error: "InternalError", error_message: "Internal Error " + err});
+        async.each(values, function (val, clb) {
+            list.push(val.name);
+            clb();
+        }, function (err) {
+            return clbk(null,{superuser: list});
+        });
+    });
+};

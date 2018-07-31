@@ -816,17 +816,11 @@ router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function (req, res
  */
 router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var list = [];
-
-    appsUsersType.find({super: true, type: "user"}, function (err, values) {
-        if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
-        async.each(values, function (val, clb) {
-            list.push(val.name);
-            clb();
-        }, function (err) {
-            res.status(200).send({superuser: list});
-        });
+    commonfunctions.getAdminTokenTypes(function(err,data){
+       if(err) return res.status(err).send(data);
+        res.status(200).send(data);
     });
+
 });
 
 
