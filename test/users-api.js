@@ -968,6 +968,99 @@ describe('Users API', function () {
 
 
 
+    describe('POST /authuser/:id/actions/setusername/:newusername', function () {
+
+        it('should set a new username', function (done) {
+            var user = {
+                "type": conf.userType[1], //client | admin
+                "email": "mario@caport.com",
+                "password": "miciomicio"
+            };
+
+            var userLogin = {
+                "username": user.email,
+                "password": user.password
+            };
+
+            var newUsername="changeme@changeme.it";
+
+            var userBody = JSON.stringify({user:user});
+            var url = APIURL + '/signup';
+            request.post({
+                url: url,
+                body: userBody,
+                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+            }, function (error, response) {
+                if (error) console.log("######   ERRORE should create a new Authuser: " + error +"  ######");
+                else {
+                    response.statusCode.should.be.equal(201);
+                    var results = JSON.parse(response.body);
+                    results.should.have.property('apiKey');
+                    results.should.have.property('refreshToken');
+
+                    // make a username update
+                    var url = APIURL+'/'+results.userId+"/actions/setusername/"+ newUsername;
+                    request.post({
+                        url: url,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                    },function(error, response, body){
+                        if(error) console.log("######   ERRORE: " + error + "  ######");
+                        else{
+                            response.statusCode.should.be.equal(200);
+                            results = JSON.parse(response.body);
+                            results.should.have.property('username');
+                            results.should.have.property('token');
+                            results.username.should.have.property('old');
+                            results.username.should.have.property('new');
+                            results.username.old.should.be.equal(user.email);
+                            results.username.new.should.be.equal(newUsername);
+                            results.token.should.have.property('apiKey');
+                            results.token.should.have.property('refreshToken');
+                            var userBodyLogin = JSON.stringify(userLogin);
+
+                            url=APIURL+"/signin";
+                            request.post({ // should not be possible login with old username
+                                url: url,
+                                body: userBodyLogin,
+                                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                            }, function (error, response) {
+                                if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
+                                else {
+                                    response.statusCode.should.be.equal(403);
+                                    var results = JSON.parse(response.body);
+                                    results.should.have.property('error');
+                                    results.should.have.property('error_message');
+                                    results.error_message.indexOf("You are not correctly authenticated").should.be.greaterThan(-1);
+
+                                    userLogin.username=newUsername;
+                                    userBodyLogin = JSON.stringify(userLogin);
+
+
+                                    url=APIURL+"/signin";
+                                    request.post({ // should be possible login with new username
+                                        url: url,
+                                        body: userBodyLogin,
+                                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                                    }, function (error, response) {
+                                        if (error) console.log("######  ERRORE should  login a Authuser: " + error +"  ######");
+                                        else {
+                                            response.statusCode.should.be.equal(200);
+                                            var results = JSON.parse(response.body);
+                                            results.should.have.property('apiKey');
+                                            results.should.have.property('refreshToken');
+                                        }
+                                        done();
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
 
 
     describe('POST /authuser', function () {

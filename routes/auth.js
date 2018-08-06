@@ -743,6 +743,88 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
 
 
 
+
+
+/**
+ * @api {post} /authuser/:id/actions/setusername Update the User username
+ * @apiVersion 1.0.0
+ * @apiName SetUsername
+ * @apiGroup User
+ *
+ * @apiDescription Accessible only by access tokens, updates the User username.
+ *
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ * @apiParam (URL parameter)    {String} id             The User id
+ * @apiParam (Body Parameter)   {String} oldusername    The old username to update.
+ * @apiParam (Body Parameter)   {String} newusername    The new username to set.
+ *
+ * @apiSuccess (200 - OK) {Object} username             information about new and old username
+ * @apiSuccess (200 - OK) {String} username.old         Old username
+ * @apiSuccess (200 - OK) {String} username.new         new username
+ * @apiSuccess (200 - OK) {Object} token                new access credentials
+ * @apiSuccess (200 - OK) {Object} token.apiKey               information about apiKey token
+ * @apiSuccess (200 - OK) {String} token.apiKey.token         User Token
+ * @apiSuccess (200 - OK) {String} token.apiKey.expires       token expiration date
+ * @apiSuccess (200 - OK) {Object} token.refreshToken         information about refreshToken used to renew token
+ * @apiSuccess (200 - OK) {String} token.refreshToken.token   user refreshToken
+ * @apiSuccess (200 - OK) {String} token.refreshToken.expires refreshToken expiration date
+ * @apiSuccess (200 - OK) {String} token.userId               user id
+ *
+ * @apiSuccessExample {json} Example: 200 OK
+ *      HTTP/1.1 200 OK
+ *      {
+ *        "apiKey":{
+ *                  "token":"VppR5sHU_hV3U",
+ *                  "expires":1466789299072
+ *                 },
+ *        "refreshToken":{
+ *                          "token":"eQO7de4AJe-syk",
+ *                          "expires":1467394099074
+ *                       },
+ *       "userId":"4334f423432"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse NotFound
+ * @apiUse ServerError
+ * @apiUse InvalidUserAndPassword
+ * @apiSampleRequest off
+ *
+ */
+router.post('/:id/actions/setusername/:newusername', jwtMiddle.ensureIsAuthorized, function (req, res) {
+    "use strict";
+
+    var id = req.params.id;
+    var newusername = req.params.newusername;
+
+    User.findByIdAndUpdate(id,{email:newusername}, function (err, usr) {
+        if (err) return res.status(500).send({error: "internal_error", error_message: err});
+
+        if (!usr) return res.status(404).send({error: "NotFound", error_message: "User not Found"});
+
+        var resp={
+            username:{
+                old:usr.email,
+                new:newusername
+            }
+        };
+        usr.email=newusername;
+        resp.token=commonfunctions.generateToken(usr, "user");
+
+        return res.status(200).send(resp);
+    });
+});
+
+
+
 /**
  * @api {post} /authuser/actions/ids/find Get all Users in a array list
  * @apiVersion 1.0.0
