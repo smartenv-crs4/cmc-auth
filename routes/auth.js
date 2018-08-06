@@ -762,8 +762,7 @@ router.post('/:id/actions/setpassword', jwtMiddle.ensureIsAuthorized, function (
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
  * @apiParam (URL parameter)    {String} id             The User id
- * @apiParam (Body Parameter)   {String} oldusername    The old username to update.
- * @apiParam (Body Parameter)   {String} newusername    The new username to set.
+ * @apiParam (URL Parameter)   {String} newusername    The new username to set.
  *
  * @apiSuccess (200 - OK) {Object} username             information about new and old username
  * @apiSuccess (200 - OK) {String} username.old         Old username
