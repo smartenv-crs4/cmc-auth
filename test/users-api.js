@@ -34,7 +34,7 @@ var util = require('util');
 var Port = 3055;
 var APIURL = 'http://localhost:' + Port + "/authuser";
 var server;
-var type = conf.userType;
+var type = conf.testSettings.userType;
 var adminUser;
 var clientUser;
 var clientToken;
@@ -218,7 +218,7 @@ describe('Users API', function () {
 
 
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -270,7 +270,7 @@ describe('Users API', function () {
 
 
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -321,7 +321,7 @@ describe('Users API', function () {
 
         it('should create a new Authuser', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -352,7 +352,7 @@ describe('Users API', function () {
 
 
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -401,7 +401,7 @@ describe('Users API', function () {
 
         it('should not create a new Authuser no body sended', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -429,7 +429,7 @@ describe('Users API', function () {
 
         it('should not create a new Authuser no email sended', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 //"email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -489,7 +489,7 @@ describe('Users API', function () {
 
         it('should not create a new Authuser no Password type sended', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com"
             };
             var userBody = JSON.stringify({user:user});
@@ -691,7 +691,7 @@ describe('Users API', function () {
         it('should not create a new Authuser no valid field sended', function (done) {
 
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio",
                 "cofdFisc":"ABAA"
@@ -727,7 +727,7 @@ describe('Users API', function () {
             it('must return  error 401 for Unauthorized token', function (done) {
 
                 var user = {
-                    "type": conf.userType[1], //client | admin
+                    "type": conf.testSettings.userType[1], //client | admin
                     "email": "mario@caport.com",
                     "password": "miciomicio"
                 };
@@ -972,7 +972,7 @@ describe('Users API', function () {
 
         it('should set a new username', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -1067,7 +1067,7 @@ describe('Users API', function () {
 
         it('should reset a password and get reset Token', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -1110,7 +1110,7 @@ describe('Users API', function () {
         this.timeout(5000);
         it('should reset a password, get reset Token and set a new Password', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -1231,7 +1231,7 @@ describe('Users API', function () {
         this.timeout(5000);
         it('should not reset a password of a user by reset_token of other User', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };
@@ -1283,7 +1283,7 @@ describe('Users API', function () {
 
                                     //create user on which reset password with user1 reset_token
                                     var userFake = {
-                                        "type": conf.userType[1], //client | admin
+                                        "type": conf.testSettings.userType[1], //client | admin
                                         "email": "fake@caport.com",
                                         "password": "miciomicio"
                                     };
@@ -1384,7 +1384,7 @@ describe('Users API', function () {
         this.timeout(5000);
         it('should set a new password', function (done) {
             var user = {
-                "type": conf.userType[1], //client | admin
+                "type": conf.testSettings.userType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };

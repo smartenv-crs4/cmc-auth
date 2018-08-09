@@ -775,12 +775,16 @@ router.post('/refreshToken', jwtMiddle.ensureIsAuthorized, function (req, res) {
  */
 router.get('/gettokentypelist', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var userType = conf.getParam("userType");
-    var appType = conf.getParam("appType");
-    var msType = conf.getParam("msType");
-
-    res.status(200).send({user: userType, app: appType, ms: msType});
-
+    commonfunctions.getUsers(function(err,usrJson){
+        var userType=usrJson.userType;
+        commonfunctions.getApp(function(err,appJson){
+            var appType=appJson.appType;
+            commonfunctions.getMicroservice(function(err,msJson){
+                var msType=msJson.msType;
+                res.status(200).send({user: userType, app: appType, ms: msType});
+            });
+        });
+    });
 });
 
 

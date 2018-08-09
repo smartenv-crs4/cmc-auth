@@ -265,47 +265,51 @@ exports.initMs = function(callb) {
 
 
 exports.updateMicroservice=function(clbk){
-    ms.find(null,null,{sort:{_id:1}},function(err,values){
-        if(!err && values){
-            conf.setParam("microserviceList",values);
-            var msNameList=[];
-            for (var msName in values){
-                msNameList.push(values[msName].name);
-            }
-            conf.setParam("msType",msNameList);
-            clbk();
-        }else clbk();
-    });
+    // ms.find(null,null,{sort:{_id:1}},function(err,values){
+    //     if(!err && values){
+    //         conf.setParam("microserviceList",values);
+    //         var msNameList=[];
+    //         for (var msName in values){
+    //             msNameList.push(values[msName].name);
+    //         }
+    //         conf.setParam("msType",msNameList);
+    //         clbk();
+    //     }else clbk();
+    // });
+
+    clbk();
 };
 
 
 
 exports.updateUsers=function(clbk){
-    tokenTypes.find({type:"user"},function(err,values){
-        if(!err && values){
-            var tokenNameList=[];
-            for (var users in values){
-                tokenNameList.push(values[users].name);
-            }
-            conf.setParam("userType",tokenNameList);
-            clbk();
-        }else clbk();
-    });
+    // tokenTypes.find({type:"user"},function(err,values){
+    //     if(!err && values){
+    //         var tokenNameList=[];
+    //         for (var users in values){
+    //             tokenNameList.push(values[users].name);
+    //         }
+    //         conf.setParam("userType",tokenNameList);
+    //         clbk();
+    //     }else clbk();
+    // });
+    clbk();
 };
 
 
 exports.updateApp=function(clbk){
-    tokenTypes.find({type:"app"},function(err,values){
-        if(!err && values){
-            var tokenNameList=[];
-            for (var apps in values){
-                tokenNameList.push(values[apps].name);
-            }
-            conf.setParam("appType",tokenNameList);
-            clbk();
-
-        }else clbk();
-    });
+    // tokenTypes.find({type:"app"},function(err,values){
+    //     if(!err && values){
+    //         var tokenNameList=[];
+    //         for (var apps in values){
+    //             tokenNameList.push(values[apps].name);
+    //         }
+    //         conf.setParam("appType",tokenNameList);
+    //         clbk();
+    //
+    //     }else clbk();
+    // });
+    clbk();
 };
 
 
@@ -320,5 +324,44 @@ exports.getAdminTokenTypes=function(clbk){
         }, function (err) {
             return clbk(null,{superuser: list});
         });
+    });
+};
+
+exports.getMicroservice=function(clbk){
+    ms.find(null,null,{sort:{_id:1}},function(err,values){
+        if(!err && values){
+            var msNameList=[];
+            for (var msName in values){
+                msNameList.push(values[msName].name);
+            }
+            clbk(null,{microserviceList:values,msType:msNameList});
+        }else clbk(err,{microserviceList:[],msType:[]});
+    });
+};
+
+
+
+exports.getUsers=function(clbk){
+    tokenTypes.find({type:"user"},function(err,values){
+        if(!err && values){
+            var tokenNameList=[];
+            for (var users in values){
+                tokenNameList.push(values[users].name);
+            }
+            clbk(null,{userType:tokenNameList});
+        }else clbk(err,{userType:[]});
+    });
+};
+
+
+exports.getApp=function(clbk){
+    tokenTypes.find({type:"app"},function(err,values){
+        if(!err && values){
+            var tokenNameList=[];
+            for (var apps in values){
+                tokenNameList.push(values[apps].name);
+            }
+            clbk(null,{appType:tokenNameList});
+        }else clbk(err,{appType:[]});
     });
 };

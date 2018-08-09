@@ -44,8 +44,8 @@ var oldAppType;
 describe('UserAndAppTypes API', function () {
 
     before(function (done) {
-        oldUserType=conf.userType;
-        oldAppType=conf.appType;
+        oldUserType=conf.testSettings.userType;
+        oldAppType=conf.testSettings.appType;
 
        
 
@@ -73,8 +73,8 @@ describe('UserAndAppTypes API', function () {
             db.disconnect(function (err,res) {
                 if (err) console.log("######   ERRORE After 2: " + err +"  ######");
                 server.close();
-                conf.userType=oldUserType;
-                conf.appType=oldAppType;
+                conf.testSettings.userType=oldUserType;
+                conf.testSettings.appType=oldAppType;
                
                 done();
             });
@@ -99,9 +99,9 @@ describe('UserAndAppTypes API', function () {
             });
 
         }, function (err) {
-            commonFunction.updateMicroservice(function() {
-                commonFunction.updateApp(function () {
-                    commonFunction.updateUsers(function () {
+            db.updateMicroserviceToTest(function() {
+                db.updateAppToTest(function () {
+                    db.updateUsersToTest(function () {
                         done();
                     });
                 });
@@ -426,10 +426,10 @@ describe('UserAndAppTypes API', function () {
 
         it('must return error 409 in delete  due some user of this type exist', function(done){
 
-            Users.create({email:"prova@prova.it", type:conf.userType[0]},function(err,app){
+            Users.create({email:"prova@prova.it", type:conf.testSettings.userType[0]},function(err,app){
                 if (err) console.log("######   ERRORE: " + err + "  ######");
                 else{
-                    UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
+                    UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
@@ -463,10 +463,10 @@ describe('UserAndAppTypes API', function () {
 
         it('must return error 409 in delete  due some auth token rules include this user type ', function(done){
 
-            authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[conf.userType[0]]},function(err,valAuth){
+            authorization.create({URI:"/bleee",method:"POST",name:conf.testSettings.msType[0],authToken:[conf.testSettings.userType[0]]},function(err,valAuth){
                 if (err) console.log("######   ERRORE: " + err + "  ######");
                 else{
-                    UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
+                    UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
@@ -534,14 +534,14 @@ describe('UserAndAppTypes API', function () {
 
         it('must get update error for duplicate key name', function(done){
 
-            UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
+            UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
                     var url = APIURL+'/'+ute._id;
                     request.put({
                         url: url,
                         headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
-                        body:JSON.stringify({usertype:{name:conf.userType[1]}})
+                        body:JSON.stringify({usertype:{name:conf.testSettings.userType[1]}})
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
@@ -562,7 +562,7 @@ describe('UserAndAppTypes API', function () {
 
         it('must update user type', function(done){
 
-            UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
+            UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
                     var url = APIURL+'/'+ute._id;
@@ -590,9 +590,9 @@ describe('UserAndAppTypes API', function () {
 
         it('must update user type and all linked data', function(done){
 
-            var nameType=conf.userType[0];
+            var nameType=conf.testSettings.userType[0];
 
-            authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[nameType]},function(error,valAuth){
+            authorization.create({URI:"/bleee",method:"POST",name:conf.testSettings.msType[0],authToken:[nameType]},function(error,valAuth){
                 if(error) console.log("######   ERRORE1_: " + error + "  ######");
                 else{
                     Users.create({email:"prova@prova.it", type:nameType},function(error,app){
@@ -718,7 +718,7 @@ describe('UserAndAppTypes API', function () {
             request.post({
                 url: url,
                 headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
-                body:JSON.stringify({usertype:{name:conf.userType[0]}})
+                body:JSON.stringify({usertype:{name:conf.testSettings.userType[0]}})
             },function(error, response, body){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{

@@ -25,6 +25,7 @@ var findAllFn = require('./metadata').findAll;
 var _=require('underscore');
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
+var commonfunctions=require('../routes/commonfunctions');
 
 
 var conf=require('../routes/configSettingManagment');
@@ -48,42 +49,36 @@ AuthEndPointSchema.statics.findAll = function (conditions, fields, options, call
 
 
 AuthEndPointSchema.pre('save', function (next) {
-    var userType=conf.getParam("userType");
-    var appType=conf.getParam("appType");
-    var msType=conf.getParam("msType");
-    var tokensType= userType.concat(appType).concat(msType);
+    var _this=this;
+
+    commonfunctions.getUsers(function(err,usrJson){
+        var userType=usrJson.userType;
+        commonfunctions.getApp(function(err,appJson){
+            var appType=appJson.appType;
+            commonfunctions.getMicroservice(function(err,msJson){
+                var msType=msJson.msType;
+                var tokensType= userType.concat(appType).concat(msType);
+
+                if(!((_.intersection(tokensType,_this.authToken)).length>=0))
+                    return next(new Error("'" +_this.authToken + "' is not a valid value for `authToken`["+ tokensType+"]."));
+
+                if(!((_.indexOf(msType,_this.name.toString()))>=0))
+                    return next(new Error("'" +_this.name + "' is not a valid value for `name`["+ msType+"]."));
+
+                return next();
+            });
+        });
+
+
+    });
 
 
 
-    if(!((_.intersection(tokensType,this.authToken)).length>=0))
-        return next(new Error("'" +this.authToken + "' is not a valid value for `authToken`["+ tokensType+"]."));
 
-    if(!((_.indexOf(msType,this.name.toString()))>=0))
-        return next(new Error("'" +this.name + "' is not a valid value for `name`["+ msType+"]."));
-
-    return next();
 });
 
 
 
-// AuthEndPointSchema.statics.UpdateAuthTokenSchema = function (callback){
-//     var userType=conf.getParam("userType");
-//     var appType=conf.getParam("appType");
-//     var msType=conf.getParam("msType");
-//     var tokensType= userType.concat(appType).concat(msType);
-//
-//
-//     // console.log("!!!!!!!!!!!!!!!!!! AUYHTOKENTYPE:" + tokensType);
-//     // AuthEndPointSchema.path('authToken', [{type: String, enum: tokensType, index: true, required:true}]);
-//     // //AuthEndPointSchema.path('authToken', [{type: String, enum: tokensType, index: true, required:true}]);
-//     // console.log("!!!!!!!!!!!!!!!!!! USERTYPE:" + msType);
-//     // AuthEndPointSchema.path('name', [{type: String, enum: msType, index: true, required:true}]);
-//     //
-//     // AuthEndPoint = mongoose.model('authendpoints', AuthEndPointSchema);
-//
-//     return callback(null);
-//
-// };
 
 //AuthEndPointSchema.index({ URI: 1, method: 1},{ unique: true });
 

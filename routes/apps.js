@@ -198,23 +198,25 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
     if (app.access_token)
         delete app['access_token'];
 
-    //user['validated'] = true;
-    if (!(conf.getParam("appType").indexOf(app['type']) >= 0))//||  user['type'] == 'admin'
-        return res.status(400).send({error: 'BadRequest', error_message: "No valid App Type provided"});
+    commonfunctions.getApp(function(err,appJson){
+        var appType=appJson.appType;
+        //user['validated'] = true;
+        if (!(appType.indexOf(app['type']) >= 0))//||  user['type'] == 'admin'
+            return res.status(400).send({error: 'BadRequest', error_message: "No valid App Type provided"});
 
-    try {
-        App.register(app, password, function (err, newpp) {
-            if (err) return res.status(500).send({
-                error: "signup_error",
-                error_message: 'Unable to register app (err:' + err + ')'
+        try {
+            App.register(app, password, function (err, newpp) {
+                if (err) return res.status(500).send({
+                    error: "signup_error",
+                    error_message: 'Unable to register app (err:' + err + ')'
+                });
+
+                return res.status(201).send(commonfunctions.generateToken(newpp, "developer"));
             });
-
-            return res.status(201).send(commonfunctions.generateToken(newpp, "developer"));
-        });
-    } catch (ex) {
-        return res.status(500).send({error: "signup_error", error_message: 'Unable to register app (err:' + ex + ')'});
-    }
-
+        } catch (ex) {
+            return res.status(500).send({error: "signup_error", error_message: 'Unable to register app (err:' + ex + ')'});
+        }
+    });
 });
 
 
@@ -429,8 +431,10 @@ router.post('/:id/actions/setapptype/:type', jwtMiddle.ensureIsAuthorized, funct
         var id = req.params.id;
         var userType=req.params.type;
 
+    commonfunctions.getApp(function(err,appJson){
+        var appType=appJson.appType;
         //user['validated'] = true;
-        if (!(conf.getParam("appType").indexOf(userType) >= 0))//||  user['type'] == 'admin'
+        if (!(appType.indexOf(userType) >= 0))//||  user['type'] == 'admin'
             return res.status(400).send({error: 'BadRequest', error_message: "No valid Application Type provided"});
         else{
             App.findByIdAndUpdate(id,{type:userType},function (err,doc) {
@@ -441,8 +445,9 @@ router.post('/:id/actions/setapptype/:type', jwtMiddle.ensureIsAuthorized, funct
                 }
             });
         }
-    }
-);
+    });
+
+});
 
 
 function checked_unchecked(id, value, cb) {

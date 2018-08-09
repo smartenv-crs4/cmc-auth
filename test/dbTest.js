@@ -25,12 +25,17 @@ var conf = require('../config').conf;
 var commonFunctions=require('../routes/commonfunctions');
 var util=require('util');
 var async=require('async');
-var dbUrl =  conf.dbHost + ':' + conf.dbPort + '/' + conf.dbName;
+var dbUrl = "mongodb://" + conf.dbHost + ':' + conf.dbPort + '/' + conf.dbName;
 var tokenTypes=require('../models/userAndAppTypes').UserAndAppTypes;
 var _=require('underscore');
+var ms=require('../models/microservices').Microservice;
+
 
 var options = {
-    server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
+    keepAlive: 1,
+    connectTimeoutMS: 30000,
+    useMongoClient: true
+    //,
     /*
 	user: 'admin',
     pass: 'node'
@@ -48,39 +53,12 @@ exports.connect = function connect(testName,callback) {
         else {
             //if not exixts create default Admin user
             async.series([
-                    function(clb){  //create admin default user
-                        var Users=require('../models/users').User;
-                        Users.findOne({type:conf.AdminDefaultUser.type},function(err,val){
-                            if (err) console.log("ERROR in creation admin default User " + err);
-                            if(!val){
-                                var user=JSON.parse(JSON.stringify(conf.AdminDefaultUser));
-                                var psw=conf.AdminDefaultUser.password;
-                                delete user['password'];
-                                commonFunctions.createUser(user,psw,function(err, stausCode, json){
-                                    if(err) console.log("ERROR in creation Default admin user " + json.error_message);
-                                        tokenTypes.find({name:conf.AdminDefaultUser.type, type:"user"},function(err,userT){
-                                            if (err) console.log("ERROR in creation admin default User " + err);
-                                            if(_.isEmpty(userT)){
-                                                tokenTypes.create({name:user.type, type:"user",super:true},function(err,userT){
-                                                    if (err) console.log("ERROR in creation admin default User " + err);
-                                                    clb(null,"one");
-                                                });
-                                            }else{
-                                                clb(null,"one");
-                                            }
-                                        });
-                                });
-                            }else{
-                                clb(null,"one");
-                            }
-                        });
-                    },
                     function(clb){ // create  AutmMs token and load config params from DB
                         var tokenType = require('../models/userAndAppTypes').UserAndAppTypes;
 
                         async.parallel([
                                 function(cl){ // create  AutmMs token and load config params from DB
-                                    async.each(conf.appType, function(item, callbackEnd) {
+                                    async.each(conf.testSettings.appType, function(item, callbackEnd) {
 
                                         try{
                                             tokenType.create({name:item,type:"app"},function(err,va){
@@ -95,7 +73,7 @@ exports.connect = function connect(testName,callback) {
                                     });
                                 },
                                 function(cl){ // create  AutmMs token and load config params from DB
-                                    async.each(conf.userType, function(item, callbackEnd) {
+                                    async.each(conf.testSettings.userType, function(item, callbackEnd) {
 
                                         try{
                                             tokenType.create({name:item,type:"user"},function(err,va){
@@ -118,7 +96,34 @@ exports.connect = function connect(testName,callback) {
                         commonFunctions.initMs(function(cnf){
                             clb(null,"three");
                         });
-                    }
+                    },
+                    function(clb){  //create admin default user
+                        var Users=require('../models/users').User;
+                        Users.findOne({type:conf.AdminDefaultUser.type},function(err,val){
+                            if (err) console.log("ERROR in creation admin default User " + err);
+                            if(!val){
+                                var user=JSON.parse(JSON.stringify(conf.AdminDefaultUser));
+                                var psw=conf.AdminDefaultUser.password;
+                                delete user['password'];
+                                commonFunctions.createUser(user,psw,function(err, stausCode, json){
+                                    if(err) console.log("ERROR in creation Default admin user " + json.error_message);
+                                    tokenTypes.find({name:conf.AdminDefaultUser.type, type:"user"},function(err,userT){
+                                        if (err) console.log("ERROR in creation admin default User " + err);
+                                        if(_.isEmpty(userT)){
+                                            tokenTypes.create({name:user.type, type:"user",super:true},function(err,userT){
+                                                if (err) console.log("ERROR in creation admin default User " + err);
+                                                clb(null,"one");
+                                            });
+                                        }else{
+                                            clb(null,"one");
+                                        }
+                                    });
+                                });
+                            }else{
+                                clb(null,"one");
+                            }
+                        });
+                    },
                 
                 ],
                 function(err, results){
@@ -136,7 +141,49 @@ exports.disconnect = function disconnect(callback) {
     tokenType.remove({},function(err,values){
         mongoose.disconnect(callback);
     });
+};
+
+
+exports.updateMicroserviceToTest=function(clbk){
+    ms.find(null,null,{sort:{_id:1}},function(err,values){
+        if(!err && values){
+            conf.microserviceList=values;
+            var msNameList=[];
+            for (var msName in values){
+                msNameList.push(values[msName].name);
+            }
+            conf.testSettings.msType=msNameList;
+            clbk();
+        }else clbk();
+    });
+};
 
 
 
+exports.updateUsersToTest=function(clbk){
+    tokenTypes.find({type:"user"},function(err,values){
+        if(!err && values){
+            var tokenNameList=[];
+            for (var users in values){
+                tokenNameList.push(values[users].name);
+            }
+            conf.testSettings.userType=tokenNameList;
+            clbk();
+        }else clbk();
+    });
+};
+
+
+exports.updateAppToTest=function(clbk){
+    tokenTypes.find({type:"app"},function(err,values){
+        if(!err && values){
+            var tokenNameList=[];
+            for (var apps in values){
+                tokenNameList.push(values[apps].name);
+            }
+            conf.testSettings.appType=tokenNameList;
+            clbk();
+
+        }else clbk();
+    });
 };

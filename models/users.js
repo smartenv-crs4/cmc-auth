@@ -24,7 +24,7 @@ var mongoose = require('mongoose');
 var findAllFn = require('./metadata').findAll;
 var _=require('underscore');
 var Schema = mongoose.Schema;
-
+var commonfunctions=require('../routes/commonfunctions');
 
 
 
@@ -62,13 +62,17 @@ UserSchema.statics.findAll = function (conditions, fields, options, callback) {
 
 UserSchema.pre('save', function (next) {
 
-    var userType=conf.getParam("userType");
+    var _this=this;
+    commonfunctions.getUsers(function(err,usrJson){
+        var userType=usrJson.userType;
+        if(!((_.indexOf(userType,_this.type.toString()))>=0))
+            return next(new Error("'" +_this.type + "' is not a valid value for user field `type`["+ userType+"]."));
+
+        return next();
+    });
 
 
-    if(!((_.indexOf(userType,this.type.toString()))>=0))
-        return next(new Error("'" +this.type + "' is not a valid value for user field `type`["+ userType+"]."));
 
-    return next();
 });
 
 UserSchema.plugin(passportLocalMongoose, {usernameField: 'email'});

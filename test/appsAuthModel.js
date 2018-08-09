@@ -30,43 +30,48 @@ var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 var conf=require('../routes/configSettingManagment');
 var util = require('util');
-var type=conf.getParam("appType");
+var commonfunctions=require('../routes/commonfunctions');
 
 describe('MS Auth Model', function(){
 
-  before(function(done){
+    before(function (done) {
 
-    db.connect("appsAuthModel",function(){
-      done();
+        db.connect("appsAuthModel", function () {
+            done();
+        });
     });
-  });
 
-  after(function(done){
+    after(function (done) {
 
-    db.disconnect(function(){
-      done();
+        db.disconnect(function () {
+            done();
+        });
     });
-  });
 
 
-  beforeEach(function(done){
+    beforeEach(function (done) {
 
-    var range = _.range(100);
-    
-    async.each(range, function(e,cb){
+        var range = _.range(100);
+
+        commonfunctions.getApp(function (err, appJson) {
+            var type = appJson.appType;
+            async.each(range, function (e, cb) {
 
 
-        App.create({
-            email:"email" + e + "@email.it",
-            type: type[_.random(0,type.length-1)]
-        },function(err,val){
-            if (err) throw err;
-            cb();
+                App.create({
+                    email: "email" + e + "@email.it",
+                    type: type[_.random(0, type.length - 1)]
+                }, function (err, val) {
+                    if (err) throw err;
+                    cb();
+                });
+
+            }, function (err) {
+                done();
+            });
+
         });
 
-    }, function(err){
-        done();
-      });
     });
 
 
@@ -220,7 +225,7 @@ describe('MS Auth Model', function(){
                 },function(err,val){
                     should.exist(err);
                     var errstring="err:"+ err
-                    errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for app field `type`[webui,ext,user,ms].");
+                    errstring.indexOf("err:Error: 'INVALID' is not a valid value for app field `type`").should.be.greaterThan(-1);
                     done();
                 });
             }catch(ex) {
@@ -231,19 +236,24 @@ describe('MS Auth Model', function(){
 
     describe('Strict throw test', function(){
 
-        it('must thow an exception for invalid App Type', function(done){
+        it('must not thow an exception for invalid App Type', function(done){
 
-            try {
-                App.create({
-                    email:"email@email.it",
-                    type: conf.getParam("appType")[0]
-                },function(err,val){
-                    should.exist(val);
+            commonfunctions.getApp(function(err,appJson){
+                var appType=appJson.appType;
+                try {
+                    App.create({
+                        email:"email@email.it",
+                        type: appType[0]
+                    },function(err,val){
+                        should.exist(val);
+                        done();
+                    });
+                }catch(ex) {
                     done();
-                });
-            }catch(ex) {
-                done();
-            }
+                }
+            });
+
+
         });
     });
 

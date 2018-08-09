@@ -37,13 +37,16 @@ router.get('/main', function(req, res) {
 
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         var adminToken=req.query.adminToken || null;
-        res.render('main', {
-            MicroSL: conf.getParam("microserviceList"),
-            myUrl: conf.getParam("authUrl"),
-            myToken: conf.getParam("MyMicroserviceToken"),
-            iconsList: iconsList,
-            adminToken:adminToken,
-            authmsName:conf.getParam("authMsName") || "authms"
+
+        commonfunctions.getMicroservice(function(err,msJson){
+            res.render('main', {
+                MicroSL: msJson.microserviceList,
+                myUrl: conf.getParam("authUrl"),
+                myToken: conf.getParam("MyMicroserviceToken"),
+                iconsList: iconsList,
+                adminToken:adminToken,
+                authmsName:conf.getParam("authMsName") || "authms"
+            });
         });
     }
     else {
@@ -109,7 +112,7 @@ router.post('/configure', function(req, res) {
                     }else{
 
                         if(decoded.valid){
-                            let adminUser=conf.getParam("WhoUsersCanLoginToConfigure");
+                            var adminUser=conf.getParam("WhoUsersCanLoginToConfigure");
 
                             if(adminUser.indexOf("all")>=0){
                                 //get all admin tokentypes

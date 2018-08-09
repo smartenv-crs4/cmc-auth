@@ -23,6 +23,7 @@
 var mongoose = require('mongoose');
 var findAllFn = require('./metadata').findAll;
 var _=require('underscore');
+commonfunctions=require('../routes/commonfunctions');
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
@@ -63,14 +64,14 @@ AppSchema.statics.findAll = function (conditions, fields, options, callback) {
 
 AppSchema.pre('save', function (next) {
 
-    var appType=conf.getParam("appType");
+    var _this=this;
+    commonfunctions.getApp(function(err,appJson){
+        var appType=appJson.appType;
+        if(!((_.indexOf(appType,_this.type.toString()))>=0))
+            return next(new Error("'" + _this.type + "' is not a valid value for app field `type`[" + appType + "]."));
 
-
-    if(!((_.indexOf(appType,this.type.toString()))>=0))
-        return next(new Error("'" + this.type + "' is not a valid value for app field `type`[" + appType + "]."));
-
-
-    return next();
+        return next();
+    });
 });
 
 

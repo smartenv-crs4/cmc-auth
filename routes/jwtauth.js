@@ -158,13 +158,17 @@ exports.ensureIsAuthorized = function(req, res, next) {
             var token = req.decode_results;
             var exampleUrl = conf.exampleUrl;
 
-            if (!(conf.getParam("msType").indexOf(token.type)>=0)) { // if is not a microservice token
-                return res.status(401)
-                    .set({'WWW-Authenticate': 'Bearer realm=' + exampleUrl + ', error="invalid_token", error_message="The access token is not a valid microservice Auth Token"'})
-                    .send({error: "invalid_token", error_message: "The access token is not a valid microservice Token"});
-            } else{
-                return next();
-            }
+            commonfunctions.getMicroservice(function(err,msJson){
+                var msType=msJson.msType;
+                if (!(msType.indexOf(token.type)>=0)) { // if is not a microservice token
+                    return res.status(401)
+                        .set({'WWW-Authenticate': 'Bearer realm=' + exampleUrl + ', error="invalid_token", error_message="The access token is not a valid microservice Auth Token"'})
+                        .send({error: "invalid_token", error_message: "The access token is not a valid microservice Token"});
+                } else{
+                    return next();
+                }
+            });
+
 
         }else{
             if(item.authToken.indexOf(req.decode_results.type)>=0)

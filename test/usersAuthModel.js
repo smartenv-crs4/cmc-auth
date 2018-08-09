@@ -30,45 +30,49 @@ var User = require('../models/users').User;
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 var conf=require('../routes/configSettingManagment');
-
 var util = require('util');
+commonfunctions=require('../routes/commonfunctions');
+var tokenTypes = require('../models/userAndAppTypes').UserAndAppTypes;
 
 
 describe('MS Auth Model', function(){
 
-  before(function(done){
+    before(function (done) {
 
-    db.connect("usersAuthModel",function(){
-      done();
+        db.connect("usersAuthModel", function () {
+            done();
+        });
     });
-  });
 
-  after(function(done){
+    after(function (done) {
 
-    db.disconnect(function(){
-      done();
+        db.disconnect(function () {
+            done();
+        });
     });
-  });
 
 
-  beforeEach(function(done){
+    beforeEach(function (done) {
 
-    var range = _.range(100);
-    var type=conf.getParam("userType");
-    async.each(range, function(e,cb){
+        var range = _.range(100);
 
+        commonfunctions.getUsers(function (err, usrJson) {
+            var type = usrJson.userType;
+            async.each(range, function (e, cb) {
+                User.create({
+                    email: "email" + e + "@email.it",
+                    type: type[_.random(0, type.length - 1)]
+                }, function (err, val) {
+                    if (err) throw err;
+                    cb();
+                });
 
-        User.create({
-            email:"email" + e + "@email.it",
-            type: type[_.random(0,type.length-1)]
-        },function(err,val){
-            if (err) throw err;
-            cb();
+            }, function (err) {
+                done();
+            });
         });
 
-    }, function(err){
-        done();
-      });
+
     });
 
 
@@ -197,15 +201,17 @@ describe('MS Auth Model', function(){
         it('must thow an exception for invalid USER Type', function(done){
 
             try {
-                conf.setParam("userType",["valid"]);
-                User.create({
-                    email:"email@email.it",
-                    type: "INVALID"
-                },function(err,val){
-                    should.exist(err);
-                    var errstring="err:"+ err;
-                    errstring.should.be.equal("err:Error: 'INVALID' is not a valid value for user field `type`[valid].");
-                    done();
+                tokenTypes.create({type:"user",name:"valid"}, function (err, content) {
+                    if (err) err.should.be.equal(null);
+                    User.create({
+                        email:"email@email.it",
+                        type: "INVALID"
+                    },function(err,val){
+                        should.exist(err);
+                        var errstring="err:"+ err;
+                        errstring.indexOf("err:Error: 'INVALID' is not a valid value for user field `type`").should.be.greaterThan(-1);
+                        done();
+                    });
                 });
             }catch(ex) {
                 done();

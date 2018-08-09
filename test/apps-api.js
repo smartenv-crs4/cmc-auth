@@ -33,7 +33,7 @@ var util = require('util');
 var Port = 3055;
 var APIURL = 'http://localhost:' + Port + "/authapp";
 var server;
-var type = conf.appType;
+var type = conf.testSettings.appType;
 var clientApplication;
 
 
@@ -465,7 +465,7 @@ describe('Apps API', function () {
 
         it('should not create a new Application no User type sended', function (done) {
             var user = {
-                //"type": conf.appType[1], //client | admin
+                //"type": conf.testSettings.appType[1], //client | admin
                 "email": "mario@caport.com",
                 "password": "miciomicio"
             };

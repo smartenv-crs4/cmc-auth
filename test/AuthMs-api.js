@@ -36,8 +36,8 @@ var util = require('util');
 var Port = 3055;
 var APIURL = 'http://localhost:' + Port;
 var server;
-var type = conf.userType;
-var appType=conf.appType;
+var type = conf.testSettings.userType;
+var appType=conf.testSettings.appType;
 
 describe('AuthMS API', function () {
 

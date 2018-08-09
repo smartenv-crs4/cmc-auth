@@ -197,12 +197,15 @@ router.post('/signup', jwtMiddle.ensureIsAuthorized, function (req, res) {
     if (user.access_token)
         delete user['access_token'];
 
-    //user['validated'] = true;
-    if (!(conf.getParam("userType").indexOf(user['type']) >= 0))//||  user['type'] == 'admin'
-        return res.status(400).send({error: 'BadRequest', error_message: "No valid User Type provided"});
+    commonfunctions.getUsers(function(err,usrJson){
+        var userType=usrJson.userType;
+        //user['validated'] = true;
+        if (!(userType.indexOf(user['type']) >= 0))//||  user['type'] == 'admin'
+            return res.status(400).send({error: 'BadRequest', error_message: "No valid User Type provided"});
 
-    commonfunctions.createUser(user, password, function (err, scode, respo) {
-        return res.status(scode).send(respo);
+        commonfunctions.createUser(user, password, function (err, scode, respo) {
+            return res.status(scode).send(respo);
+        });
     });
 });
 
@@ -443,19 +446,22 @@ router.post('/:id/actions/setusertype/:type', jwtMiddle.ensureIsAuthorized, func
         var userType=req.params.type;
 
         //user['validated'] = true;
-        if (!(conf.getParam("userType").indexOf(userType) >= 0))//||  user['type'] == 'admin'
+    commonfunctions.getUsers(function(err,usrJson){
+        var allUserType=usrJson.userType;
+        if (!(allUserType.indexOf(userType) >= 0))//||  user['type'] == 'admin'
             return res.status(400).send({error: 'BadRequest', error_message: "No valid User Type provided"});
         else{
             User.findByIdAndUpdate(id,{type:userType},function (err,doc) {
-               if(err)
-                   return res.status(500).send({error: 'InternelError', error_message: err});
-               else{
-                   return res.status(200).send({id:id, type:userType});
-               }
+                if(err)
+                    return res.status(500).send({error: 'InternelError', error_message: err});
+                else{
+                    return res.status(200).send({id:id, type:userType});
+                }
             });
         }
-    }
-);
+    });
+
+});
 
 
 
