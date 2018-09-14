@@ -39,6 +39,7 @@ var server;
 var userTypeID;
 var oldAppType;
 var olduserType;
+var redisSync=require('../routes/redisSync');
 
 
 describe('appType-Api API', function () {
@@ -74,6 +75,10 @@ describe('appType-Api API', function () {
                 server.close();
                 conf.testSettings.appType=oldAppType;
                 conf.testSettings.userType=olduserType;
+                if(redisSync.useRedisMemCache) {
+                    redisSync.unsubscribe();
+                    redisSync.quit();
+                }
                 done();
             });
 
@@ -97,9 +102,9 @@ describe('appType-Api API', function () {
             });
 
         }, function (err) {
-            db.updateMicroserviceToTest(function() {
-                db.updateAppToTest(function () {
-                    db.updateUsersToTest(function () {
+            db.updateMicroserviceToTest(false,function() {
+                db.updateAppToTest(false,function () {
+                    db.updateUsersToTest(false,function () {
                         done();
                     });
                 });
@@ -422,12 +427,14 @@ describe('appType-Api API', function () {
 
     describe('DELETE /apptypes/:id', function(){
 
+
+
         it('must return error 409 in delete  due some app of this type exist', function(done){
 
-            Apps.create({email:"prova@prova.it", type:conf.testSettings.appType[0]},function(err,app){
+            Apps.create({email:"prova@prova.it", type:conf.appType[0]},function(err,app){
                 if (err) console.log("######   ERRORE: " + err + "  ######");
                 else{
-                    UserAndAppTypes.findOne({name:conf.testSettings.appType[0]},function(error,ute){
+                    UserAndAppTypes.findOne({name:conf.appType[0]},function(error,ute){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
@@ -463,10 +470,10 @@ describe('appType-Api API', function () {
 
         it('must return error 409 in delete  due some auth token rules include this app type ', function(done){
 
-            authorization.create({URI:"/bleee",method:"POST",name:conf.testSettings.msType[0],authToken:[conf.testSettings.appType[0]]},function(err,valAuth){
+            authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[conf.appType[0]]},function(err,valAuth){
                 if (err) console.log("######   ERRORE1: " + err + "  ######");
                 else{
-                    UserAndAppTypes.findOne({name:conf.testSettings.appType[0]},function(error,ute){
+                    UserAndAppTypes.findOne({name:conf.appType[0]},function(error,ute){
                         if(error) console.log("######   ERRORE2: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
@@ -534,14 +541,14 @@ describe('appType-Api API', function () {
 
         it('must get update error for duplicate key name', function(done){
 
-            UserAndAppTypes.findOne({name:conf.testSettings.appType[0]},function(error,ute){
+            UserAndAppTypes.findOne({name:conf.appType[0]},function(error,ute){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
                     var url = APIURL+'/'+ute._id;
                     request.put({
                         url: url,
                         headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
-                        body:JSON.stringify({apptype:{name:conf.testSettings.appType[1]}})
+                        body:JSON.stringify({apptype:{name:conf.appType[1]}})
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{                            
@@ -562,7 +569,7 @@ describe('appType-Api API', function () {
 
         it('must update app type', function(done){
 
-            UserAndAppTypes.findOne({name:conf.testSettings.appType[0]},function(error,ute){
+            UserAndAppTypes.findOne({name:conf.appType[0]},function(error,ute){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
                     var url = APIURL+'/'+ute._id;
@@ -590,9 +597,9 @@ describe('appType-Api API', function () {
 
         it('must update app type and all linked data', function(done){
 
-            var nameType=conf.testSettings.appType[0];
+            var nameType=conf.appType[0];
 
-            authorization.create({URI:"/bleee",method:"POST",name:conf.testSettings.msType[0],authToken:[nameType]},function(error,valAuth){
+            authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[nameType]},function(error,valAuth){
                 if(error) console.log("######   ERRORE1_: " + error + "  ######");
                 else{
                     Apps.create({email:"prova@prova.it", type:nameType},function(error,app){
@@ -718,7 +725,7 @@ describe('appType-Api API', function () {
             request.post({
                 url: url,
                 headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
-                body:JSON.stringify({apptype:{name:conf.testSettings.appType[0]}})
+                body:JSON.stringify({apptype:{name:conf.appType[0]}})
             },function(error, response, body){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{

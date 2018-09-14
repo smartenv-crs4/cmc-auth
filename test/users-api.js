@@ -38,10 +38,12 @@ var type = conf.testSettings.userType;
 var adminUser;
 var clientUser;
 var clientToken;
+var redisSync=require('../routes/redisSync');
 
 describe('Users API', function () {
 
     before(function (done) {
+        redisSync.setup();
         db.connect("users-api",function (err) {
             if (err) console.log("######   ERRORE BEFORE : " + err +"  ######");
 
@@ -59,6 +61,10 @@ describe('Users API', function () {
             if (err) console.log("######   ERRORE After 1: " + err +"  ######");
             db.disconnect(function (err,res) {
                 if (err) console.log("######   ERRORE After 2: " + err +"  ######");
+                if(redisSync.useRedisMemCache) {
+                    redisSync.unsubscribe();
+                    redisSync.quit();
+                }
                 done();
             });
             server.close();

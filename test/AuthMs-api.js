@@ -38,6 +38,7 @@ var APIURL = 'http://localhost:' + Port;
 var server;
 var type = conf.testSettings.userType;
 var appType=conf.testSettings.appType;
+var redisSync=require('../routes/redisSync');
 
 describe('AuthMS API', function () {
 
@@ -61,6 +62,10 @@ describe('AuthMS API', function () {
                 if (err) console.log("######   ERRORE After " + err +"  ######");
                 db.disconnect(function (err,res) {
                     if (err) console.log("######   ERRORE After: " + err +"  ######");
+                    if(redisSync.useRedisMemCache) {
+                        redisSync.unsubscribe();
+                        redisSync.quit();
+                    }
                     done();
                 });
                 server.close();

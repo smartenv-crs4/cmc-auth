@@ -26,6 +26,16 @@
 
 var debug = require('debug')('CMC-Auth-Microservice');
 var db = require("../models/db");
+var redisSync=require('../routes/redisSync');
+
+redisSync.setup();
+
+function redisCloseSession(){
+    if(redisSync.useRedisMemCache) {
+        redisSync.unsubscribe();
+        redisSync.quit();
+    }
+}
 
 db.connect(function(err){
 
@@ -66,7 +76,7 @@ db.connect(function(err){
 process.on('SIGINT', function(code) {
     console.log("Exiting MS...");
     db.disconnect(function(err,result){
-
+    redisCloseSession();
     if(err){
         console.log('Unable to disconnect from database');
     }
@@ -74,7 +84,6 @@ process.on('SIGINT', function(code) {
     else{
         console.log('Disconnected from database');
     }
-
 
     process.exit(0);
     });

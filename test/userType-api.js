@@ -20,7 +20,6 @@
  * ############################################################################
  */
 
-
 var should = require('should');
 var mongoose = require('mongoose');
 var _ = require('underscore')._;
@@ -40,6 +39,8 @@ var server;
 var userTypeID;
 var oldUserType;
 var oldAppType;
+var redisSync=require('../routes/redisSync');
+
 
 describe('UserAndAppTypes API', function () {
 
@@ -47,7 +48,6 @@ describe('UserAndAppTypes API', function () {
         oldUserType=conf.testSettings.userType;
         oldAppType=conf.testSettings.appType;
 
-       
 
         db.connect("userType-api",function (err) {
             if (err) console.log("######   ERRORE BEFORE : " + err +"  ######");
@@ -75,7 +75,10 @@ describe('UserAndAppTypes API', function () {
                 server.close();
                 conf.testSettings.userType=oldUserType;
                 conf.testSettings.appType=oldAppType;
-               
+                if(redisSync.useRedisMemCache) {
+                    redisSync.unsubscribe();
+                    redisSync.quit();
+                }
                 done();
             });
 
@@ -99,9 +102,9 @@ describe('UserAndAppTypes API', function () {
             });
 
         }, function (err) {
-            db.updateMicroserviceToTest(function() {
-                db.updateAppToTest(function () {
-                    db.updateUsersToTest(function () {
+            db.updateMicroserviceToTest(false,function() {
+                db.updateAppToTest(false,function () {
+                    db.updateUsersToTest(false,function () {
                         done();
                     });
                 });
@@ -424,12 +427,14 @@ describe('UserAndAppTypes API', function () {
 
     describe('DELETE /usertypes/:id', function(){
 
+        this.timeout(8000);
+
         it('must return error 409 in delete  due some user of this type exist', function(done){
 
-            Users.create({email:"prova@prova.it", type:conf.testSettings.userType[0]},function(err,app){
+            Users.create({email:"prova@prova.it", type:conf.userType[0]},function(err,app){
                 if (err) console.log("######   ERRORE: " + err + "  ######");
                 else{
-                    UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
+                    UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
@@ -463,10 +468,10 @@ describe('UserAndAppTypes API', function () {
 
         it('must return error 409 in delete  due some auth token rules include this user type ', function(done){
 
-            authorization.create({URI:"/bleee",method:"POST",name:conf.testSettings.msType[0],authToken:[conf.testSettings.userType[0]]},function(err,valAuth){
+            authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[conf.userType[0]]},function(err,valAuth){
                 if (err) console.log("######   ERRORE: " + err + "  ######");
                 else{
-                    UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
+                    UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
                             var url = APIURL+'/'+ute._id;
@@ -534,14 +539,14 @@ describe('UserAndAppTypes API', function () {
 
         it('must get update error for duplicate key name', function(done){
 
-            UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
+            UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
                     var url = APIURL+'/'+ute._id;
                     request.put({
                         url: url,
                         headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
-                        body:JSON.stringify({usertype:{name:conf.testSettings.userType[1]}})
+                        body:JSON.stringify({usertype:{name:conf.userType[1]}})
                     },function(error, response, body){
                         if(error) console.log("######   ERRORE: " + error + "  ######");
                         else{
@@ -562,7 +567,7 @@ describe('UserAndAppTypes API', function () {
 
         it('must update user type', function(done){
 
-            UserAndAppTypes.findOne({name:conf.testSettings.userType[0]},function(error,ute){
+            UserAndAppTypes.findOne({name:conf.userType[0]},function(error,ute){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{
                     var url = APIURL+'/'+ute._id;
@@ -590,9 +595,9 @@ describe('UserAndAppTypes API', function () {
 
         it('must update user type and all linked data', function(done){
 
-            var nameType=conf.testSettings.userType[0];
+            var nameType=conf.userType[0];
 
-            authorization.create({URI:"/bleee",method:"POST",name:conf.testSettings.msType[0],authToken:[nameType]},function(error,valAuth){
+            authorization.create({URI:"/bleee",method:"POST",name:conf.msType[0],authToken:[nameType]},function(error,valAuth){
                 if(error) console.log("######   ERRORE1_: " + error + "  ######");
                 else{
                     Users.create({email:"prova@prova.it", type:nameType},function(error,app){
@@ -718,7 +723,7 @@ describe('UserAndAppTypes API', function () {
             request.post({
                 url: url,
                 headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken},
-                body:JSON.stringify({usertype:{name:conf.testSettings.userType[0]}})
+                body:JSON.stringify({usertype:{name:conf.userType[0]}})
             },function(error, response, body){
                 if(error) console.log("######   ERRORE: " + error + "  ######");
                 else{

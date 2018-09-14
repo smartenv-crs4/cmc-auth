@@ -33,7 +33,7 @@ var tokenTypes=require('../models/userAndAppTypes').UserAndAppTypes;
 var msAuth=require('../models/authEndpoints').AuthEndPoint;
 var _=require('underscore');
 var tokenLife=conf.getParam("tokenLife");
-
+var redisSync=require('../routes/redisSync');
 
 
 exports.createUser = function(user, password, callb) {
@@ -240,18 +240,18 @@ exports.initMs = function(callb) {
             },
             function(callback){ // int MsType
 
-               commonFunction.updateMicroservice(function(){
+               commonFunction.updateMicroservice(false,function(){
                    callback(null, 'two');
                });
 
             },
             function(callback){ // int MsType
-                commonFunction.updateUsers(function(){
+                commonFunction.updateUsers(false,function(){
                     callback(null, 'three');
                 });
             },
             function(callback){ // int MsType
-                commonFunction.updateApp(function(){
+                commonFunction.updateApp(false,function(){
                     callback(null, 'four');
                 });
             }
@@ -262,106 +262,171 @@ exports.initMs = function(callb) {
         });
 };
 
+function publishToRedis(channel,message,forward){
+    console.log(forward + " --> publishToRedis: " + redisSync.publish.toString());
+    if(forward) {
+        redisSync.publish(channel, message, function (err) {
+            if (err) redisSync.useRedisMemCache = false;
+        });
+    }
+}
 
+exports.updateMicroservice=function(publish,clbk){
+    if(!clbk) {
+        clbk = publish;
+        publish=true;
+    }
 
-exports.updateMicroservice=function(clbk){
-    // ms.find(null,null,{sort:{_id:1}},function(err,values){
-    //     if(!err && values){
-    //         conf.setParam("microserviceList",values);
-    //         var msNameList=[];
-    //         for (var msName in values){
-    //             msNameList.push(values[msName].name);
-    //         }
-    //         conf.setParam("msType",msNameList);
-    //         clbk();
-    //     }else clbk();
-    // });
+    if(redisSync.useRedisMemCache) {
+        ms.find(null,null,{sort:{_id:1}},function(err,values){
+            if(!err && values){
 
-    clbk();
+                publishToRedis("microserviceList",values,publish);
+                conf.setParam("microserviceList",values);
+                var msNameList=[];
+                for (var msName in values){
+                    msNameList.push(values[msName].name);
+                };
+
+                publishToRedis("msType",msNameList,publish);
+                conf.setParam("msType",msNameList);
+                return clbk();
+            }else return clbk();
+        });
+    }else return clbk();
+};
+
+function updateAdminUsers(publish,clbk){
+
+    if(!clbk) {
+        clbk = publish;
+        publish=true;
+    }
+    if(redisSync.useRedisMemCache) {
+        tokenTypes.find({super: true, type: "user"}, function (err, values) {
+            if (!err && values) {
+                var tokenNameList = [];
+                for (var users in values) {
+                    tokenNameList.push(values[users].name);
+                }
+                publishToRedis("superuser",tokenNameList,publish);
+                conf.setParam("superuser", tokenNameList);
+                return clbk();
+            } else return clbk();
+        });
+    }else return clbk();
+}
+
+exports.updateUsers=function(publish,clbk){
+    if(!clbk) {
+        clbk = publish;
+        publish=true;
+    }
+    if(redisSync.useRedisMemCache) {
+        tokenTypes.find({type: "user"}, function (err, values) {
+            if (!err && values) {
+                var tokenNameList = [];
+                for (var users in values) {
+                    tokenNameList.push(values[users].name);
+                }
+                publishToRedis("userType",tokenNameList,publish);
+                conf.setParam("userType", tokenNameList);
+                console.log("UPDATE USER:" +  conf.getParam("userType"));
+                updateAdminUsers(publish,clbk);
+            } else updateAdminUsers(publish,clbk);
+        });
+    }else return clbk();
 };
 
 
 
-exports.updateUsers=function(clbk){
-    // tokenTypes.find({type:"user"},function(err,values){
-    //     if(!err && values){
-    //         var tokenNameList=[];
-    //         for (var users in values){
-    //             tokenNameList.push(values[users].name);
-    //         }
-    //         conf.setParam("userType",tokenNameList);
-    //         clbk();
-    //     }else clbk();
-    // });
-    clbk();
-};
+exports.updateApp=function(publish,clbk){
+    if(!clbk) {
+        clbk = publish;
+        publish=true;
+    }
+    if(redisSync.useRedisMemCache) {
+        tokenTypes.find({type: "app"}, function (err, values) {
+            if (!err && values) {
+                var tokenNameList = [];
+                for (var apps in values) {
+                    tokenNameList.push(values[apps].name);
+                }
+                publishToRedis("appType",tokenNameList,publish);
+                conf.setParam("appType", tokenNameList);
+                return clbk();
 
-
-exports.updateApp=function(clbk){
-    // tokenTypes.find({type:"app"},function(err,values){
-    //     if(!err && values){
-    //         var tokenNameList=[];
-    //         for (var apps in values){
-    //             tokenNameList.push(values[apps].name);
-    //         }
-    //         conf.setParam("appType",tokenNameList);
-    //         clbk();
-    //
-    //     }else clbk();
-    // });
-    clbk();
+            } else return clbk();
+        });
+    }else return clbk();
 };
 
 
 exports.getAdminTokenTypes=function(clbk){
-    var list = [];
 
-    tokenTypes.find({super: true, type: "user"}, function (err, values) {
-        if (err) return clbk(500,{error: "InternalError", error_message: "Internal Error " + err});
-        async.each(values, function (val, clb) {
-            list.push(val.name);
-            clb();
-        }, function (err) {
-            return clbk(null,{superuser: list});
+    if(redisSync.useRedisMemCache) {
+        return clbk(null, {superuser: conf.getParam("superuser")});
+    }else{
+        var list = [];
+        tokenTypes.find({super: true, type: "user"}, function (err, values) {
+            if (err) return clbk(500, {error: "InternalError", error_message: "Internal Error " + err});
+            async.each(values, function (val, clb) {
+                list.push(val.name);
+                return clb();
+            }, function (err) {
+                return clbk(null, {superuser: list});
+            });
         });
-    });
+    }
 };
 
 exports.getMicroservice=function(clbk){
-    ms.find(null,null,{sort:{_id:1}},function(err,values){
-        if(!err && values){
-            var msNameList=[];
-            for (var msName in values){
-                msNameList.push(values[msName].name);
-            }
-            clbk(null,{microserviceList:values,msType:msNameList});
-        }else clbk(err,{microserviceList:[],msType:[]});
-    });
+    if(redisSync.useRedisMemCache) {
+        return clbk(null, {microserviceList: conf.getParam("microserviceList"), msType: conf.getParam("msType")});
+    }else {
+        ms.find(null, null, {sort: {_id: 1}}, function (err, values) {
+            if (!err && values) {
+                var msNameList = [];
+                for (var msName in values) {
+                    msNameList.push(values[msName].name);
+                }
+                return clbk(null, {microserviceList: values, msType: msNameList});
+            } else return clbk(err, {microserviceList: [], msType: []});
+        });
+    }
 };
 
 
 
 exports.getUsers=function(clbk){
-    tokenTypes.find({type:"user"},function(err,values){
-        if(!err && values){
-            var tokenNameList=[];
-            for (var users in values){
-                tokenNameList.push(values[users].name);
-            }
-            clbk(null,{userType:tokenNameList});
-        }else clbk(err,{userType:[]});
-    });
+    if(redisSync.useRedisMemCache) {
+        return clbk(null, {userType: conf.getParam("userType")});
+    }else {
+        tokenTypes.find({type: "user"}, function (err, values) {
+            if (!err && values) {
+                var tokenNameList = [];
+                for (var users in values) {
+                    tokenNameList.push(values[users].name);
+                }
+                return clbk(null, {userType: tokenNameList});
+            } else return clbk(err, {userType: []});
+        });
+    }
 };
 
 
 exports.getApp=function(clbk){
-    tokenTypes.find({type:"app"},function(err,values){
-        if(!err && values){
-            var tokenNameList=[];
-            for (var apps in values){
-                tokenNameList.push(values[apps].name);
-            }
-            clbk(null,{appType:tokenNameList});
-        }else clbk(err,{appType:[]});
-    });
+    if(redisSync.useRedisMemCache) {
+        return clbk(null, {appType: conf.getParam("appType")});
+    }else {
+        tokenTypes.find({type: "app"}, function (err, values) {
+            if (!err && values) {
+                var tokenNameList = [];
+                for (var apps in values) {
+                    tokenNameList.push(values[apps].name);
+                }
+                clbk(null, {appType: tokenNameList});
+            } else clbk(err, {appType: []});
+        });
+    }
 };

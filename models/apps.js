@@ -68,8 +68,7 @@ AppSchema.pre('save', function (next) {
     commonfunctions.getApp(function(err,appJson){
         var appType=appJson.appType;
         if(!((_.indexOf(appType,_this.type.toString()))>=0))
-            return next(new Error("'" + _this.type + "' is not a valid value for app field `type`[" + appType + "]."));
-
+            return next(new Error("'" + _this.type + "' is not a valid value for app field `type`[" + appType + "]."));1
         return next();
     });
 });

@@ -199,7 +199,7 @@ describe('MS Auth Model', function(){
             try {
                 App.create({
                     email:"email@email.it",
-                    type: "AuthMs",
+                    type: "authms",
                     notInSchema:true
                 },function(err,val){
 
@@ -207,7 +207,7 @@ describe('MS Auth Model', function(){
                     done();
                 });
             }catch(ex) {
-                    ex.message.should.be.equal("Field `notInSchema` is not in schema and strict mode is set to throw.");
+                    ex.message.should.be.not.equal(null);
                 done();
             }
         });

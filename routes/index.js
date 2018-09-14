@@ -110,7 +110,6 @@ router.post('/configure', function(req, res) {
                     if(err){
                         return renderLoginError(res,err);
                     }else{
-
                         if(decoded.valid){
                             var adminUser=conf.getParam("WhoUsersCanLoginToConfigure");
 

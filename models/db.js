@@ -81,8 +81,10 @@ exports.connect = function connect(callback) {
                                     if(_.isEmpty(userT)){
                                         tokenTypes.create({name:user.type, type:"user",super:true},function(err,userT){
                                             if (err) console.log("ERROR in creation admin default User " + err);
-                                            console.log("ADMIB TOKEN TYPE CREATED");
-                                            createUser(user,psw,clb);
+                                            commonFunctions.updateUsers(false,function(){
+                                                console.log("ADMIB TOKEN TYPE CREATED");
+                                                createUser(user,psw,clb);
+                                            });
                                         });
                                     }else{
                                         createUser(user,psw,clb);

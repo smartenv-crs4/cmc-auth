@@ -35,13 +35,14 @@ var APIURL = 'http://localhost:' + Port + "/authapp";
 var server;
 var type = conf.testSettings.appType;
 var clientApplication;
-
+var redisSync=require('../routes/redisSync');
 
 
 describe('Apps API', function () {
 
     before(function (done) {
 
+        redisSync.setup();
         db.connect("apps-api",function (err) {
             if (err) console.log("######   ERRORE BEFORE : " + err +"  ######");
 
@@ -60,6 +61,10 @@ describe('Apps API', function () {
             if (err) console.log("######   ERRORE After 1: " + err +"  ######");
             db.disconnect(function (err,res) {
                 if (err) console.log("######   ERRORE After 2: " + err +"  ######");
+                if(redisSync.useRedisMemCache) {
+                    redisSync.unsubscribe();
+                    redisSync.quit();
+                }
                 done();
             });
             server.close();
