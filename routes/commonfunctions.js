@@ -263,7 +263,6 @@ exports.initMs = function(callb) {
 };
 
 function publishToRedis(channel,message,forward){
-    console.log(forward + " --> publishToRedis: " + redisSync.publish.toString());
     if(forward) {
         redisSync.publish(channel, message, function (err) {
             if (err) redisSync.useRedisMemCache = false;
@@ -331,7 +330,6 @@ exports.updateUsers=function(publish,clbk){
                 }
                 publishToRedis("userType",tokenNameList,publish);
                 conf.setParam("userType", tokenNameList);
-                console.log("UPDATE USER:" +  conf.getParam("userType"));
                 updateAdminUsers(publish,clbk);
             } else updateAdminUsers(publish,clbk);
         });

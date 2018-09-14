@@ -82,7 +82,6 @@ var TokenManagment={
             console.log("**********************************************");
             TokenManagment.useRedisMemCache=true;
             conf.setParam(channel,JSON.parse(message));
-            console.log("RedisSync:" +  conf.getParam("userType"));
         });
     }
 };
