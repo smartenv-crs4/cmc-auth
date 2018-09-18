@@ -875,4 +875,42 @@ router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function (req,
 });
 
 
+
+/**
+ * @api {get} /tokenactions/getdefaultadminuser Get default Admin User
+ * @apiVersion 1.0.0
+ * @apiName getDefaultAdminUser
+ * @apiGroup Token
+ *
+ * @apiDescription Protected by microservice access token, it gets a Default User Admin.
+ *
+ * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
+ * @apiHeaderExample {json} Header-Example:
+ *     {
+ *       "Authorization": "Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2RlIjoidXNlciIsImlzcyI6IjU4YTMwNTcxM"
+ *     }
+ *
+ * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
+ * If set, the same token sent in Authorization header should be undefined
+ *
+ * @apiSuccess (200 - OK) {Object} Default admin user dictionary
+ *
+ * @apiSuccessExample {json} Example: 200 OK
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "email":"prova@prova.com",
+ *          "name":"Admin",
+ *          "surname":"Default"
+ *      }
+ *
+ * @apiUse Unauthorized
+ * @apiUse BadRequest
+ * @apiUse ServerError
+ */
+router.get('/getdefaultadminuser', jwtMiddle.ensureIsAuthorized, function (req, res) {
+    res.status(200).send(conf.getParam("AdminDefaultUser"));
+});
+
+
+
 module.exports = router;
