@@ -908,7 +908,7 @@ router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function (req,
  * @apiUse ServerError
  */
 router.get('/getdefaultadminuser', jwtMiddle.ensureIsAuthorized, function (req, res) {
-    res.status(200).send(conf.getParam("AdminDefaultUser"));
+    res.status(200).send({email:(conf.getParam("AdminDefaultUser")).email});
 });
 
 
