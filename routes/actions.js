@@ -860,29 +860,35 @@ router.get('/getsupeusertokenlist', jwtMiddle.ensureIsAuthorized, function (req,
  */
 router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function (req, res) {
 
-    var list = [];
 
-    appsUsersType.find({super: true, type: "app"}, function (err, values) {
-        if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
-        async.each(values, function (val, clb) {
-            list.push(val.name);
-            clb();
-        }, function (err) {
-            res.status(200).send({superapp: list});
-        });
+    commonfunctions.getAdminAppTokenTypes(function(err,data){
+        if(err) return res.status(err).send(data);
+        res.status(200).send(data);
     });
+
+    // var list = [];
+    //
+    // appsUsersType.find({super: true, type: "app"}, function (err, values) {
+    //     if (err) return res.status(500).send({error: "InternalError", error_message: "Internal Error " + err});
+    //     async.each(values, function (val, clb) {
+    //         list.push(val.name);
+    //         clb();
+    //     }, function (err) {
+    //         res.status(200).send({superapp: list});
+    //     });
+    // });
 
 });
 
 
 
 /**
- * @api {get} /tokenactions/getdefaultadminuser Get default Admin User
+ * @api {get} /tokenactions/getdefaultadminuseremail Get default Admin User username(email)
  * @apiVersion 1.0.0
- * @apiName getDefaultAdminUser
+ * @apiName getDefaultAdminUserEmail
  * @apiGroup Token
  *
- * @apiDescription Protected by microservice access token, it gets a Default User Admin.
+ * @apiDescription Protected by microservice access token, it gets a Default User Admin email.
  *
  * @apiHeader {String} [Authorization] Unique access_token. If set, the same access_token in body or in query param must be undefined
  * @apiHeaderExample {json} Header-Example:
@@ -893,21 +899,20 @@ router.get('/getsuperapptokenlist', jwtMiddle.ensureIsAuthorized, function (req,
  * @apiParam {String} [access_token] Access token that grants access to this resource. It must be sent in [ body || as query param ].
  * If set, the same token sent in Authorization header should be undefined
  *
- * @apiSuccess (200 - OK) {Object} Default admin user dictionary
+ * @apiSuccess (200 - OK) {Object} Response
+ * @apiSuccess (200 - OK) {string} Response.email default admin user username(email)
  *
  * @apiSuccessExample {json} Example: 200 OK
  *      HTTP/1.1 200 OK
  *      {
  *          "email":"prova@prova.com",
- *          "name":"Admin",
- *          "surname":"Default"
  *      }
  *
  * @apiUse Unauthorized
  * @apiUse BadRequest
  * @apiUse ServerError
  */
-router.get('/getdefaultadminuser', jwtMiddle.ensureIsAuthorized, function (req, res) {
+router.get('/getdefaultadminuseremail', jwtMiddle.ensureIsAuthorized, function (req, res) {
     res.status(200).send({email:(conf.getParam("AdminDefaultUser")).email});
 });
 

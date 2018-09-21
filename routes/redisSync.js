@@ -37,6 +37,17 @@ var TokenManagment={
     },
     "setup":function(){
 
+        var redisChannels={
+            superuserChannel:"superuser",
+            superappChannel:"superapp",
+            microserviceListChannel:"microserviceList",
+            msTypeChannel:"msType",
+            userTypeChannel:"userType",
+            appTypeChannel:"appType"
+        };
+
+        conf.setParam("redisChannels",redisChannels);
+
         var redisConf=conf.getParam("redisCache");
         if(!redisConf.password)
             delete redisConf.password;
@@ -45,18 +56,18 @@ var TokenManagment={
         var redisClientPublisher = redis.createClient(redisConf);
         redisClient.on("ready", function (err) {
 
-            redisClient.subscribe("superuser");
-            redisClient.subscribe("microserviceList");
-            redisClient.subscribe("msType");
-            redisClient.subscribe("userType");
-            redisClient.subscribe("appType");
+            redisClient.subscribe(redisChannels.superuserChannel);
+            redisClient.subscribe(redisChannels.microserviceListChannel);
+            redisClient.subscribe(redisChannels.msTypeChannel);
+            redisClient.subscribe(redisChannels.userTypeChannel);
+            redisClient.subscribe(redisChannels.appTypeChannel);
 
             TokenManagment.unsubscribe=function(){
-                redisClient.unsubscribe("superuser");
-                redisClient.unsubscribe("microserviceList");
-                redisClient.unsubscribe("msType");
-                redisClient.unsubscribe("userType");
-                redisClient.unsubscribe("appType");
+                redisClient.unsubscribe(redisChannels.superuserChannel);
+                redisClient.unsubscribe(redisChannels.microserviceListChannel);
+                redisClient.unsubscribe(redisChannels.msTypeChannel);
+                redisClient.unsubscribe(redisChannels.userTypeChannel);
+                redisClient.unsubscribe(redisChannels.appTypeChannel);
             };
             TokenManagment.quit=function(){
                 redisClient.quit();
@@ -69,7 +80,7 @@ var TokenManagment={
         });
 
         redisClient.on("error", function (err) {
-            console.log("Error in redisSync " + err);
+            console.log("Error in redisSync ----> " + err);
         });
 
         redisClient.on("subscribe", function (channel, count) {
@@ -85,8 +96,6 @@ var TokenManagment={
         });
     }
 };
-
-
 
 
 module.exports = TokenManagment;

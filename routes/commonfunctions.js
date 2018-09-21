@@ -280,14 +280,14 @@ exports.updateMicroservice=function(publish,clbk){
         ms.find(null,null,{sort:{_id:1}},function(err,values){
             if(!err && values){
 
-                publishToRedis("microserviceList",values,publish);
+                publishToRedis(conf.getParam("redisChannels").microserviceListChannel,values,publish);
                 conf.setParam("microserviceList",values);
                 var msNameList=[];
                 for (var msName in values){
                     msNameList.push(values[msName].name);
                 };
 
-                publishToRedis("msType",msNameList,publish);
+                publishToRedis(conf.getParam("redisChannels").msTypeChannel,msNameList,publish);
                 conf.setParam("msType",msNameList);
                 return clbk();
             }else return clbk();
@@ -308,7 +308,7 @@ function updateAdminUsers(publish,clbk){
                 for (var users in values) {
                     tokenNameList.push(values[users].name);
                 }
-                publishToRedis("superuser",tokenNameList,publish);
+                publishToRedis(conf.getParam("redisChannels").superuserChannel,tokenNameList,publish);
                 conf.setParam("superuser", tokenNameList);
                 return clbk();
             } else return clbk();
@@ -328,7 +328,7 @@ exports.updateUsers=function(publish,clbk){
                 for (var users in values) {
                     tokenNameList.push(values[users].name);
                 }
-                publishToRedis("userType",tokenNameList,publish);
+                publishToRedis(conf.getParam("redisChannels").userTypeChannel,tokenNameList,publish);
                 conf.setParam("userType", tokenNameList);
                 updateAdminUsers(publish,clbk);
             } else updateAdminUsers(publish,clbk);
@@ -337,6 +337,27 @@ exports.updateUsers=function(publish,clbk){
 };
 
 
+
+function updateAdminApps(publish,clbk){
+
+    if(!clbk) {
+        clbk = publish;
+        publish=true;
+    }
+    if(redisSync.useRedisMemCache) {
+        tokenTypes.find({super: true, type: "app"}, function (err, values) {
+            if (!err && values) {
+                var tokenNameList = [];
+                for (var users in values) {
+                    tokenNameList.push(values[users].name);
+                }
+                publishToRedis(conf.getParam("redisChannels").superappChannel,tokenNameList,publish);
+                conf.setParam("superapp", tokenNameList);
+                return clbk();
+            } else return clbk();
+        });
+    }else return clbk();
+}
 
 exports.updateApp=function(publish,clbk){
     if(!clbk) {
@@ -350,11 +371,11 @@ exports.updateApp=function(publish,clbk){
                 for (var apps in values) {
                     tokenNameList.push(values[apps].name);
                 }
-                publishToRedis("appType",tokenNameList,publish);
+                publishToRedis(conf.getParam("redisChannels").appTypeChannel,tokenNameList,publish);
                 conf.setParam("appType", tokenNameList);
-                return clbk();
+                updateAdminApps(publish,clbk);
 
-            } else return clbk();
+            } else updateAdminApps(publish,clbk);
         });
     }else return clbk();
 };
@@ -363,7 +384,7 @@ exports.updateApp=function(publish,clbk){
 exports.getAdminTokenTypes=function(clbk){
 
     if(redisSync.useRedisMemCache) {
-        return clbk(null, {superuser: conf.getParam("superuser")});
+        return clbk(null, {superuser: conf.getParam("superuser"), redisChannel:conf.getParam("redisChannels").superuserChannel});
     }else{
         var list = [];
         tokenTypes.find({super: true, type: "user"}, function (err, values) {
@@ -373,6 +394,25 @@ exports.getAdminTokenTypes=function(clbk){
                 return clb();
             }, function (err) {
                 return clbk(null, {superuser: list});
+            });
+        });
+    }
+};
+
+
+exports.getAdminAppTokenTypes=function(clbk){
+
+    if(redisSync.useRedisMemCache) {
+        return clbk(null, {superapp: conf.getParam("superapp"), redisChannel:conf.getParam("redisChannels").superappChannel});
+    }else{
+        var list = [];
+        tokenTypes.find({super: true, type: "app"}, function (err, values) {
+            if (err) return clbk(500, {error: "InternalError", error_message: "Internal Error " + err});
+            async.each(values, function (val, clb) {
+                list.push(val.name);
+                return clb();
+            }, function (err) {
+                return clbk(null, {superapp: list});
             });
         });
     }
