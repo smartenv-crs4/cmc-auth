@@ -374,7 +374,6 @@ exports.updateApp=function(publish,clbk){
                 publishToRedis(conf.getParam("redisChannels").appTypeChannel,tokenNameList,publish);
                 conf.setParam("appType", tokenNameList);
                 updateAdminApps(publish,clbk);
-
             } else updateAdminApps(publish,clbk);
         });
     }else return clbk();

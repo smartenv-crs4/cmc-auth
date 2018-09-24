@@ -56,6 +56,8 @@ var TokenManagment={
         var redisClientPublisher = redis.createClient(redisConf);
         redisClient.on("ready", function (err) {
 
+            console.log("Redis Ready");
+
             redisClient.subscribe(redisChannels.superuserChannel);
             redisClient.subscribe(redisChannels.microserviceListChannel);
             redisClient.subscribe(redisChannels.msTypeChannel);
@@ -80,8 +82,13 @@ var TokenManagment={
         });
 
         redisClient.on("error", function (err) {
-            console.log("Error in redisSync ----> " + err);
+            console.log("Error in redisSync Client ----> " + err);
         });
+
+        redisClientPublisher.on("error", function (err) {
+            console.log("Error in redisSync Publisher ----> " + err);
+        });
+
 
         redisClient.on("subscribe", function (channel, count) {
             console.log("Subscribed to Redis channel " + channel);
