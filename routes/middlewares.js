@@ -60,7 +60,7 @@ var User = require('../models/apps').User;
  * @apiParam {Object} AdminDefaultUser Administrator default user dictionary
  * @apiParam {String} AdminDefaultUser.email Administrator default user email
  * @apiParam {String} AdminDefaultUser.password Administrator default user password
- * @apiParam {String="admin"} AdminDefaultUser.type Administrator default user type
+ * @apiParam {String} AdminDefaultUser.type="admin" Administrator default user type
  * @apiParam {String} authUrl URL used to call authorization microservice resource
  * @apiParam {String} consulUrl URL used to call consul service. Configure it if you use a consul register/service discovery in your architecture
  * @apiParam {String} consulServices=/v1/agent/services consul service endpoint. Configure it if you use a consul register/service discovery in your architecture
@@ -68,7 +68,7 @@ var User = require('../models/apps').User;
  * @apiParam {String} tokenLife token life setting dictionary
  * @apiParam {String="years", "quarters", "months", "weeks", "days", "hours", "minutes", "seconds", "milliseconds"} tokenLife.unit=days Unit is the key of what time you want to add from current time for token life,
  * @apiParam {String} tokenLife.value=7 the amount of unit you want to add
- * @apiParam {Array} "WhoUsersCanLoginToConfigure" Array containing a list of user types who can login to configure UI. if equal to ["all"] all admin user types can access
+ * @apiParam {String[]} WhoUsersCanLoginToConfigure Array containing a list of user types who can login to configure UI. if equal to ["all"] all admin user types can access
  *
  * @apiSampleRequest off
  */
