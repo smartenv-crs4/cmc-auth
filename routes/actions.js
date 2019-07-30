@@ -499,18 +499,29 @@ function checkAutRoles(req,URI,method,callbackResponse){
 
             authEnpoints.findOne({URI: URI, method: method, name:typeT}, function (err, item) {
                 if (err) return callbackResponse(500,{error: "InternalError", error_message: "Internal Error " + err}); //res.status(500).send(
-                if (!item) return callbackResponse(401,{   //res.status(401).send({
-                    error: "BadRequest",
-                    error_message: "No auth roles defined for: " + method + " " + URI
-                });
-
-                if (item.authToken.indexOf(decoded.token.type) >= 0)
-                    callbackResponse(200,decoded); //res.status(200).send(decoded);
-                else {
-                    decoded.valid = false;
-                    decoded.error_message = "Only " + item.authToken + " token types can access this resource : '" + method + " " + URI + "'";
-                    callbackResponse(200,decoded); //res.status(200).send(decoded);
+                if (!item){
+                    commonfunctions.getMicroservice(function(err,msJson){
+                        var msType=msJson.msType;
+                        if (!(msType.indexOf(typeT)>=0)) { // if is not a microservice token
+                            return callbackResponse(401,{   //res.status(401).send({
+                                error: "BadRequest",
+                                error_message: "No auth roles defined for: " + method + " " + URI
+                            });
+                        } else{
+                            callbackResponse(200,decoded); //res.status(200).send(decoded);
+                        }
+                    });
+                }else {
+                    if (item.authToken.indexOf(decoded.token.type) >= 0)
+                        callbackResponse(200,decoded); //res.status(200).send(decoded);
+                    else {
+                        decoded.valid = false;
+                        decoded.error_message = "Only " + item.authToken + " token types can access this resource : '" + method + " " + URI + "'";
+                        callbackResponse(200,decoded); //res.status(200).send(decoded);
+                    }
                 }
+
+
 
             });
         }
