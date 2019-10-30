@@ -19,7 +19,7 @@
     "jwt-simple": "^0.2.0",
     "minimist": "^1.2.0",
     "moment": "^2.13.0",
-    "mongoose": "^4.6.1",
+    "mongoose": "^5.7.7",
     "morgan": "^1.9.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
