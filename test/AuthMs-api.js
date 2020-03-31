@@ -27,6 +27,8 @@ var async = require('async');
 var db = require("./dbTest");
 var Apps = require('../models/apps').Apps;
 var Users = require('../models/users').User;
+var Rules=require('../models/authEndpoints').AuthEndPoint;
+var MS=require('../models/microservices').Microservice;
 var conf = require('../config').conf;
 var moment = require('moment');
 var jwt = require('jwt-simple');
@@ -89,6 +91,186 @@ describe('AuthMS API', function () {
             });
         });
     });
+
+
+
+    describe('get /usertypes/', function () {
+
+        it('should test cmc-auth authorization rules. test no auth to access the resource', function (done) {
+
+            var role = {
+                URI: "/usertypes/",
+                method: "GET",
+                name: conf.authMsName,
+                authToken: ["admin"]
+            };
+
+            Rules.create(role, function (error, roleCreated) {
+                if (error) {
+                    should((error)).be.null;
+                    console.log("######   ERRORE should create a new Application: " + error + "  ######");
+                    done();
+                } else {
+                    should(roleCreated).be.not.null;
+
+                    var url = APIURL + '/usertypes/';
+                    request.get({
+                        url: url,
+                        headers: {
+                            'content-type': 'application/json',
+                            'Authorization': "Bearer " + conf.MyMicroserviceToken
+                        }
+                    }, function (error, response, body) {
+                        if (error){
+                            should((error)).be.null;
+                            console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                            done();
+                        } else {
+
+                            Rules.deleteMany({}, function (err) {
+                                response.statusCode.should.be.equal(401);
+                                done();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    describe('get /usertypes/', function () {
+
+        it('should test cmc-auth authorization rules. Two mirror rules differing only by microservice name.  authorization should select cmcAuth rules ', function (done) {
+
+            var msName="MsOne";
+            MS.create({
+                name:msName,
+                token:"token",
+                baseUrl:"localhost"
+            },function(error,val){
+                if (error){
+                    should((error)).be.null;
+                    console.log("######   ERRORE should test cmc-auth authorization rules: " + error +"  ######");
+                    done();
+                }
+                else {
+                    var role = {
+                        URI: "/usertypes/",
+                        method: "GET",
+                        name: msName,
+                        authToken: ["admin"]
+                    };
+
+                    Rules.create(role, function (error, roleCreated) {
+                        if (error) {
+                            should((error)).be.null;
+                            console.log("######   should test cmc-auth authorization rules: " + error + "  ######");
+                            done();
+                        } else {
+                            should(roleCreated).be.not.null;
+
+                            role.name = conf.authMsName;
+                            role.authToken=[conf.authMsName];
+                            Rules.create(role, function (error, secondRoleCreated) {
+                                if (error) {
+                                    should((error)).be.null;
+                                    console.log("######   should test cmc-auth authorization rules: " + error + "  ######");
+                                    done();
+                                } else {
+                                    should(secondRoleCreated).be.not.null;
+                                    var url = APIURL + '/usertypes/';
+                                    request.get({
+                                        url: url,
+                                        headers: {
+                                            'content-type': 'application/json',
+                                            'Authorization': "Bearer " + conf.MyMicroserviceToken
+                                        }
+                                    }, function (error, response, body) {
+                                        if (error){
+                                            should((error)).be.null;
+                                            console.log("######   should test cmc-auth authorization rules: " + error +"  ######");
+                                            done();
+                                        } else {
+                                            Rules.deleteMany({}, function (err) {
+                                                MS.deleteMany({_id:val._id}, function (err) {
+                                                    response.statusCode.should.be.equal(200);
+                                                    done();
+                                                });
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    describe('get /usertypes/', function () {
+
+        it('should test cmc-auth authorization rules. Rules with  /usertypes/ and method get defined for a ms but not for cmc-auth ms.  request should be satisfied ', function (done) {
+
+            var msName="MsOne";
+            MS.create({
+                name:msName,
+                token:"token",
+                baseUrl:"localhost"
+            },function(error,val){
+                if (error){
+                    should((error)).be.null;
+                    console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                    done();
+                }
+                else {
+                    var role = {
+                        URI: "/usertypes/",
+                        method: "GET",
+                        name: msName,
+                        authToken: ["admin"]
+                    };
+
+                    Rules.create(role, function (error, roleCreated) {
+                        if (error) {
+                            should((error)).be.null;
+                            console.log("######   ERRORE should create a new Application: " + error + "  ######");
+                            done();
+                        } else {
+                            should(roleCreated).be.not.null;
+
+                            var url = APIURL + '/usertypes/';
+                            request.get({
+                                url: url,
+                                headers: {
+                                    'content-type': 'application/json',
+                                    'Authorization': "Bearer " + conf.MyMicroserviceToken
+                                }
+                            }, function (error, response, body) {
+                                if (error){
+                                    should((error)).be.null;
+                                    console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                                    done();
+                                } else {
+
+                                    Rules.deleteMany({}, function (err) {
+                                        MS.deleteMany({_id:val._id}, function (err) {
+                                            response.statusCode.should.be.equal(200);
+                                            done();
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+
 
 
 

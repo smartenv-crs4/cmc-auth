@@ -151,8 +151,9 @@ exports.ensureIsAuthorized = function(req, res, next) {
     var path= (_.isEmpty(req.route)) ?  req.path : req.route.path;
     var URI=(_.isEmpty(req.baseUrl)) ? path : (req.baseUrl+path) ;
     URI=URI.endsWith("/") ? URI : URI+"/";
+    var ms=conf.getParam("authMsName") || "authms";
 
-    authEnpoints.findOne({URI:URI,method:req.method},function(err,item){
+    authEnpoints.findOne({URI:URI,method:req.method,name:ms},function(err,item){
         if(err) return res.status(500).send({error:"InternalError", error_message:"Internal Error " + err});
         if(!item) {
             var token = req.decode_results;

@@ -486,6 +486,7 @@ router.get('/checkiftokenisauth', jwtMiddle.ensureIsAuthorized, function (req, r
 });
 
 function checkAutRoles(req,URI,method,callbackResponse){
+
     decodeToken(req, null, function (err, decoded) { // err == null token is valid else err== status_code to return
         if (err) { // if err token is not valid
             decoded.error_message = decoded.error_message.replace("access_token", "decode_token");
@@ -502,6 +503,7 @@ function checkAutRoles(req,URI,method,callbackResponse){
                 if (!item){
                     commonfunctions.getMicroservice(function(err,msJson){
                         var msType=msJson.msType;
+
                         if (!(msType.indexOf(typeT)>=0)) { // if is not a microservice token
                             return callbackResponse(401,{   //res.status(401).send({
                                 error: "BadRequest",
