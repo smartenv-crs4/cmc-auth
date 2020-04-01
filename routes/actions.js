@@ -504,11 +504,10 @@ function checkAutRoles(req,URI,method,callbackResponse){
                     commonfunctions.getMicroservice(function(err,msJson){
                         var msType=msJson.msType;
 
-                        if (!(msType.indexOf(typeT)>=0)) { // if is not a microservice token
-                            return callbackResponse(401,{   //res.status(401).send({
-                                error: "BadRequest",
-                                error_message: "No auth roles defined for: " + method + " " + URI
-                            });
+                        if (!(msType.indexOf(decoded.token.type)>=0)) { // if is not a microservice token
+                            decoded.valid = false;
+                            decoded.error_message = "No auth roles defined for: " + method + " " + URI
+                            return callbackResponse(200,decoded);
                         } else{
                             callbackResponse(200,decoded); //res.status(200).send(decoded);
                         }
@@ -522,9 +521,6 @@ function checkAutRoles(req,URI,method,callbackResponse){
                         callbackResponse(200,decoded); //res.status(200).send(decoded);
                     }
                 }
-
-
-
             });
         }
     });

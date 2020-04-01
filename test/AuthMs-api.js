@@ -1630,6 +1630,162 @@ describe('AuthMS API', function () {
         });
     });
 
+
+
+
+
+    describe('POST /checkiftokenisauth', function () {
+
+        it('should create a new Application and call checkiftokenisauth with post', function (done) {
+            var user = {
+                "type": type[1], //client | admin
+                "email": "mario@caport.com",
+                "password": "miciomicio"
+            };
+            var appBody = JSON.stringify({user:user});
+            var url = APIURL + '/authuser/signup';
+            request.post({
+                url: url,
+                body: appBody,
+                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+            }, function (error, response) {
+                if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                else {
+                    response.statusCode.should.be.equal(201);
+                    var results = JSON.parse(response.body);
+                    results.should.have.property('apiKey');
+                    results.should.have.property('refreshToken');
+                    var userId=results.userId;
+
+                    var role = {
+                        URI: "/route/",
+                        method: "GET",
+                        name: conf.authMsName,
+                        authToken: [type[1]]
+                    };
+
+                    Rules.create(role, function (error, roleCreated) {
+                        if (error) {
+                            should((error)).be.null;
+                            console.log("######   ERRORE should create a new Application: " + error + "  ######");
+                            done();
+                        } else {
+                            should(roleCreated).be.not.null;
+
+                            appBody=JSON.stringify({decode_token:results.apiKey.token, URI:"/route", method:"GET"});
+
+                            url= APIURL + "/tokenactions/checkiftokenisauth";
+                            request.post({
+                                url: url,
+                                body: appBody,
+                                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                            }, function (error, response,body) {
+                                if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                                else {
+                                    response.statusCode.should.be.equal(200);
+                                    var results = JSON.parse(response.body);
+                                    results.should.have.property('valid');
+                                    results.should.have.property('token');
+                                    results.valid.should.be.true;
+                                    results.token._id.should.be.equal(userId);
+                                    results.token.email.should.be.equal(user.email);
+                                    results.token.type.should.be.equal(user.type);
+                                }
+                                Rules.deleteMany({},function(err){
+                                    done();
+                                });
+
+                            });
+
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+
+    describe('POST /checkiftokenisauth', function () {
+
+        it('call checkiftokenisauth with post and microservice token', function (done) {
+            appBody=JSON.stringify({decode_token:conf.MyMicroserviceToken, URI:"/route", method:"GET"});
+
+            url= APIURL + "/tokenactions/checkiftokenisauth";
+            request.post({
+                url: url,
+                body: appBody,
+                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+            }, function (error, response) {
+                if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                else {
+                    response.statusCode.should.be.equal(200);
+                    var results = JSON.parse(response.body);
+                    results.should.have.property('valid');
+                    results.should.have.property('token');
+                    results.valid.should.be.true;
+                }
+               done();
+
+            });
+        });
+    });
+
+
+    describe('POST /checkiftokenisauth', function () {
+
+        it('should create a new Application and call checkiftokenisauth with post. authorization should be not valid', function (done) {
+            var user = {
+                "type": type[1], //client | admin
+                "email": "mario@caport.com",
+                "password": "miciomicio"
+            };
+            var appBody = JSON.stringify({user:user});
+            var url = APIURL + '/authuser/signup';
+            request.post({
+                url: url,
+                body: appBody,
+                headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+            }, function (error, response) {
+                if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                else {
+                    response.statusCode.should.be.equal(201);
+                    var results = JSON.parse(response.body);
+                    results.should.have.property('apiKey');
+                    results.should.have.property('refreshToken');
+                    var userId=results.userId;
+
+                    var role = {
+                        URI: "/route",
+                        method: "GET",
+                        name: conf.authMsName,
+                        authToken: [conf.authMsName]
+                    };
+
+                    appBody=JSON.stringify({decode_token:results.apiKey.token, URI:"/route", method:"GET"});
+
+                    url= APIURL + "/tokenactions/checkiftokenisauth";
+                    request.post({
+                        url: url,
+                        body: appBody,
+                        headers: {'content-type': 'application/json', 'Authorization': "Bearer " + conf.MyMicroserviceToken}
+                    }, function (error, response) {
+                        if (error) console.log("######   ERRORE should create a new Application: " + error +"  ######");
+                        else {
+                            response.statusCode.should.be.equal(200);
+                            var results = JSON.parse(response.body);
+                            results.should.have.property('valid');
+                            results.should.have.property('error_message');
+                            results.valid.should.be.false;
+                            results.error_message.indexOf("No auth roles defined for").should.be.greaterThan(-1);
+                        }
+                        done();
+                    });
+                }
+            });
+        });
+    });
+
     ///////////////////////////
 
 
