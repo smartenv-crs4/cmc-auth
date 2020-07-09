@@ -31,15 +31,27 @@ var tokenTypes=require('../models/userAndAppTypes').UserAndAppTypes;
 var _=require('underscore');
 
 var options = {
-    keepAlive: 1,
-    connectTimeoutMS: 30000,
-    useMongoClient: true
-	//,
-    /*
-	user: 'admin',
-    pass: 'node'
-	*/
+    server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
+    useNewUrlParser: true,
+    user:conf.dbAuth.user,
+    pass:conf.dbAuth.psw
 };
+
+// var options = {
+//     keepAlive: 1,
+//     connectTimeoutMS: 30000,
+//     useMongoClient: true
+// 	//,
+//     /*
+// 	user: 'admin',
+//     pass: 'node'
+// 	*/
+// };
+
+
+
+
+
 
 function createUser(user,psw,clb){
     commonFunctions.createUser(user,psw,function(err, stausCode, json){
