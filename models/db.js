@@ -26,15 +26,14 @@ var conf = require('../config').conf;
 var commonFunctions=require('../routes/commonfunctions');
 var util=require('util');
 var async=require('async');
-var dbUrl =  "mongodb://" + conf.dbHost + ':' + conf.dbPort + '/' + conf.dbName;
+var dbAuth= conf.dbAuth.user ? conf.dbAuth.user + ":" + conf.dbAuth.psw + "@" : "";
+var dbUrl =  "mongodb://" + dbAuth + conf.dbHost + ':' + conf.dbPort + '/' + conf.dbName;
 var tokenTypes=require('../models/userAndAppTypes').UserAndAppTypes;
 var _=require('underscore');
 
 var options = {
     server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
-    useNewUrlParser: true,
-    user:conf.dbAuth.user,
-    pass:conf.dbAuth.psw
+    useNewUrlParser: true
 };
 
 // var options = {
