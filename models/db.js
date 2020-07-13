@@ -27,7 +27,8 @@ var commonFunctions=require('../routes/commonfunctions');
 var util=require('util');
 var async=require('async');
 var dbAuth= conf.dbAuth.user ? conf.dbAuth.user + ":" + conf.dbAuth.psw + "@" : "";
-var dbUrl =  "mongodb://" + dbAuth + conf.dbHost + ':' + conf.dbPort + '/' + conf.dbName;
+var authSource= conf.dbAuth.user ? "?authSource=admin" : "";
+var dbUrl =  "mongodb://" + dbAuth + conf.dbHost + ':' + conf.dbPort + '/' + conf.dbName + authSource;
 var tokenTypes=require('../models/userAndAppTypes').UserAndAppTypes;
 var _=require('underscore');
 
@@ -61,6 +62,8 @@ function createUser(user,psw,clb){
 }
 
 exports.connect = function connect(callback) {
+
+    console.log("Database string connection: ", dbUrl);
 
     mongoose.connect(dbUrl, options, function (err, res) {
 
