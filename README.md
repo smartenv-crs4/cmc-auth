@@ -46,3 +46,5 @@ The backoffice where you can manage microservice authorisations can be found at
 Just log in using admin credentials:
 * username -> admin@admin.com
 * password -> admin
+
+AdminDefaultUser can be changed in default.json config file
